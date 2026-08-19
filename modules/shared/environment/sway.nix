@@ -19,9 +19,14 @@
         wofi
         grim
         slurp
+        swappy
         wl-clipboard
       ];
     };
+
+    # Habilitar inicio automático en TTY1 si no se usa Display Manager (Greetd/SDDM)
+    # o bien registrar la sesión Sway para Display Managers
+    services.displayManager.defaultSession = "sway";
 
     xdg.portal = {
       enable = true;

@@ -11,6 +11,7 @@
     (lib.mkIf config.myPlatform.applications.desktop.enable {
       environment.systemPackages = with pkgs; [
         firefox
+        brave
         mpv
         zathura
         imv
