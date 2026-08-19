@@ -3,6 +3,6 @@
 result
 result-*
 
-# Claves de cifrado privadas (NUNCA subir a git)
+# Claves de cifrado privadas
 keys.txt
 *.key
