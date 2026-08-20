@@ -37,6 +37,7 @@
       slurp
       swappy
       wl-clipboard
+      cliphist
       brightnessctl
       playerctl
       pamixer

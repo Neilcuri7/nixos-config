@@ -29,6 +29,8 @@ in
         "swaync"
         "ags"
         "hypridle"
+        "wl-paste --type text --watch cliphist store" # Guardar texto en el historial
+        "wl-paste --type image --watch cliphist store" # Guardar imágenes en el historial
       ];
 
       input = {
@@ -94,6 +96,7 @@ in
         "$mainMod, Return, exec, $terminal"
         "$mainMod, W, exec, $browser"
         "$mainMod, E, exec, $fileManager"
+        "$mainMod, V, exec, cliphist list | rofi -dmenu -theme ${config.home.homeDirectory}/.config/rofi/config.rasi | cliphist decode | wl-copy"
         "$mainMod, Q, killactive,"
         "$mainMod, F, fullscreen,"
         "$mainMod, P, pseudo,"
