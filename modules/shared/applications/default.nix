@@ -5,10 +5,24 @@
     desktop.enable = lib.mkEnableOption "Desktop GUI Applications";
     tools.enable = lib.mkEnableOption "CLI Tools";
     dev.enable = lib.mkEnableOption "Development Environment Tools";
+    gaming.enable = lib.mkEnableOption "Steam and Gaming Tools";
   };
 
   config = lib.mkMerge [
     (lib.mkIf config.myPlatform.applications.desktop.enable {
+      programs.spicetify =
+        let
+          spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+        in
+        {
+          enable = true;
+          enabledExtensions = with spicePkgs.extensions; [
+            adblock
+            shuffle
+          ];
+          theme = spicePkgs.themes.catppuccin;
+        };
+
       environment.systemPackages = [
         pkgs.firefox
         pkgs.brave
@@ -17,7 +31,8 @@
         pkgs.imv
         pkgs.typora
         pkgs.kdePackages.kate
-        inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.default # Base App (GUI)
+        pkgs.discord
+        inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
       ];
     })
 
@@ -36,7 +51,7 @@
         pkgs.jq
         pkgs.tree
         pkgs.yazi
-        inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-cli # CLI (agy)
+        inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-cli
       ];
     })
 
@@ -47,6 +62,23 @@
         direnv
         gcc
         gnumake
+      ];
+    })
+
+    (lib.mkIf config.myPlatform.applications.gaming.enable {
+      programs.steam = {
+        enable = true;
+        remotePlay.openFirewall = true;
+        dedicatedServer.openFirewall = true;
+        extraCompatPackages = with pkgs; [
+          proton-ge-bin
+        ];
+      };
+
+      programs.gamemode.enable = true;
+
+      environment.systemPackages = with pkgs; [
+        protonup-qt
       ];
     })
   ];

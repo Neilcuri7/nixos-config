@@ -22,9 +22,14 @@
       url = "github:jacopone/antigravity-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    spicetify-nix = {
+      url = "github:gerg-l/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, sops-nix, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, sops-nix, spicetify-nix, ... }@inputs:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
@@ -47,6 +52,7 @@
           modules = [
             ./hosts/desktop
             sops-nix.nixosModules.sops
+            spicetify-nix.nixosModules.default
             home-manager.nixosModules.home-manager
             {
               nixpkgs.pkgs = pkgs;
@@ -64,6 +70,7 @@
           modules = [
             ./hosts/laptop
             sops-nix.nixosModules.sops
+            spicetify-nix.nixosModules.default
             home-manager.nixosModules.home-manager
             {
               nixpkgs.pkgs = pkgs;
