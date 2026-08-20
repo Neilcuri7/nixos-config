@@ -69,6 +69,38 @@ label {
     margin: 2px 4px;
 }
 
+.volume-button, .brightness-button {
+    background-color: rgba(30, 30, 46, 0.85);
+    border-radius: 10px;
+    padding: 4px 10px;
+    margin: 2px 3px;
+    transition: all 0.2s ease-in-out;
+}
+
+.speaker-button {
+    color: #89b4fa;
+}
+.speaker-button:hover {
+    background-color: rgba(137, 180, 250, 0.25);
+    color: #b4befe;
+}
+
+.mic-button {
+    color: #f38ba8;
+}
+.mic-button:hover {
+    background-color: rgba(243, 139, 168, 0.25);
+    color: #f5e0dc;
+}
+
+.brightness-button {
+    color: #f9e2af;
+}
+.brightness-button:hover {
+    background-color: rgba(249, 226, 175, 0.25);
+    color: #fab387;
+}
+
 .info-child {
     padding: 0 4px;
 }

@@ -1,21 +1,33 @@
-import brightness from '../../Services/brightness.ts'
+import brightness from '../../Services/brightness.ts';
 
 export const BrightnessSlider = () => {
-  const slider = Widget.Slider({
-    hexpand: true,
-    drawValue: false,
-    on_change: self => brightness.screen_value = self.value,
-    value: brightness.bind('screen-value'),
+  return Widget.EventBox({
+    on_scroll_up: () => {
+      brightness.screen_value = Math.min(1, brightness.screen_value + 0.05);
+    },
+    on_scroll_down: () => {
+      brightness.screen_value = Math.max(0, brightness.screen_value - 0.05);
+    },
+    child: Widget.Button({
+      class_name: "brightness-button",
+      tooltip_text: brightness.bind("screen-value").as((v) => `Brillo: ${(v * 100).toFixed(0)}%`),
+      child: Widget.Box({
+        spacing: 4,
+        children: [
+          Widget.Label({
+            label: brightness.bind("screen-value").as((v) => {
+              if (v < 0.33) return "󰃞";
+              if (v < 0.66) return "󰃟";
+              return "󰃠";
+            }),
+            class_name: "brightness-icon",
+          }),
+          Widget.Label({
+            label: brightness.bind("screen-value").as((v) => `${(v * 100).toFixed(0)}%`),
+            class_name: "brightness-percent",
+          }),
+        ],
+      }),
+    }),
   });
-
-  const icon = Widget.Label({
-    label: "🔆"
-  })
-
-  return Widget.Box({
-    class_name: "volume",
-    tooltipText: brightness.bind("screen-value").as((value) => `Brightness - ${(value * 100).toFixed(0)}%`),
-    css: "min-width: 140px",
-    children: [icon, slider]
-  })
-}
+};

@@ -15,7 +15,7 @@ export const Clock = () => {
   const now = new Date();
   const currentYear = Variable(now.getFullYear());
   const currentMonth = Variable(now.getMonth());
-  const viewMode = Variable<"calendar" | "months">("calendar");
+  const viewMode = Variable("calendar");
 
   const isCalendarOpen = Variable(false);
 
@@ -59,13 +59,16 @@ export const Clock = () => {
                     class_name: "calendar-month-btn",
                     hexpand: true,
                     child: Widget.Label({
-                      label: Utils.watch("", [currentMonth, currentYear, viewMode], () => {
-                        if (viewMode.value === "calendar") {
-                          return `${MONTHS[currentMonth.value]} ${currentYear.value}`;
-                        } else {
-                          return `${currentYear.value}`;
+                      label: Utils.derive(
+                        [currentMonth, currentYear, viewMode],
+                        (mo, yr, mode) => {
+                          if (mode === "calendar") {
+                            return `${MONTHS[mo]} ${yr}`;
+                          } else {
+                            return `${yr}`;
+                          }
                         }
-                      }),
+                      ).bind(),
                     }),
                     on_clicked: () => {
                       viewMode.value = viewMode.value === "calendar" ? "months" : "calendar";
@@ -114,53 +117,54 @@ export const Clock = () => {
                       Widget.Box({
                         vertical: true,
                         spacing: 4,
-                        children: Utils.watch([], [currentMonth, currentYear], () => {
-                          const yr = currentYear.value;
-                          const mo = currentMonth.value;
-                          const firstDay = new Date(yr, mo, 1).getDay();
-                          const daysInMonth = new Date(yr, mo + 1, 0).getDate();
-                          const today = new Date();
+                        children: Utils.derive(
+                          [currentMonth, currentYear],
+                          (mo, yr) => {
+                            const firstDay = new Date(yr, mo, 1).getDay();
+                            const daysInMonth = new Date(yr, mo + 1, 0).getDate();
+                            const today = new Date();
 
-                          const weeks = [];
-                          let dayCounter = 1 - firstDay;
+                            const weeks = [];
+                            let dayCounter = 1 - firstDay;
 
-                          for (let w = 0; w < 6; w++) {
-                            const weekRow = [];
-                            for (let d = 0; d < 7; d++) {
-                              const dateNum = dayCounter;
-                              const isCurrentMonth = dateNum >= 1 && dateNum <= daysInMonth;
-                              const isToday =
-                                isCurrentMonth &&
-                                today.getDate() === dateNum &&
-                                today.getMonth() === mo &&
-                                today.getFullYear() === yr;
+                            for (let w = 0; w < 6; w++) {
+                              const weekRow = [];
+                              for (let d = 0; d < 7; d++) {
+                                const dateNum = dayCounter;
+                                const isCurrentMonth = dateNum >= 1 && dateNum <= daysInMonth;
+                                const isToday =
+                                  isCurrentMonth &&
+                                  today.getDate() === dateNum &&
+                                  today.getMonth() === mo &&
+                                  today.getFullYear() === yr;
 
-                              let cls = "calendar-day-cell";
-                              if (!isCurrentMonth) cls += " other-month";
-                              if (isToday) cls += " today";
+                                let cls = "calendar-day-cell";
+                                if (!isCurrentMonth) cls += " other-month";
+                                if (isToday) cls += " today";
 
-                              weekRow.push(
-                                Widget.Label({
-                                  label: isCurrentMonth ? `${dateNum}` : "",
-                                  class_name: cls,
-                                  width_request: 28,
-                                  height_request: 24,
-                                  xalign: 0.5,
-                                  yalign: 0.5,
+                                weekRow.push(
+                                  Widget.Label({
+                                    label: isCurrentMonth ? `${dateNum}` : "",
+                                    class_name: cls,
+                                    width_request: 28,
+                                    height_request: 24,
+                                    xalign: 0.5,
+                                    yalign: 0.5,
+                                  })
+                                );
+                                dayCounter++;
+                              }
+                              weeks.push(
+                                Widget.Box({
+                                  homogeneous: true,
+                                  spacing: 4,
+                                  children: weekRow,
                                 })
                               );
-                              dayCounter++;
                             }
-                            weeks.push(
-                              Widget.Box({
-                                homogeneous: true,
-                                spacing: 4,
-                                children: weekRow,
-                              })
-                            );
+                            return weeks;
                           }
-                          return weeks;
-                        }),
+                        ).bind(),
                       }),
                     ],
                   }),

@@ -1,9 +1,9 @@
 const { execAsync } = Utils;
 
 const themes = [
-  { name: "Adwaita-dark", icon: "🌙", label: "Oscuro" },
-  { name: "Adwaita", icon: "☀️", label: "Claro" },
-  { name: "HighContrast", icon: "👁️", label: "Alto Contraste" },
+  { name: "Adwaita-dark", icon: "󰔎", label: "Oscuro" },
+  { name: "Adwaita", icon: "󰌵", label: "Claro" },
+  { name: "HighContrast", icon: "󰈈", label: "Alto Contraste" },
 ];
 
 let currentThemeIndex = 0;
@@ -20,7 +20,6 @@ export const ThemeSwitcher = () => {
       currentThemeIndex = (currentThemeIndex + 1) % themes.length;
       const theme = themes[currentThemeIndex];
       
-      // Usamos hyprctl dispatch exec para ejecutar el cambio de tema de NixOS/Hyprland
       const colorScheme = theme.name === "Adwaita" ? "prefer-light" : "prefer-dark";
       
       execAsync([

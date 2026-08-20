@@ -4,7 +4,7 @@ export const PowerProfile = () => {
   return Widget.Button({
     tooltipText: powerProfiles
       .bind("active-profile")
-      .as((profile) => `Active - ${profile}`),
+      .as((profile) => `Perfil de energía: ${profile}`),
     class_name: "power-profile",
     on_clicked: () => {
       switch (powerProfiles.active_profile) {
@@ -24,12 +24,12 @@ export const PowerProfile = () => {
         .bind("active_profile")
         .as((profile) =>
           profile === "performance"
-            ? "🚀"
+            ? "󰓅"
             : profile === "balanced"
-            ? "🍃"
+            ? "󰾅"
             : profile === "power-saver"
-            ? "🔋"
-            : ""
+            ? "󰾆"
+            : "󰾅"
         ),
     }),
   });
