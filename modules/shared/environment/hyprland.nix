@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
   options.myPlatform.environment.hyprland = {
@@ -13,8 +13,18 @@
       xwayland.enable = true;
     };
 
+    programs.thunar = {
+      enable = true;
+      plugins = with pkgs; [
+        thunar-archive-plugin
+        thunar-volman
+      ];
+    };
+    services.gvfs.enable = true; # Para automontaje y papelera
+    services.tumbler.enable = true; # Para miniatura de imágenes
+
     environment.systemPackages = with pkgs; [
-      ags
+      inputs.ags.packages.${pkgs.system}.default
       swaybg
       swaynotificationcenter
       rofi
@@ -32,7 +42,22 @@
       pamixer
       kitty
       xdg-utils
+      thunar
+      thunar-archive-plugin
+      gnome-calendar
+      yad
+      glib # Proporciona gsettings
+      dconf
+      papirus-icon-theme
+      rofi-emoji
+      xfce4-exo
     ];
+
+    programs.dconf.enable = true;
+
+    environment.sessionVariables = {
+      TERMINAL = "kitty";
+    };
 
     services.displayManager.defaultSession = "hyprland";
     services.displayManager.sddm = {

@@ -5,14 +5,16 @@ import { ClientTitle } from "./modules/clientTitle.ts";
 import { Media } from "./modules/mpris.ts";
 import { SysStats } from "./modules/stats.ts";
 import { PowerProfile } from "./modules/powerProfile.ts";
+import { ThemeSwitcher } from "./modules/themeSwitcher.ts";
 import { Workspaces } from "./modules/workspaces.ts";
 import { Revealer, RevealerButton } from "./modules/revealer.ts";
+import { NetworkIndicator } from "./modules/network.ts";
 
 // layout of the bar
 const Left = (monitor = 0) => {
   return Widget.Box({
     spacing: 6,
-    children: [Workspaces(monitor), Media(), SysStats(), PowerProfile()],
+    children: [Workspaces(monitor), Media(), SysStats(), PowerProfile(), ThemeSwitcher()],
   });
 };
 
@@ -27,7 +29,7 @@ const Right = (monitor = 0) => {
   return Widget.Box({
     hpack: "end",
     spacing: 6,
-    children: [RevealerButton(), Revealer(), BatteryLabel("bar"), Clock(), SysTray()],
+    children: [RevealerButton(), Revealer(), NetworkIndicator(), BatteryLabel("bar"), Clock(), SysTray()],
   });
 };
 
@@ -36,6 +38,7 @@ export const Bar = (monitor = 0) => {
     name: `bar-${monitor}`, // name has to be unique
     class_name: "bar",
     monitor,
+    layer: "top",
     anchor: ["top", "left", "right"],
     exclusivity: "exclusive",
     child: Widget.CenterBox({

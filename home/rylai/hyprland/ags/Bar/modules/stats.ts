@@ -1,3 +1,6 @@
+let prevIdle = 0;
+let prevTotal = 0;
+
 export const SysStats = () => {
   const Ram = () => {
     const ram = Variable(
@@ -32,13 +35,13 @@ export const SysStats = () => {
               1024
             ).toFixed(2)}GB (${((x.used / x.total) * 100).toFixed(2)}%)`
         ),
-      class_name: "info-child",
+      class_name: "info-child ram-stat",
       children: [
         Widget.Label({ label: " " }),
         Widget.Label({
           label: ram
             .bind()
-            .as((x) => `${((x.used / x.total) * 100).toFixed(0)}%`),
+            .as((x) => `${(x.used / 1024 / 1024).toFixed(1)} GB`),
         }),
       ],
     });
@@ -47,28 +50,51 @@ export const SysStats = () => {
   const Cpu = () => {
     const cpu = Variable(0, {
       poll: [
-        1000,
+        2000,
         [
           "bash",
           "-c",
-          String.raw`mpstat 1 1 -o JSON | grep '"cpu":' | awk -F ' ' '{print 100 - $22}'`,
+          `cat /proc/stat | grep "^cpu "`,
         ],
+        (line) => {
+          const parts = line.trim().split(/\s+/).slice(1).map(Number);
+          if (parts.length < 4) return 0;
+          const idle = parts[3] + (parts[4] || 0); // idle + iowait
+          const total = parts.reduce((acc, curr) => acc + curr, 0);
+
+          if (prevTotal === 0) {
+            prevIdle = idle;
+            prevTotal = total;
+            return 0;
+          }
+
+          const diffIdle = idle - prevIdle;
+          const diffTotal = total - prevTotal;
+
+          prevIdle = idle;
+          prevTotal = total;
+
+          if (diffTotal <= 0) return 0;
+          const usage = Math.round(((diffTotal - diffIdle) / diffTotal) * 100);
+          return Math.max(0, Math.min(100, usage));
+        },
       ],
     });
 
     return Widget.Box({
       tooltipText: cpu.bind().as((x) => `${x}%`),
-      class_name: "info-child",
+      class_name: "info-child cpu-stat",
       children: [
         Widget.Label({ label: "󰓅 " }),
         Widget.Label({
-          label: cpu.bind().as((x) => `${parseFloat(x).toFixed(0)}%`),
+          label: cpu.bind().as((x) => `${x}%`),
         }),
       ],
     });
   };
   return Widget.Box({
-    class_name: "info-bars",
+    class_name: "info-bars sys-stats",
+    spacing: 12,
     children: [Cpu(), Ram()],
   });
 };

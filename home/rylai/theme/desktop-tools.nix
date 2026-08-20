@@ -7,6 +7,14 @@
     enableBashIntegration = true;
   };
 
+  # Configuración del emulador de terminal Kitty
+  programs.kitty = {
+    enable = true;
+    settings = {
+      confirm_os_window_close = 0;
+    };
+  };
+
   # Configuración del menú de apagado Wlogout
   programs.wlogout = {
     enable = true;

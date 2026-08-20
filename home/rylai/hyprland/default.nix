@@ -14,7 +14,8 @@ in
     settings = {
       "$mainMod" = modifier;
       "$terminal" = "kitty";
-      "$menu" = "rofi -show drun";
+      "$fileManager" = "thunar";
+      "$menu" = "rofi -show drun -show-icons -theme ${config.home.homeDirectory}/.config/rofi/config.rasi";
       "$browser" = "brave";
 
       monitor = [
@@ -85,28 +86,26 @@ in
         preserve_split = true;
       };
 
-      # Reglas de ventanas
-      windowrulev2 = [
-        "idleinhibit focus, title:^(.*YouTube.*)$"
-        "fullscreen, title:^(wlogout)$"
-        "animation fade, title:^(wlogout)$"
-      ];
+      # Reglas de ventanas (Se deshabilitan temporalmente o se actualizan a la nueva sintaxis si es necesario)
+      # windowrulev2 = [];
 
       # Atajos de Teclado (Keybindings de Lucifers_NIX)
       bind = [
         "$mainMod, Return, exec, $terminal"
         "$mainMod, W, exec, $browser"
+        "$mainMod, E, exec, $fileManager"
         "$mainMod, Q, killactive,"
         "$mainMod, F, fullscreen,"
         "$mainMod, P, pseudo,"
-        "$mainMod, E, exec, rofi -show emoji"
+        "$mainMod SHIFT, E, exec, rofi -show emoji -theme ${config.home.homeDirectory}/.config/rofi/config.rasi"
         "$mainMod, T, exec, kitty yazi"
         "$mainMod, S, exec, grim -g \"$(slurp)\" - | swappy -f -"
-        "$mainMod SHIFT, Return, exec, rofi -show drun"
+        "$mainMod, H, exec, ${config.home.homeDirectory}/scripts/hypr-cheatsheet.sh"
+        "$mainMod SHIFT, Return, exec, rofi -show drun -show-icons -theme ${config.home.homeDirectory}/.config/rofi/config.rasi"
         "$mainMod SHIFT, F, togglefloating,"
         "$mainMod SHIFT, L, exec, swaylock"
         "$mainMod SHIFT, X, exec, wlogout"
-        "$mainMod SHIFT, T, exec, thunar"
+        "$mainMod SHIFT, T, exec, gsettings set org.gnome.desktop.interface color-scheme $([ \"$(gsettings get org.gnome.desktop.interface color-scheme)\" = \"'prefer-dark'\" ] && echo 'prefer-light' || echo 'prefer-dark')"
         "$mainMod SHIFT, O, exec, hyprpicker -a -f hex"
         "$mainMod SHIFT, I, layoutmsg, togglesplit"
 
@@ -180,6 +179,18 @@ in
   home.file.".config/ags" = {
     source = ./ags;
     recursive = true;
+  };
+
+  # Copiar la configuración del tema de Rofi
+  home.file.".config/rofi/config.rasi" = {
+    source = ../theme/rofi.rasi;
+  };
+
+  # Copiar scripts personalizados
+  home.file."scripts" = {
+    source = ../scripts;
+    recursive = true;
+    executable = true;
   };
 
 
