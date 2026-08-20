@@ -85,16 +85,11 @@ in
         preserve_split = true;
       };
 
-      # Reglas de ventanas y opacidad
-      windowrule = [
-        "opacity 0.85 override 0.85 override,class:^(.*)$"
-        "opacity 0.75 override 0.75 override,class:^(kitty)$"
-        "opacity 0.75 override 0.75 override,class:^(thunar)$"
-        "opacity 0.75 override 0.75 override,class:^(pavucontrol)$"
-        "opacity 1.0 override 1.0 override,title:^(.*YouTube.*)$"
-        "idleinhibit focus,title:^(.*YouTube.*)$"
-        "fullscreen,title:^(wlogout)$"
-        "animation fade,title:^(wlogout)$"
+      # Reglas de ventanas
+      windowrulev2 = [
+        "idleinhibit focus, title:^(.*YouTube.*)$"
+        "fullscreen, title:^(wlogout)$"
+        "animation fade, title:^(wlogout)$"
       ];
 
       # Atajos de Teclado (Keybindings de Lucifers_NIX)

@@ -3,6 +3,7 @@
 {
   imports = [
     ./hyprland
+    ./theme/desktop-tools.nix
   ];
 
   # Home Manager - Configuración de Usuario Solamente (REGLA #9)
