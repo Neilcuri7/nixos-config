@@ -47,12 +47,12 @@
       thunar-archive-plugin
       gnome-calendar
       yad
-      glib # Proporciona gsettings
+      glib
       dconf
       papirus-icon-theme
       rofi-emoji
       xfce4-exo
-      gh # GitHub CLI para autenticación permanente
+      gh
     ];
 
     programs.dconf.enable = true;
