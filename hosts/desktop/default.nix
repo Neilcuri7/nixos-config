@@ -4,7 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/shared/applications
-    ../../modules/shared/environment/sway.nix
+    ../../modules/shared/environment/hyprland.nix
     ../../modules/shared/hardware
     ../../modules/shared/services/sops.nix
   ];
@@ -15,8 +15,16 @@
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelParams = [ "radeon.cik_support=0" "amdgpu.cik_support=1" ];
+
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
+  hardware.enableRedistributableFirmware = true;
 
   networking.networkmanager.enable = true;
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   myPlatform = {
     applications = {
@@ -24,7 +32,7 @@
       tools.enable = true;
       dev.enable = true;
     };
-    environment.sway.enable = true;
+    environment.hyprland.enable = true;
     hardware = {
       bluetooth.enable = true;
       pipewire.enable = true;

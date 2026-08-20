@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./sway
+    ./hyprland
   ];
 
   # Home Manager - Configuración de Usuario Solamente (REGLA #9)

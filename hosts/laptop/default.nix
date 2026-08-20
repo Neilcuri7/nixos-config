@@ -4,7 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/shared/applications
-    ../../modules/shared/environment/sway.nix
+    ../../modules/shared/environment/hyprland.nix
     ../../modules/shared/hardware
     ../../modules/shared/services/sops.nix
   ];
@@ -17,6 +17,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.networkmanager.enable = true;
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   myPlatform = {
     applications = {
@@ -24,7 +25,7 @@
       tools.enable = true;
       dev.enable = true;
     };
-    environment.sway.enable = true;
+    environment.hyprland.enable = true;
     hardware = {
       bluetooth.enable = true;
       pipewire.enable = true;

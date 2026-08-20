@@ -2,7 +2,7 @@
 
 let
   modifier = "Mod4"; # Tecla Super / Windows
-  wallpaperPath = ../assets/wallpapers/default.png;
+  wallpaperPath = ../assets/wallpapers/877911.png;
 in
 {
   # 1. Configuración de Waybar
