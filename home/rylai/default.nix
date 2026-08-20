@@ -77,6 +77,23 @@
     };
   };
 
+  # Tema de Cursor (Natsuki)
+  home.pointerCursor = {
+    enable = true;
+    gtk.enable = true;
+    x11.enable = true;
+    name = "Natsuki";
+    package = pkgs.stdenv.mkDerivation {
+      name = "natsuki-cursor";
+      src = ./assets/cursors/Natsuki;
+      installPhase = ''
+        mkdir -p $out/share/icons/Natsuki
+        cp -r * $out/share/icons/Natsuki/
+      '';
+    };
+    size = 24;
+  };
+
   # Configuración visual / Dotfiles en $HOME
   gtk = {
     enable = true;

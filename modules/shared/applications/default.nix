@@ -6,9 +6,13 @@
     tools.enable = lib.mkEnableOption "CLI Tools";
     dev.enable = lib.mkEnableOption "Development Environment Tools";
     gaming.enable = lib.mkEnableOption "Steam and Gaming Tools";
+    flatpak.enable = lib.mkEnableOption "Flatpak Support";
   };
 
   config = lib.mkMerge [
+    (lib.mkIf config.myPlatform.applications.flatpak.enable {
+      services.flatpak.enable = true;
+    })
     (lib.mkIf config.myPlatform.applications.desktop.enable {
       programs.spicetify =
         let

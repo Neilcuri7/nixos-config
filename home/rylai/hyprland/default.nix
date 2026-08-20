@@ -22,7 +22,15 @@ in
         ",preferred,auto,1"
       ];
 
+      env = [
+        "XCURSOR_THEME,Natsuki"
+        "XCURSOR_SIZE,24"
+        "HYPRCURSOR_THEME,Natsuki"
+        "HYPRCURSOR_SIZE,24"
+      ];
+
       exec-once = [
+        "hyprctl setcursor Natsuki 24"
         "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
         "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
         "swaybg -i ${wallpaperPath} -m fill"
