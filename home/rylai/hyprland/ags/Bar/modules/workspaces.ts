@@ -1,6 +1,6 @@
 const hyprland = await Service.import("hyprland");
 
-const JAPANESE_NUMBERS: Record<number, string> = {
+const JAPANESE_NUMBERS = {
   1: "一",
   2: "二",
   3: "三",
@@ -14,7 +14,7 @@ const JAPANESE_NUMBERS: Record<number, string> = {
 };
 
 // Mapeo de class / app_id / title de ventana a iconos Nerd Font
-function getAppIcon(client: { class?: string; initialClass?: string; title?: string }): string {
+function getAppIcon(client) {
   const c = (client.class || client.initialClass || client.title || "").toLowerCase();
   
   if (c.includes("brave")) return "󰈹";
@@ -33,34 +33,38 @@ function getAppIcon(client: { class?: string; initialClass?: string; title?: str
 }
 
 export const Workspaces = (monitor = 0) => {
-  const activeId = hyprland.active.workspace.bind("id");
-  const clients = hyprland.bind("clients");
-  const workspaces = hyprland.bind("workspaces");
-
-  const children = Utils.watch([], [workspaces, clients], () => {
-    // Generar siempre workspaces del 1 al 10 o los existentes
-    const wsList = Array.from({ length: 10 }, (_, i) => i + 1);
-
-    return wsList.map((id) => {
-      const label = JAPANESE_NUMBERS[id] || `${id}`;
-      
-      // Filtrar los clientes que pertenecen a este workspace
-      const wsClients = hyprland.clients.filter((c) => c.workspace && c.workspace.id === id);
-      const icons = wsClients.map((c) => getAppIcon(c)).join(" ");
-      
-      const displayText = icons ? `${label} ${icons}` : label;
-
-      return Widget.Button({
-        on_clicked: () => hyprland.messageAsync(`dispatch workspace ${id}`),
-        child: Widget.Label(displayText),
-        class_name: activeId.as((i) => `workspace-button ${i === id ? "focused" : ""}`),
-      });
-    });
-  });
-
   return Widget.Box({
     class_name: "workspaces",
-    children: children,
+    setup: (self) => {
+      self.hook(hyprland, (box) => {
+        const activeWsId = hyprland.active.workspace?.id || 1;
+        const allClients = hyprland.clients || [];
+
+        // Obtener IDs de workspaces que tienen al menos 1 cliente/ventana
+        const occupiedWsIds = new Set(
+          allClients.map((c) => c.workspace && c.workspace.id).filter(Boolean)
+        );
+        // Siempre incluir el workspace enfocado actualmente
+        occupiedWsIds.add(activeWsId);
+
+        // Ordenar numéricamente los workspaces activos
+        const activeWorkspaces = Array.from(occupiedWsIds).sort((a, b) => a - b);
+
+        box.children = activeWorkspaces.map((id) => {
+          const label = JAPANESE_NUMBERS[id] || `${id}`;
+          const wsClients = allClients.filter((c) => c.workspace && c.workspace.id === id);
+          const icons = wsClients.map((c) => getAppIcon(c)).join(" ");
+          const displayText = icons ? `${label} ${icons}` : label;
+          const isFocused = activeWsId === id;
+
+          return Widget.Button({
+            on_clicked: () => hyprland.messageAsync(`dispatch workspace ${id}`),
+            child: Widget.Label(displayText),
+            class_name: `workspace-button ${isFocused ? "focused" : ""}`,
+          });
+        });
+      });
+    },
   });
 };
 

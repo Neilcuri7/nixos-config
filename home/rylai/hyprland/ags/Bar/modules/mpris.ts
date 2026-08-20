@@ -7,136 +7,26 @@ export const Media = () => {
     status: "",
   });
 
-  mpris.connect("player-added", (mpris, busName) => {
-    const activePlayer = mpris.players.find(
-      (player) => player["bus_name"] == busName
-    );
-    if (activePlayer != undefined) {
-      const { track_artists, track_title, identity, play_back_status } =
-        activePlayer;
-      const label = `${track_artists.join(", ")} - ${track_title}`;
-      const status = `${identity} - ${play_back_status}`;
+  const updatePlayer = () => {
+    const players = mpris.players || [];
+    const activePlayer = players.find((p) => p.play_back_status === "Playing") || players[0];
+    if (activePlayer) {
+      const artists = activePlayer.track_artists || [];
+      const title = activePlayer.track_title || "";
+      const label = artists.length > 0 ? `${artists.join(", ")} - ${title}` : title;
+      const status = `${activePlayer.identity || ""} - ${activePlayer.play_back_status || ""}`;
       playerData.value = {
-        busName: busName,
+        busName: activePlayer.bus_name || "",
         label: label,
         status: status,
       };
-    }
-  });
-
-  mpris.connect("player-changed", (mpris, busName) => {
-    if (mpris.players.length > 1) {
-      const changedPlayer = mpris.players.find(
-        (player) => player["bus-name"] == busName
-      );
-      if (
-        changedPlayer != undefined &&
-        (changedPlayer["play-back-status"] == "Paused" ||
-          changedPlayer["play-back-status"] == "Stopped")
-      ) {
-        const activePlayer = mpris.players.find(
-          (player) => player["play-back-status"] == "Playing"
-        );
-        if (activePlayer != undefined) {
-          const {
-            track_artists,
-            track_title,
-            identity,
-            play_back_status,
-            bus_name,
-          } = activePlayer;
-          const label = `${track_artists.join(", ")} - ${track_title}`;
-          const status = `${identity} - ${play_back_status}`;
-          playerData.value = {
-            busName: bus_name,
-            label: label,
-            status: status,
-          };
-        } else {
-          const {
-            track_artists,
-            track_title,
-            identity,
-            play_back_status,
-            bus_name,
-          } = changedPlayer;
-          const label = `${track_artists.join(", ")} - ${track_title}`;
-          const status = `${identity} - ${play_back_status}`;
-          playerData.value = {
-            busName: bus_name,
-            label: label,
-            status: status,
-          };
-        }
-      } else if (
-        changedPlayer != undefined &&
-        changedPlayer["play-back-status"] == "Playing"
-      ) {
-        const {
-          track_artists,
-          track_title,
-          identity,
-          play_back_status,
-          bus_name,
-        } = changedPlayer;
-        const label = `${track_artists.join(", ")} - ${track_title}`;
-        const status = `${identity} - ${play_back_status}`;
-        playerData.value = {
-          busName: bus_name,
-          label: label,
-          status: status,
-        };
-      }
-    } else if (mpris.players.length > 0) {
-      const activePlayer = mpris.players.find(
-        (player) => player["bus_name"] == busName
-      );
-      if (activePlayer != undefined) {
-        const { track_artists, track_title, identity, play_back_status } =
-          activePlayer;
-        const label = `${track_artists.join(", ")} - ${track_title}`;
-        const status = `${identity} - ${play_back_status}`;
-        playerData.value = {
-          busName: busName,
-          label: label,
-          status: status,
-        };
-      }
-    }
-  });
-
-  mpris.connect("player-closed", (mpris) => {
-    const players = mpris.players;
-    if (players.length > 0) {
-      const activePlayer = players.find(
-        (player) =>
-          player["play-back-status"] == "Playing" ||
-          player["play-back-status"] == "Paused"
-      );
-      if (activePlayer != undefined) {
-        const {
-          track_artists,
-          track_title,
-          identity,
-          play_back_status,
-          bus_name,
-        } = activePlayer;
-        const label = `${track_artists.join(", ")} - ${track_title}`;
-        const status = `${identity} - ${play_back_status}`;
-        playerData.value = {
-          busName: bus_name,
-          label: label,
-          status: status,
-        };
-      }
     } else {
-      playerData.value = {
-        busName: "",
-        label: "",
-        status: "",
-      };
+      playerData.value = { busName: "", label: "", status: "" };
     }
-  });
+  };
+
+
+
 
   const currentPlayer = Variable(0);
 
@@ -185,7 +75,10 @@ export const Media = () => {
   };
 
   return Widget.Button({
-    setup: (self) =>
+    setup: (self) => {
+      self.hook(mpris, () => {
+        updatePlayer();
+      });
       self.hook(playerData, () => {
         (self.tooltip_text = playerData.value.status.toString()),
           (self.on_primary_click = () =>
@@ -198,7 +91,8 @@ export const Media = () => {
             playerData.value.status != "" &&
             playerData.value.status != "Stopped"),
           (self.on_middle_click = cyclePlayers);
-      }),
+      });
+    },
     class_name: "media",
     child: Widget.Label({
       justification: "left",

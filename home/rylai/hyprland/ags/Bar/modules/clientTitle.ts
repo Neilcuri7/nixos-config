@@ -1,7 +1,7 @@
 const hyprland = await Service.import("hyprland");
 
 export const ClientTitle = () => {
-  const winTitle = hyprland.active.client.bind("title");
+  const winTitle = hyprland.bind("active").transform((a) => a?.client?.title || "");
 
   return Widget.Box({
     tooltipText: winTitle,
