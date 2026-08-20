@@ -40,4 +40,5 @@ if command -v yad >/dev/null 2>&1; then
         <<< "$KEYBINDINGS"
 else
     echo "$KEYBINDINGS"
+fi
 
