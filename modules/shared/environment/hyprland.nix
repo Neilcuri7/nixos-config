@@ -52,6 +52,7 @@
       papirus-icon-theme
       rofi-emoji
       xfce4-exo
+      gh # GitHub CLI para autenticación permanente
     ];
 
     programs.dconf.enable = true;
