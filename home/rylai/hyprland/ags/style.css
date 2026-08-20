@@ -1,172 +1,250 @@
-window.bar {
-    background-color: transparent;
-    color: @theme_fg_color;
-    transition: all 0.5s ease-in-out;
+/* --- ESTILOS GENERALES DE LA BARRA AGS (MONOCROMO: NEGRO, BLANCO Y TRANSPARENCIAS) --- */
+
+* {
+    font-family: "JetBrainsMono Nerd Font", "Noto Sans", sans-serif;
+    font-size: 13px;
+    border: none;
 }
 
+window.bar {
+    background-color: rgba(0, 0, 0, 0.45);
+    color: #ffffff;
+    padding: 4px 8px;
+}
+
+/* Botones genéricos */
 button {
     min-width: 0;
-    padding: 0 0.3rem;
-    background-color: transparent;
-    transition: all 0.5s ease-in-out;
+    padding: 4px 10px;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
     box-shadow: none;
+    margin: 2px 3px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-/*button:hover {
-    border-bottom: 3px solid @theme_fg_color;
-    color: @theme_bg_color;
-    background: linear-gradient(45deg, @insensitive_fg_color, @theme_selected_bg_color);
-}*/
+button:hover {
+    background-color: rgba(255, 255, 255, 0.22);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+}
 
 label {
-    font-weight: bold;
+    font-weight: 600;
 }
 
-.power-profile {
-  background-color: @theme_bg_color;
-  color: @theme_selected_bg_color;
-  border-radius: 15px 40px 15px 40px;
-  padding: 0px 15px;
-  opacity: 0.9;
-  margin-top: 0.2px;
-}
-
-.power-profile:hover {
-    color: @theme_bg_color;
-    background: linear-gradient(45deg, @insensitive_fg_color, @theme_selected_bg_color);
-}
-
-.info-bars {
-  background-color: @theme_bg_color;
-  color: @theme_selected_bg_color;
-  border-radius: 15px 40px 15px 40px;
-  padding: 0px 15px;
-  opacity: 0.9;
-  margin-top: 0.2px;
-}
-
-.info-child {
-  padding-left: .5rem;
+/* Espaciados y módulos específicos */
+.workspaces {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 2px 6px;
+    margin: 2px 4px;
 }
 
 .workspace-button {
-  min-width: 20px;
-  border-radius: 50%;
-  background-color: transparent;
+    min-width: 24px;
+    min-height: 24px;
+    border-radius: 6px;
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.65);
+    padding: 0 4px;
+    border: none;
 }
 
-.sys-tray {
-  background-color: @theme_bg_color;
-  color: @theme_selected_bg_color;
-  border-radius: 40px 0px 0px 15px;
-  padding: 0px .5rem 0rem 1rem;
-  opacity: 0.9;
-  margin-top: 0.2px;
+.workspace-button.focused {
+    background-color: #ffffff;
+    color: #000000;
+    font-weight: bold;
 }
 
-.volume {
-  background-color: @theme_bg_color;
-  color: @theme_selected_bg_color;
-  border-radius: 40px 15px 40px 15px;
-  padding: 0px .5rem 0px 1rem;
-  opacity: 0.9;
-  margin-top: 0.2px;
+.workspace-button:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
 }
 
-.revealerButton {
-  border: 0;
-  padding: 0;
-  color: @theme_fg_color;
-  background-color: transparent;
-  margin-top: 0.2px;
+.media, .sys-stats, .power-profile, .theme-switcher, .clock, .battery, .sys-tray, .client-title-box, .volume, .network {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 4px 12px;
+    margin: 2px 4px;
 }
 
-.revealerButton:hover {
-  color: @theme_selected_bg_color;
-  opacity: 0.9;
+.volume-button, .brightness-button {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 4px 10px;
+    margin: 2px 3px;
+    transition: all 0.2s ease-in-out;
 }
 
-.clock {
-  background-color: @theme_bg_color;
-  color: @theme_selected_bg_color;
-  border-radius: 40px 15px 40px 15px;
-  padding: 0px 20px;
-  opacity: 0.9;
-  margin-top: 0.2px;
+.speaker-button {
+    color: #ffffff;
+}
+.speaker-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
 }
 
-.battery {
-  background-color: @theme_bg_color;
-  color: @theme_selected_bg_color;
-  border-radius: 40px 15px 40px 15px;
-  padding: 0px 20px;
-  opacity: 0.9;
-  margin-top: 0.2px;
+.mic-button {
+    color: rgba(255, 255, 255, 0.85);
+}
+.mic-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+.brightness-button {
+    color: #ffffff;
+}
+.brightness-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+.info-child {
+    padding: 0 4px;
+}
+
+.media:hover, .power-profile:hover, .theme-switcher:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
 }
 
 .battery-low {
-  background-color: @theme_selected_bg_color;
-  color: @theme_bg_color;
-  border-radius: 40px 15px 40px 15px;
-  padding: 0px 20px;
-  opacity: 0.9;
-  margin-top: 0.2px;
-}
-
-.media {
-  background-color: @theme_bg_color;
-  color: @theme_selected_bg_color;
-  border-radius: 15px 40px 15px 40px;
-  padding: 0px 20px;
-  opacity: 0.9;
-  margin-top: 0.2px;
-}
-
-.media:hover {
-    color: @theme_bg_color;
-    background: linear-gradient(45deg, @insensitive_fg_color, @theme_selected_bg_color);
-}
-
-.workspaces {
-  opacity: 0.9;
-  background-color: @theme_bg_color;
-  border-radius: 0px 40px 15px 0px;
-  padding: 0rem 1rem 0rem .5rem; 
-  margin-top: 0.2px;
-}
-
-.workspaces button.focused {
-    border-bottom: 3px solid @theme_selected_bg_color;
-    color: @theme_selected_bg_color;
-    /*color: @theme_bg_color;
-    background: linear-gradient(45deg, @insensitive_fg_color, @theme_selected_bg_color);*/
-}
-
-.workspaces button:hover {
-  border-bottom: 3px solid @theme_fg_color;
- 
-}
-
-.client-title-box {
-  background-color: @theme_bg_color;
-  opacity: 0.9;
-  padding: 0px 20px;
-  border-radius: 15px;
-  margin-top: 0.2px;
+    background-color: #ffffff;
+    color: #000000;
+    font-weight: bold;
 }
 
 .client-title {
-  color: @theme_selected_bg_color;
+    color: #ffffff;
+    font-weight: bold;
 }
 
-block.empty {
-  background-color: transparent;
+.revealerButton {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 4px 8px;
+    margin: 2px 2px;
 }
 
-levelbar block,
-highlight {
-    min-height: 5px;
-    border-radius: 3px;
+.revealerButton:hover {
+    background-color: #ffffff;
+    color: #000000;
 }
 
-/* #1EADC9 #3BCACE */
+/* --- ESTILOS DEL POPOVER / POPUP DEL CALENDARIO --- */
+window.calendar-window {
+    background-color: transparent;
+}
+
+.calendar-window-box {
+    background-color: rgba(10, 10, 10, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 6px;
+    margin-top: 6px;
+    margin-right: 40px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+menu {
+    background-color: rgba(10, 10, 10, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 6px;
+}
+
+menuitem {
+    background-color: transparent;
+    padding: 0;
+}
+
+menuitem:hover {
+    background-color: transparent;
+}
+
+.calendar-popup-container {
+    padding: 8px;
+}
+
+.calendar-header {
+    margin-bottom: 8px;
+}
+
+.calendar-nav-btn {
+    min-width: 28px;
+    padding: 4px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.calendar-nav-btn:hover {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.calendar-month-btn {
+    padding: 4px 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-weight: bold;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.calendar-month-btn:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+.calendar-days-header {
+    margin-bottom: 4px;
+}
+
+.calendar-day-head {
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.calendar-day-cell {
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 12px;
+}
+
+.calendar-day-cell.other-month {
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.calendar-day-cell.today {
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.calendar-month-choice {
+    padding: 8px 4px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.calendar-month-choice:hover {
+    background-color: #ffffff;
+    color: #000000;
+}
+

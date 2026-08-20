@@ -13,11 +13,26 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    ags = {
+      url = "github:Aylur/ags/v1";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, sops-nix, ... }@inputs:
     let
       system = "x86_64-linux";
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+        overlays = [
+          (final: prev: {
+            nodePackages = {
+              typescript = final.typescript;
+            };
+          })
+        ];
+      };
       specialArgs = { inherit inputs; };
     in
     {
@@ -29,6 +44,7 @@
             sops-nix.nixosModules.sops
             home-manager.nixosModules.home-manager
             {
+              nixpkgs.pkgs = pkgs;
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "backup";
@@ -45,6 +61,7 @@
             sops-nix.nixosModules.sops
             home-manager.nixosModules.home-manager
             {
+              nixpkgs.pkgs = pkgs;
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "backup";

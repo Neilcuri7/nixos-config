@@ -1,0 +1,76 @@
+* {
+    font: "JetBrainsMono Nerd Font 12";
+    background-color: transparent;
+    text-color: #cdd6f4;
+    margin: 0;
+    padding: 0;
+}
+
+window {
+    background-color: rgba(30, 30, 46, 0.95);
+    border: 2px;
+    border-color: #89b4fa;
+    border-radius: 12px;
+    width: 600px;
+    padding: 16px;
+}
+
+mainbox {
+    spacing: 12px;
+    children: [ inputbar, listview ];
+}
+
+inputbar {
+    background-color: rgba(49, 50, 68, 0.8);
+    border-radius: 8px;
+    padding: 8px 12px;
+    children: [ prompt, entry ];
+}
+
+prompt {
+    text-color: #89b4fa;
+    margin: 0px 8px 0px 0px;
+}
+
+entry {
+    placeholder: "Buscar aplicación...";
+    placeholder-color: #6c7086;
+    text-color: #cdd6f4;
+}
+
+listview {
+    lines: 8;
+    columns: 1;
+    fixed-height: false;
+    spacing: 6px;
+    cycle: true;
+}
+
+element {
+    padding: 8px 12px;
+    border-radius: 8px;
+    spacing: 12px;
+    background-color: transparent;
+    children: [ element-icon, element-text ];
+}
+
+element-icon {
+    size: 28px;
+}
+
+element-text {
+    vertical-align: 0.5;
+    text-color: #cdd6f4;
+}
+
+element selected {
+    background-color: #89b4fa;
+}
+
+element selected element-text {
+    text-color: #11111b;
+}
+
+element selected element-icon {
+    size: 28px;
+}

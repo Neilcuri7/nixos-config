@@ -15,6 +15,8 @@
         mpv
         zathura
         imv
+        typora
+        kdePackages.kate
       ];
     })
 
@@ -32,6 +34,7 @@
         curl
         jq
         tree
+        yazi
       ];
     })
 

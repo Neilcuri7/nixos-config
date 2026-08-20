@@ -24,6 +24,14 @@
   hardware.enableRedistributableFirmware = true;
 
   networking.networkmanager.enable = true;
+  services.udisks2.enable = true;
+  services.gvfs.enable = true;
+
+  systemd.tmpfiles.rules = [
+    "d /mnt/storage 0775 rylai users -"
+    "z /mnt/storage 0775 rylai users -"
+  ];
+
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   myPlatform = {
