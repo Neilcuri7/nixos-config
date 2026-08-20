@@ -30,6 +30,8 @@
       pull.rebase = true;
       commit.gpgsign = true;
       gpg.format = "ssh";
+      credential."https://github.com".helper = "!${pkgs.gh}/bin/gh auth git-credential";
+      credential."https://gist.github.com".helper = "!${pkgs.gh}/bin/gh auth git-credential";
     };
   };
 
@@ -38,6 +40,8 @@
     BROWSER = "brave";
     TERMINAL = "kitty";
     TERM = "xterm-256color";
+    EDITOR = "nvim";
+    VISUAL = "nvim";
   };
 
   xdg.mimeApps = {

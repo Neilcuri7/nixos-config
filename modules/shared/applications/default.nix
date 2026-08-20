@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
   options.myPlatform.applications = {
@@ -9,32 +9,34 @@
 
   config = lib.mkMerge [
     (lib.mkIf config.myPlatform.applications.desktop.enable {
-      environment.systemPackages = with pkgs; [
-        firefox
-        brave
-        mpv
-        zathura
-        imv
-        typora
-        kdePackages.kate
+      environment.systemPackages = [
+        pkgs.firefox
+        pkgs.brave
+        pkgs.mpv
+        pkgs.zathura
+        pkgs.imv
+        pkgs.typora
+        pkgs.kdePackages.kate
+        inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.default # Base App (GUI)
       ];
     })
 
     (lib.mkIf config.myPlatform.applications.tools.enable {
-      environment.systemPackages = with pkgs; [
-        alacritty
-        foot
-        git
-        ripgrep
-        fd
-        htop
-        btop
-        fastfetch
-        unzip
-        curl
-        jq
-        tree
-        yazi
+      environment.systemPackages = [
+        pkgs.alacritty
+        pkgs.foot
+        pkgs.git
+        pkgs.ripgrep
+        pkgs.fd
+        pkgs.htop
+        pkgs.btop
+        pkgs.fastfetch
+        pkgs.unzip
+        pkgs.curl
+        pkgs.jq
+        pkgs.tree
+        pkgs.yazi
+        inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-cli # CLI (agy)
       ];
     })
 

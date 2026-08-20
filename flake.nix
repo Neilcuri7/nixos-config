@@ -17,6 +17,11 @@
     ags = {
       url = "github:Aylur/ags/v1";
     };
+
+    antigravity-nix = {
+      url = "github:jacopone/antigravity-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, sops-nix, ... }@inputs:
