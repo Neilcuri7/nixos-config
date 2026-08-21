@@ -12,7 +12,7 @@ fi
 mkdir -p "$CACHE_DIR"
 
 generate_entry() {
-    local wallpaper="$1"
+    local wallpaper=$(readlink -f "$1")
     local filename=$(basename "$wallpaper")
     local thumb="$CACHE_DIR/$filename"
 
@@ -52,13 +52,16 @@ element-icon {
     size: 140px;
     horizontal-align: 0.5;
 }
+element selected element-icon {
+    size: 140px;
+}
 element-text {
     horizontal-align: 0.5;
     vertical-align: 0.5;
 }
 '
 
-SELECTED_WALLPAPER=$(find "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) | \
+SELECTED_WALLPAPER=$(find -L "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) | \
     while read -r img; do
         generate_entry "$img"
     done | \
