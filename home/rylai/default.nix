@@ -30,6 +30,8 @@
       pull.rebase = true;
       commit.gpgsign = true;
       gpg.format = "ssh";
+      credential."https://github.com".helper = "!${pkgs.gh}/bin/gh auth git-credential";
+      credential."https://gist.github.com".helper = "!${pkgs.gh}/bin/gh auth git-credential";
     };
   };
 
@@ -38,6 +40,8 @@
     BROWSER = "brave";
     TERMINAL = "kitty";
     TERM = "xterm-256color";
+    EDITOR = "nvim";
+    VISUAL = "nvim";
   };
 
   xdg.mimeApps = {
@@ -71,6 +75,23 @@
       "application/xml" = "org.kde.kwrite.desktop";
       "text/xml" = "org.kde.kwrite.desktop";
     };
+  };
+
+  # Tema de Cursor (Natsuki)
+  home.pointerCursor = {
+    enable = true;
+    gtk.enable = true;
+    x11.enable = true;
+    name = "Natsuki";
+    package = pkgs.stdenv.mkDerivation {
+      name = "natsuki-cursor";
+      src = ./assets/cursors/Natsuki;
+      installPhase = ''
+        mkdir -p $out/share/icons/Natsuki
+        cp -r * $out/share/icons/Natsuki/
+      '';
+    };
+    size = 24;
   };
 
   # Configuración visual / Dotfiles en $HOME

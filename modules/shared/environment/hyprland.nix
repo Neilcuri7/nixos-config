@@ -37,6 +37,7 @@
       slurp
       swappy
       wl-clipboard
+      cliphist
       brightnessctl
       playerctl
       pamixer
@@ -46,11 +47,12 @@
       thunar-archive-plugin
       gnome-calendar
       yad
-      glib # Proporciona gsettings
+      glib
       dconf
       papirus-icon-theme
       rofi-emoji
       xfce4-exo
+      gh
     ];
 
     programs.dconf.enable = true;

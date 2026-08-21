@@ -5,6 +5,7 @@ KEYBINDINGS="🐧 Alt + Shift             : Cambiar distribución/idioma del tec
 🐧 Super + Enter           : Terminal (Kitty)
 🐧 Super + W               : Navegador (Brave)
 🐧 Super + E               : Explorador de archivos (Thunar)
+🐧 Super + V               : Historial de portapapeles (Cliphist + Rofi)
 🐧 Super + Q               : Cerrar ventana activa
 🐧 Super + F               : Pantalla completa (Fullscreen)
 🐧 Super + P               : Modo Pseudo-tile
@@ -39,4 +40,5 @@ if command -v yad >/dev/null 2>&1; then
         <<< "$KEYBINDINGS"
 else
     echo "$KEYBINDINGS"
+fi
 

@@ -24,6 +24,7 @@
       desktop.enable = true;
       tools.enable = true;
       dev.enable = true;
+      flatpak.enable = true;
     };
     environment.hyprland.enable = true;
     hardware = {

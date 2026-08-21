@@ -22,13 +22,23 @@ in
         ",preferred,auto,1"
       ];
 
+      env = [
+        "XCURSOR_THEME,Natsuki"
+        "XCURSOR_SIZE,24"
+        "HYPRCURSOR_THEME,Natsuki"
+        "HYPRCURSOR_SIZE,24"
+      ];
+
       exec-once = [
+        "hyprctl setcursor Natsuki 24"
         "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
         "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
         "swaybg -i ${wallpaperPath} -m fill"
         "swaync"
         "ags"
         "hypridle"
+        "wl-paste --type text --watch cliphist store" # Guardar texto en el historial
+        "wl-paste --type image --watch cliphist store" # Guardar imágenes en el historial
       ];
 
       input = {
@@ -94,6 +104,7 @@ in
         "$mainMod, Return, exec, $terminal"
         "$mainMod, W, exec, $browser"
         "$mainMod, E, exec, $fileManager"
+        "$mainMod, V, exec, cliphist list | rofi -dmenu -theme ${config.home.homeDirectory}/.config/rofi/config.rasi | cliphist decode | wl-copy"
         "$mainMod, Q, killactive,"
         "$mainMod, F, fullscreen,"
         "$mainMod, P, pseudo,"
@@ -114,7 +125,6 @@ in
         "$mainMod, right, movefocus, r"
         "$mainMod, up, movefocus, u"
         "$mainMod, down, movefocus, d"
-        "$mainMod, h, movefocus, l"
         "$mainMod, l, movefocus, r"
         "$mainMod, k, movefocus, u"
         "$mainMod, j, movefocus, d"
