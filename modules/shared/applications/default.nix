@@ -36,6 +36,7 @@
         pkgs.kdePackages.kate
         pkgs.discord
         inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
+        inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-ide
       ];
     })
 
@@ -56,6 +57,7 @@
         pkgs.yazi
         pkgs.imagemagick
         pkgs.tinty
+        pkgs.micro
         inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-cli
       ];
     })

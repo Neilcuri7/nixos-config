@@ -47,8 +47,8 @@
       yad
       glib
       dconf
-      papirus-icon-theme
-      rofi-emoji
+      shared-mime-info
+      desktop-file-utils
       xfce4-exo
       gh
     ];

@@ -42,8 +42,8 @@
     BROWSER = "brave";
     TERMINAL = "kitty";
     TERM = "xterm-256color";
-    EDITOR = "nvim";
-    VISUAL = "nvim";
+    EDITOR = "micro";
+    VISUAL = "kwrite";
   };
 
   xdg.mimeApps = {
@@ -210,6 +210,22 @@
         }
         "break"
       ];
+    };
+  };
+
+  programs.yazi = {
+    enable = true;
+    enableBashIntegration = true;
+    settings = {
+      opener = {
+        edit = [
+          {
+            run = "micro \"$@\"";
+            block = true;
+            for = "unix";
+          }
+        ];
+      };
     };
   };
 
