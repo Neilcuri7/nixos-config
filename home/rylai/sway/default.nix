@@ -148,7 +148,7 @@ in
 
       # Fondo de pantalla y servicios de inicio
       startup = [
-        { command = "${pkgs.swaybg}/bin/swaybg -i ${wallpaperPath} -m fill"; }
+        { command = "${config.home.homeDirectory}/scripts/init-wallpaper.sh"; }
       ];
 
       # Integración con Waybar (Reemplaza swaybar nativo)

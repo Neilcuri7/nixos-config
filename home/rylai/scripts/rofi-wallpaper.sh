@@ -69,15 +69,23 @@ SELECTED_WALLPAPER=$(find -L "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.p
 
 if [ -n "$SELECTED_WALLPAPER" ]; then
     FULL_PATH="$WALLPAPER_DIR/$SELECTED_WALLPAPER"
-    CURRENT_WALLPAPER="$WALLPAPER_DIR/current"
+    STATE_DIR="$HOME/.local/state/wallpaper"
+    CURRENT_WALLPAPER="$STATE_DIR/current"
     
-    # 1. Guardar/actualizar la referencia al wallpaper actual para que persista entre reinicios
+    mkdir -p "$STATE_DIR"
+    
+    # 1. Obtener PIDs anteriores de swaybg
+    OLD_PIDS=$(pgrep swaybg)
+
+    # 2. Iniciar inmediatamente la nueva instancia de swaybg con la ruta del fondo elegido
+    swaybg -i "$FULL_PATH" -m fill &
+
+    # 3. Eliminar instancias anteriores de swaybg tras un instante brevísimo para transición suave
+    if [ -n "$OLD_PIDS" ]; then
+        (sleep 0.3 && kill $OLD_PIDS 2>/dev/null) &
+    fi
+
+    # 4. Guardar/actualizar la referencia para que persista entre reinicios sin que Nix/Home Manager lo borre
     cp -f "$FULL_PATH" "$CURRENT_WALLPAPER"
-    
-    # 2. Iniciar nueva instancia de swaybg en segundo plano apuntando a $CURRENT_WALLPAPER
-    swaybg -i "$CURRENT_WALLPAPER" -m fill &
-    NEW_SWAYBG_PID=$!
-    
-    # Esperar un instante breve para que la nueva instancia tome el foco del fondo y matar las anteriores
-    (sleep 0.5 && pkill --oldest swaybg) &
 fi
+
