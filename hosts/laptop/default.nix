@@ -37,8 +37,11 @@
 
   virtualisation.docker.enable = true;
 
+  programs.zsh.enable = true;
+
   users.users.rylai = {
     isNormalUser = true;
+    shell = pkgs.zsh;
     extraGroups = [ "wheel" "networkmanager" "video" "audio" "docker" ];
   };
 

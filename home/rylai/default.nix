@@ -16,6 +16,15 @@
     enable = true;
   };
 
+  programs.zsh = {
+    enable = true;
+    autosuggestion.enable = true;
+    history = {
+      size = 10000;
+      share = true;
+    };
+  };
+
   # Opción 2: Configuración de Git con firma SSH
   programs.git = {
     enable = true;

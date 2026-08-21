@@ -69,6 +69,7 @@
         direnv
         gcc
         gnumake
+        docker-compose
       ];
     })
 
