@@ -216,6 +216,7 @@
   programs.yazi = {
     enable = true;
     enableBashIntegration = true;
+    shellWrapperName = "y";
     settings = {
       opener = {
         edit = [
@@ -231,6 +232,7 @@
 
   home.file.".config/themes.json" = {
     source = ./theme/themes.json;
+    force = true;
   };
 
   home.stateVersion = "24.11";
