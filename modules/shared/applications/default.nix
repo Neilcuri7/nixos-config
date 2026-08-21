@@ -55,6 +55,7 @@
         pkgs.tree
         pkgs.yazi
         pkgs.imagemagick
+        pkgs.tinty
         inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-cli
       ];
     })

@@ -1,0 +1,28 @@
+{
+  "_comentario": "==========================================================================",
+  "_instrucciones": [
+    "GUÍA PARA AGREGAR NUEVOS TEMAS EN ~/.config/themes.json:",
+    "1. Agrega un nuevo objeto dentro del arreglo 'themes'.",
+    "2. 'id': Identificador único sin espacios (ej. 'catppuccin-mocha').",
+    "3. 'name': Nombre legible que aparecerá en menús o tooltips.",
+    "4. 'scheme': Nombre exacto del esquema Base16/tinty (ej. 'nord', 'cerulean-signal-dark', 'dracula').",
+    "5. 'icon': Icono minimalista de Nerd Fonts (ej. '󰂨', '󰔎', '󰅟', '󰌪').",
+    "Nota: Los temas no están anclados a ningún fondo de pantalla."
+  ],
+  "_comentario_final": "==========================================================================",
+  "active_theme": "nord",
+  "themes": [
+    {
+      "id": "nord",
+      "name": "Nord",
+      "scheme": "nord",
+      "icon": "󰂨"
+    },
+    {
+      "id": "cerulean-signal-dark",
+      "name": "Cerulean Signal Dark",
+      "scheme": "cerulean-signal-dark",
+      "icon": "󰔎"
+    }
+  ]
+}

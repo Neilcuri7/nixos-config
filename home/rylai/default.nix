@@ -213,5 +213,9 @@
     };
   };
 
+  home.file.".config/themes.json" = {
+    source = ./theme/themes.json;
+  };
+
   home.stateVersion = "24.11";
 }
