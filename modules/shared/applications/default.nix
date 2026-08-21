@@ -24,7 +24,6 @@
             adblock
             shuffle
           ];
-          theme = spicePkgs.themes.catppuccin;
         };
 
       environment.systemPackages = [
@@ -55,6 +54,7 @@
         pkgs.jq
         pkgs.tree
         pkgs.yazi
+        pkgs.imagemagick
         inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-cli
       ];
     })

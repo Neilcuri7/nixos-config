@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -54,6 +54,24 @@
   users.users.rylai = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" "video" "audio" ];
+  };
+
+  # Configuración de Stylix (Tema Nord unificado)
+  stylix = {
+    enable = true;
+    image = ../../home/rylai/assets/wallpapers/877911.png;
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/nord.yaml";
+    polarity = "dark";
+    opacity = {
+      terminal = 0.90;
+      popups = 0.85;
+    };
+    fonts = {
+      monospace = {
+        package = pkgs.nerd-fonts.jetbrains-mono;
+        name = "JetBrainsMono Nerd Font";
+      };
+    };
   };
 
   system.stateVersion = "24.11";
