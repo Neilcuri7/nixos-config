@@ -120,7 +120,21 @@ case "$ACTION" in
         ;;
 
     *)
-        echo "Uso: $0 {next|menu}"
-        exit 1
+        if [ "$ACTION" = "init" ]; then
+            ACTIVE_ID=$(jq -r '.active_theme' "$CONFIG_FILE")
+            THEMES_COUNT=$(jq '.themes | length' "$CONFIG_FILE")
+            for i in $(seq 0 $((THEMES_COUNT - 1))); do
+                ID=$(jq -r ".themes[$i].id" "$CONFIG_FILE")
+                if [ "$ID" = "$ACTIVE_ID" ]; then
+                    SCHEME=$(jq -r ".themes[$i].scheme" "$CONFIG_FILE")
+                    NAME=$(jq -r ".themes[$i].name" "$CONFIG_FILE")
+                    apply_theme "$ID" "$SCHEME" "$NAME"
+                    break
+                fi
+            done
+        else
+            echo "Uso: $0 {next|menu|init}"
+            exit 1
+        fi
         ;;
 esac
