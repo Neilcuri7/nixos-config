@@ -34,11 +34,11 @@ export CACHE_DIR
 
 ROFI_GRID_THEME='
 window {
-    width: 850px;
+    width: 1200px;
 }
 listview {
-    columns: 3;
-    lines: 3;
+    columns: 5;
+    lines: 2;
     spacing: 12px;
     cycle: true;
     dynamic: true;

@@ -22,6 +22,7 @@ KEYBINDINGS="󰌽 Alt + Shift             : Cambiar distribución/idioma del tec
 󰐥 Super + Shift + X       : Menú de apagado (Wlogout)
 󰔎 Super + Shift + T       : Cambiar tema claro / oscuro (GTK)
 󰈊 Super + Shift + O       : Selector de color (Hyprpicker)
+󰊴 Super + Shift + G       : Activar/Desactivar Gamemode
 󰤼 Super + Shift + I       : Alternar split horizontal/vertical
 󰖲 Super + Shift + Space   : Mover ventana activa a espacio especial
 󰨞 Super + [1-9, 0]        : Ir al escritorio (Workspace 1-10)
