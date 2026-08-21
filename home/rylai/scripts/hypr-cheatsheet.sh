@@ -34,7 +34,8 @@ KEYBINDINGS="󰌽 Alt + Shift             : Cambiar distribución/idioma del tec
 if command -v rofi >/dev/null 2>&1; then
     echo "$KEYBINDINGS" | rofi -dmenu \
         -p "󰌽 Atajos de Teclado" \
-        -theme "$ROFI_CONFIG"
+        -theme "$ROFI_CONFIG" \
+        -theme-str 'window { width: 750px; }'
 else
     echo "$KEYBINDINGS"
 fi
