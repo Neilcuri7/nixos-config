@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-HYPRGAMEMODE=$(hyprctl getoption animations:enabled | awk 'NR==1{print $2}')
-
-if [ "$HYPRGAMEMODE" = 1 ] ; then
+if hyprctl getoption animations:enabled | grep -q "int: 1" ; then
     hyprctl --batch "\
         keyword animations:enabled 0;\
         keyword decoration:blur:enabled 0;\
