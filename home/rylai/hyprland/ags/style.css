@@ -1,4 +1,5 @@
-/* --- ESTILOS GENERALES DE LA BARRA AGS (MONOCROMO: NEGRO, BLANCO Y TRANSPARENCIAS) --- */
+/* --- ESTILOS GENERALES DE LA BARRA AGS CON VARIABLES DE TEMA DINÁMICAS --- */
+@import url("theme-colors.css");
 
 * {
     font-family: "JetBrainsMono Nerd Font", "Noto Sans", sans-serif;
@@ -8,7 +9,7 @@
 
 window.bar {
     background-color: rgba(0, 0, 0, 0.45);
-    color: #ffffff;
+    color: @theme_fg;
     padding: 2px 6px;
 }
 
@@ -17,18 +18,18 @@ button {
     min-width: 0;
     padding: 2px 8px;
     background-color: rgba(255, 255, 255, 0.08);
-    color: #ffffff;
+    color: @theme_fg;
     border-radius: 6px;
     transition: all 0.2s ease-in-out;
     box-shadow: none;
     margin: 1px 2px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid @theme_border;
 }
 
 button:hover {
-    background-color: rgba(255, 255, 255, 0.22);
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    background-color: @theme_hover;
+    color: @theme_accent;
+    border: 1px solid @theme_accent;
 }
 
 label {
@@ -37,8 +38,8 @@ label {
 
 /* Espaciados y módulos específicos */
 .workspaces {
-    background-color: rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: @theme_module_bg;
+    border: 1px solid @theme_border;
     border-radius: 8px;
     padding: 1px 4px;
     margin: 1px 3px;
@@ -49,34 +50,34 @@ label {
     min-height: 20px;
     border-radius: 5px;
     background-color: transparent;
-    color: rgba(255, 255, 255, 0.65);
+    color: @theme_fg;
     padding: 0 3px;
     border: none;
 }
 
 .workspace-button.focused {
-    background-color: #ffffff;
-    color: #000000;
+    background-color: @theme_accent;
+    color: @theme_bg;
     font-weight: bold;
 }
 
 .workspace-button:hover {
-    background-color: rgba(255, 255, 255, 0.25);
-    color: #ffffff;
+    background-color: @theme_hover;
+    color: @theme_fg;
 }
 
 .media, .sys-stats, .power-profile, .theme-switcher, .clock, .battery, .sys-tray, .client-title-box, .volume, .network {
-    background-color: rgba(0, 0, 0, 0.6);
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: @theme_module_bg;
+    color: @theme_fg;
+    border: 1px solid @theme_border;
     border-radius: 8px;
     padding: 2px 8px;
     margin: 1px 3px;
 }
 
 .volume-button, .brightness-button {
-    background-color: rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: @theme_module_bg;
+    border: 1px solid @theme_border;
     border-radius: 8px;
     padding: 2px 8px;
     margin: 1px 2px;
@@ -84,27 +85,27 @@ label {
 }
 
 .speaker-button {
-    color: #ffffff;
+    color: @theme_fg;
 }
 .speaker-button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
+    background-color: @theme_hover;
+    color: @theme_accent;
 }
 
 .mic-button {
-    color: rgba(255, 255, 255, 0.85);
+    color: @theme_fg;
 }
 .mic-button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
+    background-color: @theme_hover;
+    color: @theme_accent;
 }
 
 .brightness-button {
-    color: #ffffff;
+    color: @theme_fg;
 }
 .brightness-button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
+    background-color: @theme_hover;
+    color: @theme_accent;
 }
 
 .info-child {
@@ -112,33 +113,33 @@ label {
 }
 
 .media:hover, .power-profile:hover, .theme-switcher:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
+    background-color: @theme_hover;
+    color: @theme_accent;
 }
 
 .battery-low {
-    background-color: #ffffff;
-    color: #000000;
+    background-color: @theme_accent;
+    color: @theme_bg;
     font-weight: bold;
 }
 
 .client-title {
-    color: #ffffff;
+    color: @theme_fg;
     font-weight: bold;
 }
 
 .revealerButton {
-    background-color: rgba(0, 0, 0, 0.6);
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: @theme_module_bg;
+    color: @theme_fg;
+    border: 1px solid @theme_border;
     border-radius: 6px;
     padding: 2px 6px;
     margin: 1px 2px;
 }
 
 .revealerButton:hover {
-    background-color: #ffffff;
-    color: #000000;
+    background-color: @theme_accent;
+    color: @theme_bg;
 }
 
 /* --- ESTILOS DEL POPOVER / POPUP DEL CALENDARIO --- */
@@ -147,8 +148,8 @@ window.calendar-window {
 }
 
 .calendar-window-box {
-    background-color: rgba(10, 10, 10, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: @theme_bg;
+    border: 1px solid @theme_border;
     border-radius: 12px;
     padding: 6px;
     margin-top: 6px;
@@ -157,8 +158,8 @@ window.calendar-window {
 }
 
 menu {
-    background-color: rgba(10, 10, 10, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: @theme_bg;
+    border: 1px solid @theme_border;
     border-radius: 12px;
     padding: 6px;
 }
@@ -184,28 +185,28 @@ menuitem:hover {
     min-width: 28px;
     padding: 4px;
     background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
+    color: @theme_fg;
     border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid @theme_border;
 }
 
 .calendar-nav-btn:hover {
-    background-color: #ffffff;
-    color: #000000;
+    background-color: @theme_accent;
+    color: @theme_bg;
 }
 
 .calendar-month-btn {
     padding: 4px 8px;
     background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
+    color: @theme_fg;
     font-weight: bold;
     border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid @theme_border;
 }
 
 .calendar-month-btn:hover {
-    background-color: rgba(255, 255, 255, 0.25);
-    color: #ffffff;
+    background-color: @theme_hover;
+    color: @theme_accent;
 }
 
 .calendar-days-header {
@@ -213,24 +214,24 @@ menuitem:hover {
 }
 
 .calendar-day-head {
-    color: rgba(255, 255, 255, 0.7);
+    color: @theme_accent;
     font-weight: bold;
     font-size: 11px;
 }
 
 .calendar-day-cell {
-    color: #ffffff;
+    color: @theme_fg;
     font-weight: 500;
     font-size: 12px;
 }
 
 .calendar-day-cell.other-month {
-    color: rgba(255, 255, 255, 0.25);
+    color: @theme_border;
 }
 
 .calendar-day-cell.today {
-    background-color: #ffffff;
-    color: #000000;
+    background-color: @theme_accent;
+    color: @theme_bg;
     border-radius: 6px;
     font-weight: bold;
 }
@@ -238,13 +239,13 @@ menuitem:hover {
 .calendar-month-choice {
     padding: 8px 4px;
     background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
+    color: @theme_fg;
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid @theme_border;
 }
 
 .calendar-month-choice:hover {
-    background-color: #ffffff;
-    color: #000000;
+    background-color: @theme_accent;
+    color: @theme_bg;
 }
 

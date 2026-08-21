@@ -43,8 +43,6 @@
       pamixer
       kitty
       xdg-utils
-      thunar
-      thunar-archive-plugin
       gnome-calendar
       yad
       glib
@@ -59,6 +57,8 @@
 
     environment.sessionVariables = {
       TERMINAL = "kitty";
+      NIXOS_OZONE_WL = "1";
+      MOZ_ENABLE_WAYLAND = "1";
     };
 
     services.displayManager.defaultSession = "hyprland";
