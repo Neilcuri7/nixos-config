@@ -33,7 +33,8 @@ in
         "hyprctl setcursor Natsuki 24"
         "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
         "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
-        "swaybg -i ${wallpaperPath} -m fill"
+        "${config.home.homeDirectory}/scripts/init-wallpaper.sh"
+        "${config.home.homeDirectory}/scripts/theme-switcher.sh init"
         "swaync"
         "ags"
         "hypridle"
@@ -117,6 +118,7 @@ in
         "$mainMod SHIFT, X, exec, wlogout"
         "$mainMod SHIFT, T, exec, gsettings set org.gnome.desktop.interface color-scheme $([ \"$(gsettings get org.gnome.desktop.interface color-scheme)\" = \"'prefer-dark'\" ] && echo 'prefer-light' || echo 'prefer-dark')"
         "$mainMod SHIFT, O, exec, hyprpicker -a -f hex"
+        "$mainMod SHIFT, G, exec, ${config.home.homeDirectory}/scripts/gamemode.sh"
         "$mainMod SHIFT, I, layoutmsg, togglesplit"
 
         # Mover foco entre ventanas

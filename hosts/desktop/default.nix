@@ -26,6 +26,8 @@
   networking.networkmanager.enable = true;
   services.udisks2.enable = true;
   services.gvfs.enable = true;
+  services.power-profiles-daemon.enable = true;
+  services.upower.enable = true;
 
   systemd.tmpfiles.rules = [
     "d /mnt/storage 0775 rylai users -"

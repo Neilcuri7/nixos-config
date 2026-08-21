@@ -12,7 +12,7 @@ fi
 mkdir -p "$CACHE_DIR"
 
 generate_entry() {
-    local wallpaper="$1"
+    local wallpaper=$(readlink -f "$1")
     local filename=$(basename "$wallpaper")
     local thumb="$CACHE_DIR/$filename"
 
@@ -34,11 +34,11 @@ export CACHE_DIR
 
 ROFI_GRID_THEME='
 window {
-    width: 850px;
+    width: 1200px;
 }
 listview {
-    columns: 3;
-    lines: 3;
+    columns: 5;
+    lines: 2;
     spacing: 12px;
     cycle: true;
     dynamic: true;
@@ -52,13 +52,16 @@ element-icon {
     size: 140px;
     horizontal-align: 0.5;
 }
+element selected element-icon {
+    size: 140px;
+}
 element-text {
     horizontal-align: 0.5;
     vertical-align: 0.5;
 }
 '
 
-SELECTED_WALLPAPER=$(find "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) | \
+SELECTED_WALLPAPER=$(find -L "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) | \
     while read -r img; do
         generate_entry "$img"
     done | \
@@ -66,6 +69,23 @@ SELECTED_WALLPAPER=$(find "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.png"
 
 if [ -n "$SELECTED_WALLPAPER" ]; then
     FULL_PATH="$WALLPAPER_DIR/$SELECTED_WALLPAPER"
-    pkill swaybg
+    STATE_DIR="$HOME/.local/state/wallpaper"
+    CURRENT_WALLPAPER="$STATE_DIR/current"
+    
+    mkdir -p "$STATE_DIR"
+    
+    # 1. Obtener PIDs anteriores de swaybg
+    OLD_PIDS=$(pgrep swaybg)
+
+    # 2. Iniciar inmediatamente la nueva instancia de swaybg con la ruta del fondo elegido
     swaybg -i "$FULL_PATH" -m fill &
+
+    # 3. Eliminar instancias anteriores de swaybg tras un instante brevísimo para transición suave
+    if [ -n "$OLD_PIDS" ]; then
+        (sleep 0.3 && kill $OLD_PIDS 2>/dev/null) &
+    fi
+
+    # 4. Guardar/actualizar la referencia para que persista entre reinicios sin que Nix/Home Manager lo borre
+    cp -f "$FULL_PATH" "$CURRENT_WALLPAPER"
 fi
+
