@@ -55,8 +55,6 @@ in
         gaps_in = 4;
         gaps_out = 8;
         border_size = 2;
-        "col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
-        "col.inactive_border" = "rgba(595959aa)";
         layout = "dwindle";
       };
 
@@ -104,7 +102,7 @@ in
         "$mainMod, Return, exec, $terminal"
         "$mainMod, W, exec, $browser"
         "$mainMod, E, exec, $fileManager"
-        "$mainMod, V, exec, cliphist list | rofi -dmenu -theme ${config.home.homeDirectory}/.config/rofi/config.rasi | cliphist decode | wl-copy"
+        "$mainMod, V, exec, ${config.home.homeDirectory}/scripts/rofi-clipboard.sh"
         "$mainMod, Q, killactive,"
         "$mainMod, F, fullscreen,"
         "$mainMod, P, pseudo,"
@@ -112,6 +110,7 @@ in
         "$mainMod, T, exec, kitty yazi"
         "$mainMod, S, exec, grim -g \"$(slurp)\" - | swappy -f -"
         "$mainMod, H, exec, ${config.home.homeDirectory}/scripts/hypr-cheatsheet.sh"
+        "$mainMod SHIFT, W, exec, ${config.home.homeDirectory}/scripts/rofi-wallpaper.sh"
         "$mainMod SHIFT, Return, exec, rofi -show drun -show-icons -theme ${config.home.homeDirectory}/.config/rofi/config.rasi"
         "$mainMod SHIFT, F, togglefloating,"
         "$mainMod SHIFT, L, exec, swaylock"
@@ -201,6 +200,12 @@ in
     source = ../scripts;
     recursive = true;
     executable = true;
+  };
+
+  # Copiar wallpapers portables
+  home.file.".config/wallpapers" = {
+    source = ../assets/wallpapers;
+    recursive = true;
   };
 
 

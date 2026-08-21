@@ -24,7 +24,6 @@
             adblock
             shuffle
           ];
-          theme = spicePkgs.themes.catppuccin;
         };
 
       environment.systemPackages = [

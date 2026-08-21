@@ -27,9 +27,14 @@
       url = "github:gerg-l/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    stylix = {
+      url = "github:danth/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, sops-nix, spicetify-nix, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, sops-nix, spicetify-nix, stylix, ... }@inputs:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
@@ -53,6 +58,7 @@
             ./hosts/desktop
             sops-nix.nixosModules.sops
             spicetify-nix.nixosModules.default
+            stylix.nixosModules.stylix
             home-manager.nixosModules.home-manager
             {
               nixpkgs.pkgs = pkgs;
@@ -71,6 +77,7 @@
             ./hosts/laptop
             sops-nix.nixosModules.sops
             spicetify-nix.nixosModules.default
+            stylix.nixosModules.stylix
             home-manager.nixosModules.home-manager
             {
               nixpkgs.pkgs = pkgs;
