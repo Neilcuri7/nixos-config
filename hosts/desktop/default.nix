@@ -53,9 +53,11 @@
     services.sops.enable = true;
   };
 
+  virtualisation.docker.enable = true;
+
   users.users.rylai = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "video" "audio" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "audio" "docker" ];
   };
 
   # Configuración de Stylix (Tema Nord unificado)

@@ -35,9 +35,11 @@
     services.sops.enable = true;
   };
 
+  virtualisation.docker.enable = true;
+
   users.users.rylai = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "video" "audio" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "audio" "docker" ];
   };
 
   system.stateVersion = "24.11";
