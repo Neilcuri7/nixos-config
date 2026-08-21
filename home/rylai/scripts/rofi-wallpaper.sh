@@ -69,12 +69,13 @@ SELECTED_WALLPAPER=$(find -L "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.p
 
 if [ -n "$SELECTED_WALLPAPER" ]; then
     FULL_PATH="$WALLPAPER_DIR/$SELECTED_WALLPAPER"
+    CURRENT_WALLPAPER="$WALLPAPER_DIR/current"
     
     # 1. Guardar/actualizar la referencia al wallpaper actual para que persista entre reinicios
-    cp -f "$FULL_PATH" "$WALLPAPER_DIR/current"
+    cp -f "$FULL_PATH" "$CURRENT_WALLPAPER"
     
-    # 2. Iniciar nueva instancia de swaybg en segundo plano antes de matar la anterior para evitar parpadeos
-    swaybg -i "$FULL_PATH" -m fill &
+    # 2. Iniciar nueva instancia de swaybg en segundo plano apuntando a $CURRENT_WALLPAPER
+    swaybg -i "$CURRENT_WALLPAPER" -m fill &
     NEW_SWAYBG_PID=$!
     
     # Esperar un instante breve para que la nueva instancia tome el foco del fondo y matar las anteriores
