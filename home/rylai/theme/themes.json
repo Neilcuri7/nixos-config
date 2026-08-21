@@ -15,14 +15,26 @@
     {
       "id": "nord",
       "name": "Nord",
-      "scheme": "nord",
+      "scheme": "base16-nord",
       "icon": "󰂨"
     },
     {
       "id": "cerulean-signal-dark",
       "name": "Cerulean Signal Dark",
-      "scheme": "cerulean-signal-dark",
+      "scheme": "base16-cerulean-signal-dark",
       "icon": "󰔎"
+    },
+    {
+      "id": "bosque",
+      "name": "Bosque",
+      "scheme": "base16-bosque",
+      "icon": "󰌪"
+    },
+    {
+      "id": "tokyo-night-dark",
+      "name": "Tokyo Night Dark",
+      "scheme": "base24-tokyo-night-dark",
+      "icon": "󰅟"
     }
   ]
 }

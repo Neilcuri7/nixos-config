@@ -28,14 +28,43 @@ apply_theme() {
         tinty apply "$scheme" &>/dev/null
     fi
 
-    # 2. Actualizar el tema activo en ~/.config/themes.json usando jq
+    # 2. Actualizar bordes de ventanas en Hyprland si está ejecutándose
+    if command -v hyprctl &>/dev/null && [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
+        COLOR1=$(tinty info "$scheme" 2>/dev/null | awk -F'|' '/base0D/ {print $4}' | xargs | tr -d '#')
+        COLOR2=$(tinty info "$scheme" 2>/dev/null | awk -F'|' '/base0E/ {print $4}' | xargs | tr -d '#')
+        INACTIVE=$(tinty info "$scheme" 2>/dev/null | awk -F'|' '/base02/ {print $4}' | xargs | tr -d '#')
+
+        if [ -n "$COLOR1" ] && [ -n "$COLOR2" ]; then
+            hyprctl keyword general:col.active_border "rgba(${COLOR1}ff) rgba(${COLOR2}ff) 45deg" &>/dev/null
+        elif [ -n "$COLOR1" ]; then
+            hyprctl keyword general:col.active_border "rgba(${COLOR1}ff)" &>/dev/null
+        fi
+
+        if [ -n "$INACTIVE" ]; then
+            hyprctl keyword general:col.inactive_border "rgba(${INACTIVE}ff)" &>/dev/null
+        fi
+    fi
+
+    # 3. Actualizar bordes de ventanas en Sway si está ejecutándose
+    if command -v swaymsg &>/dev/null && [ -n "$SWAYSOCK" ]; then
+        COLOR1=$(tinty info "$scheme" 2>/dev/null | awk -F'|' '/base0D/ {print $4}' | xargs | tr -d '#')
+        BG=$(tinty info "$scheme" 2>/dev/null | awk -F'|' '/base00/ {print $4}' | xargs | tr -d '#')
+        FG=$(tinty info "$scheme" 2>/dev/null | awk -F'|' '/base05/ {print $4}' | xargs | tr -d '#')
+        if [ -n "$COLOR1" ]; then
+            swaymsg client.focused "#$COLOR1" "#$BG" "#$FG" "#$COLOR1" "#$COLOR1" &>/dev/null
+        fi
+    fi
+
+    # 4. Actualizar el tema activo en ~/.config/themes.json usando jq
     if command -v jq &>/dev/null; then
         tmp=$(mktemp)
         jq --arg id "$theme_id" '.active_theme = $id' "$CONFIG_FILE" > "$tmp" && mv "$tmp" "$CONFIG_FILE"
     fi
 
-    # 3. Notificación de cambio de tema
-    notify-send "Tema cambiado" "Tema actual: $name ($scheme)" -i preferences-desktop-theme
+    # 5. Notificación de cambio de tema
+    if command -v notify-send &>/dev/null; then
+        notify-send "Tema cambiado" "Tema actual: $name ($scheme)" -i preferences-desktop-theme
+    fi
 }
 
 case "$ACTION" in
