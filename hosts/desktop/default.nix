@@ -20,6 +20,8 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelParams = [ "radeon.cik_support=0" "amdgpu.cik_support=1" ];
 
+  zramSwap.enable = true;
+
   hardware.graphics = {
     enable = true;
     enable32Bit = true;

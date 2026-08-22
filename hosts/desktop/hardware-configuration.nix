@@ -30,9 +30,7 @@
       options = [ "nofail" "user" "exec" ];
     };
 
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/8b4723b3-c0b1-484e-8201-3a3d3ac2b1b9"; }
-    ];
+  swapDevices = [ ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

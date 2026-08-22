@@ -36,7 +36,7 @@
     settings = {
       user = {
         name = "Neilcuri7";
-        email = "20231b866@upc.edu.pe";
+        email = "u20231b866@upc.edu.pe";
       };
       init.defaultBranch = "main";
       pull.rebase = true;
