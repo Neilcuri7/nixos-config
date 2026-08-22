@@ -20,7 +20,16 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelParams = [ "radeon.cik_support=0" "amdgpu.cik_support=1" ];
 
-  zramSwap.enable = true;
+  swapDevices = [
+    {
+      device = "/var/lib/swapfile";
+      size = 8 * 1024;
+    }
+  ];
+
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 10;
+  };
 
   hardware.graphics = {
     enable = true;
