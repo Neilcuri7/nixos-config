@@ -11,7 +11,10 @@
 
   networking.hostName = "laptop";
   time.timeZone = "America/Bogota";
+  time.hardwareClockInLocalTime = true;
   i18n.defaultLocale = "es_CO.UTF-8";
+
+  services.tailscale.enable = true;
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
