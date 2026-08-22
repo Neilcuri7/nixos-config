@@ -11,7 +11,10 @@
 
   networking.hostName = "desktop";
   time.timeZone = "America/Bogota";
+  time.hardwareClockInLocalTime = true;
   i18n.defaultLocale = "es_CO.UTF-8";
+
+  services.tailscale.enable = true;
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -53,9 +56,14 @@
     services.sops.enable = true;
   };
 
+  virtualisation.docker.enable = true;
+
+  programs.zsh.enable = true;
+
   users.users.rylai = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "video" "audio" ];
+    shell = pkgs.zsh;
+    extraGroups = [ "wheel" "networkmanager" "video" "audio" "docker" ];
   };
 
   # Configuración de Stylix (Tema Nord unificado)

@@ -1,0 +1,7 @@
+/* Variables dinámicas para temas en AGS */
+@define-color theme_bg #2e3440;
+@define-color theme_fg #e5e9f0;
+@define-color theme_accent #81a1c1;
+@define-color theme_border #4c566a;
+@define-color theme_module_bg rgba(46, 52, 64, 0.75);
+@define-color theme_hover rgba(129, 161, 193, 0.25);

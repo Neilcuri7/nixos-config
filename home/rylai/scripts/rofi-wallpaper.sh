@@ -86,6 +86,7 @@ if [ -n "$SELECTED_WALLPAPER" ]; then
     fi
 
     # 4. Guardar/actualizar la referencia para que persista entre reinicios sin que Nix/Home Manager lo borre
-    cp -f "$FULL_PATH" "$CURRENT_WALLPAPER"
+    rm -f "$CURRENT_WALLPAPER"
+    cp -L "$FULL_PATH" "$CURRENT_WALLPAPER"
 fi
 

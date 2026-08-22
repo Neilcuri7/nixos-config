@@ -16,6 +16,16 @@
     enable = true;
   };
 
+  programs.zsh = {
+    enable = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+    history = {
+      size = 10000;
+      share = true;
+    };
+  };
+
   # Opción 2: Configuración de Git con firma SSH
   programs.git = {
     enable = true;
@@ -42,8 +52,8 @@
     BROWSER = "brave";
     TERMINAL = "kitty";
     TERM = "xterm-256color";
-    EDITOR = "nvim";
-    VISUAL = "nvim";
+    EDITOR = "micro";
+    VISUAL = "kwrite";
   };
 
   xdg.mimeApps = {
@@ -213,8 +223,26 @@
     };
   };
 
+  programs.yazi = {
+    enable = true;
+    enableBashIntegration = true;
+    shellWrapperName = "y";
+    settings = {
+      opener = {
+        edit = [
+          {
+            run = "micro \"$@\"";
+            block = true;
+            for = "unix";
+          }
+        ];
+      };
+    };
+  };
+
   home.file.".config/themes.json" = {
     source = ./theme/themes.json;
+    force = true;
   };
 
   home.stateVersion = "24.11";
