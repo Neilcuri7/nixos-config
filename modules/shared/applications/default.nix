@@ -29,6 +29,7 @@
       environment.systemPackages = [
         pkgs.firefox
         pkgs.brave
+        pkgs.google-chrome
         pkgs.mpv
         pkgs.zathura
         pkgs.imv
@@ -44,6 +45,8 @@
       environment.systemPackages = [
         pkgs.alacritty
         pkgs.foot
+        pkgs.kitty
+        pkgs.xdg-terminal-exec
         pkgs.git
         pkgs.ripgrep
         pkgs.fd
@@ -66,6 +69,7 @@
       environment.systemPackages = with pkgs; [
         neovim
         helix
+        opencode
         direnv
         gcc
         gnumake

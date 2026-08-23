@@ -42,6 +42,7 @@
       playerctl
       pamixer
       kitty
+      xdg-terminal-exec
       xdg-utils
       gnome-calendar
       yad

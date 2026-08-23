@@ -56,6 +56,16 @@
     VISUAL = "kwrite";
   };
 
+  # Terminal por defecto para aplicaciones XDG / GLib / Thunar
+  xdg.configFile."xdg-terminals.list".text = "kitty.desktop\n";
+
+  dconf.settings = {
+    "org/gnome/desktop/default-applications/terminal" = {
+      exec = "kitty";
+      exec-arg = "-e";
+    };
+  };
+
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
