@@ -74,6 +74,7 @@
         gcc
         gnumake
         docker-compose
+        repomix
       ];
     })
 

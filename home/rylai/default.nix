@@ -13,6 +13,9 @@
   home.username = "rylai";
   home.homeDirectory = "/home/rylai";
 
+  # Asegurar directorio base para la activación de codex en airi
+  home.file.".codex/.keep".text = "";
+
   programs.bash = {
     enable = true;
   };
