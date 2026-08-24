@@ -1,9 +1,10 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports = [
     ./hyprland
     ./theme/desktop-tools.nix
+    inputs.airi.homeModules.ai
   ];
 
   # Home Manager - Configuración de Usuario Solamente (REGLA #9)
