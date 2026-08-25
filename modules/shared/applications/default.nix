@@ -36,6 +36,7 @@
         pkgs.typora
         pkgs.kdePackages.kate
         pkgs.discord
+        pkgs.file-roller
         inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
         inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-ide
       ];
@@ -54,6 +55,8 @@
         pkgs.btop
         pkgs.fastfetch
         pkgs.unzip
+        pkgs.p7zip
+        pkgs.unrar
         pkgs.curl
         pkgs.jq
         pkgs.tree
