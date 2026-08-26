@@ -26,6 +26,8 @@
           ];
         };
 
+      programs.gpu-screen-recorder.enable = true;
+
       environment.systemPackages = [
         pkgs.firefox
         pkgs.brave
@@ -37,6 +39,7 @@
         pkgs.kdePackages.kate
         pkgs.discord
         pkgs.file-roller
+        pkgs.gpu-screen-recorder-ui
         inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
         inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-ide
       ];
