@@ -40,15 +40,23 @@ export const Workspaces = (monitor = 0) => {
         const activeWsId = hyprland.active.workspace?.id || 1;
         const allClients = hyprland.clients || [];
 
-        // Obtener IDs de workspaces que tienen al menos 1 cliente/ventana
+        // Obtener IDs de workspaces normales (> 0) que tienen al menos 1 cliente/ventana
         const occupiedWsIds = new Set(
-          allClients.map((c) => c.workspace && c.workspace.id).filter(Boolean)
+          allClients
+            .map((c) => c.workspace && c.workspace.id)
+            .filter((id) => id && id > 0)
         );
-        // Siempre incluir el workspace enfocado actualmente
-        occupiedWsIds.add(activeWsId);
+        // Siempre incluir el workspace enfocado actualmente si es un workspace normal (> 0)
+        if (activeWsId > 0) {
+          occupiedWsIds.add(activeWsId);
+        } else if (occupiedWsIds.size === 0) {
+          occupiedWsIds.add(1);
+        }
 
-        // Ordenar numéricamente los workspaces activos
-        const activeWorkspaces = Array.from(occupiedWsIds).sort((a, b) => a - b);
+        // Ordenar numéricamente los workspaces activos normales (> 0)
+        const activeWorkspaces = Array.from(occupiedWsIds)
+          .filter((id) => id > 0)
+          .sort((a, b) => a - b);
 
         box.children = activeWorkspaces.map((id) => {
           const label = JAPANESE_NUMBERS[id] || `${id}`;
