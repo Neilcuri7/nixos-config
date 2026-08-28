@@ -169,6 +169,15 @@ in
         # Special Workspace (Scratchpad)
         "$mainMod, space, togglespecialworkspace,"
         "$mainMod SHIFT, space, movetoworkspace, special"
+
+        # GPU Screen Recorder (Wayland Workaround - Default UI hotkeys)
+        "ALT, Z, exec, gsr-ui-cli toggle-show"
+        "ALT, F9, exec, gsr-ui-cli toggle-record"
+        "ALT, F7, exec, gsr-ui-cli toggle-pause"
+        "SHIFT ALT, F10, exec, gsr-ui-cli toggle-replay"
+        "ALT, F10, exec, gsr-ui-cli replay-save"
+        "ALT, F11, exec, gsr-ui-cli replay-save-1-min"
+        "ALT, F12, exec, gsr-ui-cli replay-save-10-min"
       ];
 
       # Mouse Binds
