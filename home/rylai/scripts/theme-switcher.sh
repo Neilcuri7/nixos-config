@@ -25,52 +25,26 @@ hex_to_rgb() {
     echo "$r, $g, $b"
 }
 
-# Función para aplicar un tema completo
-apply_theme() {
-    local theme_id="$1"
-    local scheme="$2"
-    local name="$3"
-
-    # Obtener colores desde themes.json usando jq
-    local theme_json
-    theme_json=$(jq -c --arg id "$theme_id" '.themes[] | select(.id == $id)' "$CONFIG_FILE" 2>/dev/null)
-
-    # Variables base por defecto (Nord como fallback)
-    local base00="#2e3440"
-    local base01="#3b4252"
-    local base02="#434c5e"
-    local base03="#4c566a"
-    local base04="#d8dee9"
-    local base05="#e5e9f0"
-    local base06="#eceff4"
-    local base07="#8fbcbb"
-    local base08="#bf616a"
-    local base09="#d08770"
-    local base0A="#ebcb8b"
-    local base0B="#a3be8c"
-    local base0C="#88c0d0"
-    local base0D="#81a1c1"
-    local base0E="#b48ead"
-    local base0F="#5e81ac"
-
-    if [ -n "$theme_json" ]; then
-        base00=$(echo "$theme_json" | jq -r '.colors.base00 // "#2e3440"')
-        base01=$(echo "$theme_json" | jq -r '.colors.base01 // "#3b4252"')
-        base02=$(echo "$theme_json" | jq -r '.colors.base02 // "#434c5e"')
-        base03=$(echo "$theme_json" | jq -r '.colors.base03 // "#4c566a"')
-        base04=$(echo "$theme_json" | jq -r '.colors.base04 // "#d8dee9"')
-        base05=$(echo "$theme_json" | jq -r '.colors.base05 // "#e5e9f0"')
-        base06=$(echo "$theme_json" | jq -r '.colors.base06 // "#eceff4"')
-        base07=$(echo "$theme_json" | jq -r '.colors.base07 // "#8fbcbb"')
-        base08=$(echo "$theme_json" | jq -r '.colors.base08 // "#bf616a"')
-        base09=$(echo "$theme_json" | jq -r '.colors.base09 // "#d08770"')
-        base0A=$(echo "$theme_json" | jq -r '.colors.base0A // "#ebcb8b"')
-        base0B=$(echo "$theme_json" | jq -r '.colors.base0B // "#a3be8c"')
-        base0C=$(echo "$theme_json" | jq -r '.colors.base0C // "#88c0d0"')
-        base0D=$(echo "$theme_json" | jq -r '.colors.base0D // "#81a1c1"')
-        base0E=$(echo "$theme_json" | jq -r '.colors.base0E // "#b48ead"')
-        base0F=$(echo "$theme_json" | jq -r '.colors.base0F // "#5e81ac"')
-    fi
+# Función central para aplicar una paleta de colores en todos los componentes
+apply_palette() {
+    local base00="$1"
+    local base01="$2"
+    local base02="$3"
+    local base03="$4"
+    local base04="$5"
+    local base05="$6"
+    local base06="$7"
+    local base07="$8"
+    local base08="$9"
+    local base09="${10}"
+    local base0A="${11}"
+    local base0B="${12}"
+    local base0C="${13}"
+    local base0D="${14}"
+    local base0E="${15}"
+    local base0F="${16}"
+    local theme_id="${17}"
+    local name="${18}"
 
     local c_active1="${base0D#\#}"
     local c_active2="${base0E#\#}"
@@ -91,7 +65,7 @@ apply_theme() {
     # 3. Generar y aplicar colores dinámicos a Kitty
     mkdir -p "$HOME/.config/kitty"
     cat <<EOF > "$HOME/.config/kitty/current-theme.conf"
-# Tema dinámico generado automáticamente por theme-switcher.sh
+# Tema generado automáticamente por theme-switcher.sh
 background            $base00
 foreground            $base05
 selection_background  $base02
@@ -102,7 +76,7 @@ cursor_text_color     $base00
 active_border_color   $base0D
 inactive_border_color $base02
 
-# Paleta Base16 para texto y comandos en Kitty
+# Paleta para terminal
 color0  $base00
 color1  $base08
 color2  $base0B
@@ -158,7 +132,7 @@ EOF
     fi
 
     # 6. Actualizar tema activo en ~/.config/themes.json
-    if command -v jq &>/dev/null; then
+    if command -v jq &>/dev/null && [ -f "$CONFIG_FILE" ]; then
         tmp=$(mktemp)
         jq --arg id "$theme_id" '.active_theme = $id' "$CONFIG_FILE" > "$tmp" && mv "$tmp" "$CONFIG_FILE"
     fi
@@ -169,7 +143,108 @@ EOF
     fi
 }
 
+# Función para aplicar un tema manual predefinido desde themes.json
+apply_theme() {
+    local theme_id="$1"
+    local scheme="$2"
+    local name="$3"
+
+    local theme_json
+    theme_json=$(jq -c --arg id "$theme_id" '.themes[] | select(.id == $id)' "$CONFIG_FILE" 2>/dev/null)
+
+    local base00="#2e3440" base01="#3b4252" base02="#434c5e" base03="#4c566a"
+    local base04="#d8dee9" base05="#e5e9f0" base06="#eceff4" base07="#8fbcbb"
+    local base08="#bf616a" base09="#d08770" base0A="#ebcb8b" base0B="#a3be8c"
+    local base0C="#88c0d0" base0D="#81a1c1" base0E="#b48ead" base0F="#5e81ac"
+
+    if [ -n "$theme_json" ]; then
+        base00=$(echo "$theme_json" | jq -r '.colors.base00 // "#2e3440"')
+        base01=$(echo "$theme_json" | jq -r '.colors.base01 // "#3b4252"')
+        base02=$(echo "$theme_json" | jq -r '.colors.base02 // "#434c5e"')
+        base03=$(echo "$theme_json" | jq -r '.colors.base03 // "#4c566a"')
+        base04=$(echo "$theme_json" | jq -r '.colors.base04 // "#d8dee9"')
+        base05=$(echo "$theme_json" | jq -r '.colors.base05 // "#e5e9f0"')
+        base06=$(echo "$theme_json" | jq -r '.colors.base06 // "#eceff4"')
+        base07=$(echo "$theme_json" | jq -r '.colors.base07 // "#8fbcbb"')
+        base08=$(echo "$theme_json" | jq -r '.colors.base08 // "#bf616a"')
+        base09=$(echo "$theme_json" | jq -r '.colors.base09 // "#d08770"')
+        base0A=$(echo "$theme_json" | jq -r '.colors.base0A // "#ebcb8b"')
+        base0B=$(echo "$theme_json" | jq -r '.colors.base0B // "#a3be8c"')
+        base0C=$(echo "$theme_json" | jq -r '.colors.base0C // "#88c0d0"')
+        base0D=$(echo "$theme_json" | jq -r '.colors.base0D // "#81a1c1"')
+        base0E=$(echo "$theme_json" | jq -r '.colors.base0E // "#b48ead"')
+        base0F=$(echo "$theme_json" | jq -r '.colors.base0F // "#5e81ac"')
+    fi
+
+    apply_palette "$base00" "$base01" "$base02" "$base03" "$base04" "$base05" "$base06" "$base07" \
+                  "$base08" "$base09" "$base0A" "$base0B" "$base0C" "$base0D" "$base0E" "$base0F" \
+                  "$theme_id" "$name"
+}
+
+# Función para extraer colores del wallpaper usando Matugen (Modo Dinámico Híbrido)
+apply_matugen_wallpaper() {
+    local target_wall="$1"
+
+    if [ -z "$target_wall" ]; then
+        local current_path_file="$HOME/.local/state/wallpaper/current_path.txt"
+        if [ -f "$current_path_file" ]; then
+            target_wall=$(cat "$current_path_file" | tr -d '\n')
+        fi
+        if [ -z "$target_wall" ] || [ ! -f "$target_wall" ]; then
+            target_wall="$HOME/.local/state/wallpaper/current"
+        fi
+    fi
+
+    if [ ! -f "$target_wall" ]; then
+        notify-send "Matugen" "No se encontró fondo de pantalla activo para extraer colores."
+        return 1
+    fi
+
+    if ! command -v matugen &>/dev/null; then
+        notify-send "Matugen" "El paquete 'matugen' no está instalado en el PATH."
+        return 1
+    fi
+
+    # Extraer paleta en formato JSON con matugen (~30ms)
+    local matugen_raw
+    matugen_raw=$(matugen image "$target_wall" --dry-run --json hex 2>/dev/null)
+
+    if [ -z "$matugen_raw" ]; then
+        notify-send "Matugen" "Error al procesar los colores del fondo."
+        return 1
+    fi
+
+    # Mapear colores de Material You a variables base16
+    local base00 base01 base02 base03 base04 base05 base06 base07
+    local base08 base09 base0A base0B base0C base0D base0E base0F
+
+    base00=$(echo "$matugen_raw" | jq -r '.colors.dark.surface // "#121212"')
+    base01=$(echo "$matugen_raw" | jq -r '.colors.dark.surface_container // "#1e1e1e"')
+    base02=$(echo "$matugen_raw" | jq -r '.colors.dark.surface_container_high // "#282828"')
+    base03=$(echo "$matugen_raw" | jq -r '.colors.dark.outline // "#484848"')
+    base04=$(echo "$matugen_raw" | jq -r '.colors.dark.on_surface_variant // "#c0c0c0"')
+    base05=$(echo "$matugen_raw" | jq -r '.colors.dark.on_surface // "#e0e0e0"')
+    base06=$(echo "$matugen_raw" | jq -r '.colors.dark.on_primary // "#ffffff"')
+    base07=$(echo "$matugen_raw" | jq -r '.colors.dark.secondary // "#89b4fa"')
+    base08=$(echo "$matugen_raw" | jq -r '.colors.dark.error // "#f38ba8"')
+    base09=$(echo "$matugen_raw" | jq -r '.colors.dark.tertiary // "#fab387"')
+    base0A=$(echo "$matugen_raw" | jq -r '.colors.dark.primary_container // "#f9e2af"')
+    base0B=$(echo "$matugen_raw" | jq -r '.colors.dark.secondary_container // "#a6e3a1"')
+    base0C=$(echo "$matugen_raw" | jq -r '.colors.dark.tertiary_container // "#94e2d5"')
+    base0D=$(echo "$matugen_raw" | jq -r '.colors.dark.primary // "#89b4fa"')
+    base0E=$(echo "$matugen_raw" | jq -r '.colors.dark.inverse_primary // "#cba6f7"')
+    base0F=$(echo "$matugen_raw" | jq -r '.colors.dark.scrim // "#000000"')
+
+    apply_palette "$base00" "$base01" "$base02" "$base03" "$base04" "$base05" "$base06" "$base07" \
+                  "$base08" "$base09" "$base0A" "$base0B" "$base0C" "$base0D" "$base0E" "$base0F" \
+                  "matugen-wallpaper" "Wallpaper Dinámico (Matugen)"
+}
+
 case "$ACTION" in
+    "wallpaper"|"matugen")
+        apply_matugen_wallpaper "$2"
+        ;;
+
     "next")
         ACTIVE_ID=$(jq -r '.active_theme' "$CONFIG_FILE")
         THEMES_COUNT=$(jq '.themes | length' "$CONFIG_FILE")
@@ -193,7 +268,7 @@ case "$ACTION" in
 
     "menu")
         ROFI_CONFIG="$HOME/.config/rofi/config.rasi"
-        THEME_OPTIONS=""
+        THEME_OPTIONS="󰸉  Extraer colores del Wallpaper (Matugen)\n"
         THEMES_COUNT=$(jq '.themes | length' "$CONFIG_FILE")
         for i in $(seq 0 $((THEMES_COUNT - 1))); do
             NAME=$(jq -r ".themes[$i].name" "$CONFIG_FILE")
@@ -201,37 +276,45 @@ case "$ACTION" in
             THEME_OPTIONS="${THEME_OPTIONS}${ICON}  ${NAME}\n"
         done
 
-        SELECTED=$(echo -e -n "$THEME_OPTIONS" | rofi -dmenu -p "󰔎 Seleccionar Tema" -theme "$ROFI_CONFIG" -theme-str 'window { width: 450px; }')
+        SELECTED=$(echo -e -n "$THEME_OPTIONS" | rofi -dmenu -p "󰔎 Seleccionar Tema" -theme "$ROFI_CONFIG" -theme-str 'window { width: 480px; }')
 
         if [ -n "$SELECTED" ]; then
-            SELECTED_NAME=$(echo "$SELECTED" | sed -E 's/^[^ ]+ +//')
-            for i in $(seq 0 $((THEMES_COUNT - 1))); do
-                NAME=$(jq -r ".themes[$i].name" "$CONFIG_FILE")
-                if [ "$NAME" = "$SELECTED_NAME" ]; then
-                    ID=$(jq -r ".themes[$i].id" "$CONFIG_FILE")
-                    SCHEME=$(jq -r ".themes[$i].scheme" "$CONFIG_FILE")
-                    apply_theme "$ID" "$SCHEME" "$NAME"
-                    break
-                fi
-            done
+            if [[ "$SELECTED" == *"Matugen"* ]]; then
+                apply_matugen_wallpaper
+            else
+                SELECTED_NAME=$(echo "$SELECTED" | sed -E 's/^[^ ]+ +//')
+                for i in $(seq 0 $((THEMES_COUNT - 1))); do
+                    NAME=$(jq -r ".themes[$i].name" "$CONFIG_FILE")
+                    if [ "$NAME" = "$SELECTED_NAME" ]; then
+                        ID=$(jq -r ".themes[$i].id" "$CONFIG_FILE")
+                        SCHEME=$(jq -r ".themes[$i].scheme" "$CONFIG_FILE")
+                        apply_theme "$ID" "$SCHEME" "$NAME"
+                        break
+                    fi
+                done
+            fi
         fi
         ;;
 
     *)
         if [ "$ACTION" = "init" ]; then
             ACTIVE_ID=$(jq -r '.active_theme' "$CONFIG_FILE")
-            THEMES_COUNT=$(jq '.themes | length' "$CONFIG_FILE")
-            for i in $(seq 0 $((THEMES_COUNT - 1))); do
-                ID=$(jq -r ".themes[$i].id" "$CONFIG_FILE")
-                if [ "$ID" = "$ACTIVE_ID" ]; then
-                    SCHEME=$(jq -r ".themes[$i].scheme" "$CONFIG_FILE")
-                    NAME=$(jq -r ".themes[$i].name" "$CONFIG_FILE")
-                    apply_theme "$ID" "$SCHEME" "$NAME"
-                    break
-                fi
-            done
+            if [ "$ACTIVE_ID" = "matugen-wallpaper" ]; then
+                apply_matugen_wallpaper
+            else
+                THEMES_COUNT=$(jq '.themes | length' "$CONFIG_FILE")
+                for i in $(seq 0 $((THEMES_COUNT - 1))); do
+                    ID=$(jq -r ".themes[$i].id" "$CONFIG_FILE")
+                    if [ "$ID" = "$ACTIVE_ID" ]; then
+                        SCHEME=$(jq -r ".themes[$i].scheme" "$CONFIG_FILE")
+                        NAME=$(jq -r ".themes[$i].name" "$CONFIG_FILE")
+                        apply_theme "$ID" "$SCHEME" "$NAME"
+                        break
+                    fi
+                done
+            fi
         else
-            echo "Uso: $0 {next|menu|init}"
+            echo "Uso: $0 {next|menu|init|wallpaper [path]}"
             exit 1
         fi
         ;;

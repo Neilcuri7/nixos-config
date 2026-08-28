@@ -53,18 +53,18 @@ in
       };
 
       general = {
-        gaps_in = 4;
-        gaps_out = 8;
+        gaps_in = 3;
+        gaps_out = 6;
         border_size = 2;
         layout = "dwindle";
       };
 
       decoration = {
-        rounding = 10;
+        rounding = 0;
         blur = {
-          enabled = true;
-          size = 3;
-          passes = 3;
+          enabled = false;
+          size = 2;
+          passes = 1;
           new_optimizations = true;
         };
         shadow = {
@@ -75,19 +75,16 @@ in
       animations = {
         enabled = true;
         bezier = [
-          "wind, 0.05, 0.9, 0.1, 1.05"
-          "winIn, 0.1, 1.1, 0.1, 1.1"
-          "winOut, 0.3, -0.3, 0, 1"
-          "liner, 1, 1, 1, 1"
+          "quick, 0.05, 0.9, 0.1, 1.0"
         ];
         animation = [
-          "windows, 1, 6, wind, slide"
-          "windowsIn, 1, 6, winIn, slide"
-          "windowsOut, 1, 5, winOut, slide"
-          "windowsMove, 1, 5, wind, slide"
-          "border, 1, 1, liner"
-          "fade, 1, 10, default"
-          "workspaces, 1, 5, wind"
+          "windows, 1, 3, quick, slide"
+          "windowsIn, 1, 3, quick, slide"
+          "windowsOut, 1, 2, quick, slide"
+          "windowsMove, 1, 3, quick, slide"
+          "border, 0"
+          "fade, 1, 3, quick"
+          "workspaces, 1, 3, quick, slide"
         ];
       };
 
@@ -104,6 +101,8 @@ in
         "$mainMod, W, exec, $browser"
         "$mainMod, E, exec, $fileManager"
         "$mainMod, V, exec, ${config.home.homeDirectory}/scripts/rofi-clipboard.sh"
+        "$mainMod, N, exec, swaync-client -t -sw" # Abrir/cerrar panel e historial de notificaciones
+        "$mainMod SHIFT, N, exec, swaync-client -C" # Limpiar todas las notificaciones
         "$mainMod, Q, killactive,"
         "$mainMod, F, fullscreen,"
         "$mainMod CTRL, F, fullscreen, 1"

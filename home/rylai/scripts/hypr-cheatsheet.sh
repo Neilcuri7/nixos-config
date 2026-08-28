@@ -35,6 +35,8 @@ KEYBINDINGS="󰌌 ─── [ APLICACIONES Y LANZADORES ] ───
 
 󰒓 ─── [ SISTEMA Y UTILIDADES ] ───
 󰌽 Alt + Shift               : Cambiar distribución de teclado (us / es)
+󰂚 Super + N                 : Ver historial / panel de notificaciones (SwayNC)
+󰂛 Super + Shift + N         : Limpiar todas las notificaciones
 󰄄 Super + S                 : Captura de pantalla (Grim + Slurp + Swappy)
 󰈊 Super + Shift + O         : Selector de color (Hyprpicker)
 󰔎 Super + Shift + T         : Cambiar tema claro / oscuro (GTK)
@@ -47,7 +49,7 @@ if command -v rofi >/dev/null 2>&1; then
     echo "$KEYBINDINGS" | rofi -dmenu \
         -p "󰌽 Atajos de Teclado" \
         -theme "$ROFI_CONFIG" \
-        -theme-str 'window { width: 850px; }'
+        -theme-str 'window { width: 950px; } listview { lines: 17; } element-text { font: "JetBrainsMono Nerd Font 10"; } prompt { font: "JetBrainsMono Nerd Font 10.5"; } entry { font: "JetBrainsMono Nerd Font 10.5"; }'
 else
     echo "$KEYBINDINGS"
 fi

@@ -70,23 +70,33 @@ SELECTED_WALLPAPER=$(find -L "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.p
 if [ -n "$SELECTED_WALLPAPER" ]; then
     FULL_PATH="$WALLPAPER_DIR/$SELECTED_WALLPAPER"
     STATE_DIR="$HOME/.local/state/wallpaper"
+    CURRENT_PATH_FILE="$STATE_DIR/current_path.txt"
     CURRENT_WALLPAPER="$STATE_DIR/current"
     
     mkdir -p "$STATE_DIR"
     
-    # 1. Obtener PIDs anteriores de swaybg
+    # 1. Guardar la ruta seleccionada inmediatamente
+    echo "$FULL_PATH" > "$CURRENT_PATH_FILE"
+    rm -f "$CURRENT_WALLPAPER"
+    cp -L "$FULL_PATH" "$CURRENT_WALLPAPER" 2>/dev/null
+
+    # 2. Iniciar la nueva instancia de swaybg
     OLD_PIDS=$(pgrep swaybg)
-
-    # 2. Iniciar inmediatamente la nueva instancia de swaybg con la ruta del fondo elegido
     swaybg -i "$FULL_PATH" -m fill &
+    NEW_PID=$!
 
-    # 3. Eliminar instancias anteriores de swaybg tras un instante brevísimo para transición suave
+    # 3. Eliminar instancias anteriores suavemente
     if [ -n "$OLD_PIDS" ]; then
-        (sleep 0.3 && kill $OLD_PIDS 2>/dev/null) &
+        (sleep 0.15 && for pid in $OLD_PIDS; do [ "$pid" != "$NEW_PID" ] && kill "$pid" 2>/dev/null; done) &
     fi
 
-    # 4. Guardar/actualizar la referencia para que persista entre reinicios sin que Nix/Home Manager lo borre
-    rm -f "$CURRENT_WALLPAPER"
-    cp -L "$FULL_PATH" "$CURRENT_WALLPAPER"
+    # 4. Si el tema activo es 'matugen-wallpaper', actualizar los colores del nuevo fondo automáticamente
+    THEMES_CONFIG="$HOME/.config/themes.json"
+    if [ -f "$THEMES_CONFIG" ] && command -v jq &>/dev/null; then
+        ACTIVE_THEME=$(jq -r '.active_theme // empty' "$THEMES_CONFIG" 2>/dev/null)
+        if [ "$ACTIVE_THEME" = "matugen-wallpaper" ]; then
+            "$HOME/scripts/theme-switcher.sh" wallpaper "$FULL_PATH" &
+        fi
+    fi
 fi
 

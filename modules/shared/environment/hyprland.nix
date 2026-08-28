@@ -26,6 +26,7 @@
     environment.systemPackages = with pkgs; [
       inputs.ags.packages.${pkgs.system}.default
       swaybg
+      matugen
       swaynotificationcenter
       rofi
       wlogout
