@@ -70,11 +70,13 @@
   virtualisation.docker.enable = true;
 
   programs.zsh.enable = true;
+  programs.ydotool.enable = true;
+  hardware.uinput.enable = true;
 
   users.users.rylai = {
     isNormalUser = true;
     shell = pkgs.zsh;
-    extraGroups = [ "wheel" "networkmanager" "video" "audio" "docker" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "audio" "docker" "input" "uinput" ];
   };
 
   # Configuración de Stylix (Tema Nord unificado)
