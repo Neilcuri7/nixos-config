@@ -76,7 +76,7 @@
   users.users.rylai = {
     isNormalUser = true;
     shell = pkgs.zsh;
-    extraGroups = [ "wheel" "networkmanager" "video" "audio" "docker" "input" "uinput" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "audio" "docker" "input" "uinput" "ydotool" ];
   };
 
   # Configuración de Stylix (Tema Nord unificado)
