@@ -18,12 +18,18 @@
 
   programs.bash = {
     enable = true;
+    shellAliases = {
+      brave-dev = "brave --remote-debugging-port=9222 --user-data-dir=\"$HOME/.config/brave-dev\" &>/dev/null & disown";
+    };
   };
 
   programs.zsh = {
     enable = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
+    shellAliases = {
+      brave-dev = "brave --remote-debugging-port=9222 --user-data-dir=\"$HOME/.config/brave-dev\" &>/dev/null & disown";
+    };
     history = {
       size = 10000;
       share = true;
@@ -101,6 +107,23 @@
       "application/xml" = "org.kde.kwrite.desktop";
       "text/xml" = "org.kde.kwrite.desktop";
     };
+  };
+
+  xdg.desktopEntries.brave-dev = {
+    name = "Brave (Dev Mode)";
+    genericName = "Web Browser";
+    comment = "Brave Browser with Remote Debugging";
+    exec = "brave --remote-debugging-port=9222 --user-data-dir=%h/.config/brave-dev %U";
+    terminal = false;
+    icon = "brave-browser";
+    categories = [ "Network" "WebBrowser" "Development" ];
+    mimeType = [
+      "text/html"
+      "text/xml"
+      "application/xhtml+xml"
+      "x-scheme-handler/http"
+      "x-scheme-handler/https"
+    ];
   };
 
   # Tema de Cursor (Natsuki)
