@@ -113,10 +113,10 @@
     name = "Brave (Dev Mode)";
     genericName = "Web Browser";
     comment = "Brave Browser with Remote Debugging";
-    exec = "brave --remote-debugging-port=9222 --user-data-dir=%h/.config/brave-dev %U";
+    exec = "brave --remote-debugging-port=9222 --user-data-dir=${config.home.homeDirectory}/.config/brave-dev %U";
     terminal = false;
     icon = "brave-browser";
-    categories = [ "Network" "WebBrowser" "Development" ];
+    categories = [ "Network" "WebBrowser" ];
     mimeType = [
       "text/html"
       "text/xml"
