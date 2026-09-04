@@ -106,6 +106,15 @@
       "application/x-yaml" = "org.kde.kwrite.desktop";
       "application/xml" = "org.kde.kwrite.desktop";
       "text/xml" = "org.kde.kwrite.desktop";
+      "image/png" = "imv.desktop";
+      "image/jpeg" = "imv.desktop";
+      "image/gif" = "imv.desktop";
+      "image/webp" = "imv.desktop";
+      "image/bmp" = "imv.desktop";
+      "image/tiff" = "imv.desktop";
+      "image/svg+xml" = "imv.desktop";
+      "image/heif" = "imv.desktop";
+      "image/avif" = "imv.desktop";
     };
   };
 
