@@ -165,6 +165,18 @@ in
         "$mainMod SHIFT, 9, movetoworkspace, 9"
         "$mainMod SHIFT, 0, movetoworkspace, 10"
 
+        # Enviar ventana activa a Workspace en segundo plano sin cambiar de workspace (1-10)
+        "$mainMod CTRL, 1, movetoworkspacesilent, 1"
+        "$mainMod CTRL, 2, movetoworkspacesilent, 2"
+        "$mainMod CTRL, 3, movetoworkspacesilent, 3"
+        "$mainMod CTRL, 4, movetoworkspacesilent, 4"
+        "$mainMod CTRL, 5, movetoworkspacesilent, 5"
+        "$mainMod CTRL, 6, movetoworkspacesilent, 6"
+        "$mainMod CTRL, 7, movetoworkspacesilent, 7"
+        "$mainMod CTRL, 8, movetoworkspacesilent, 8"
+        "$mainMod CTRL, 9, movetoworkspacesilent, 9"
+        "$mainMod CTRL, 0, movetoworkspacesilent, 10"
+
         # Special Workspace (Scratchpad)
         "$mainMod, space, togglespecialworkspace,"
         "$mainMod SHIFT, space, movetoworkspace, special"
