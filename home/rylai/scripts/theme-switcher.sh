@@ -64,7 +64,9 @@ apply_palette() {
 
     # 3. Generar y aplicar colores dinámicos a Kitty
     mkdir -p "$HOME/.config/kitty"
-    cat <<EOF > "$HOME/.config/kitty/current-theme.conf"
+    local kitty_tmp
+    kitty_tmp=$(mktemp)
+    cat <<EOF > "$kitty_tmp"
 # Tema generado automáticamente por theme-switcher.sh
 background            $base00
 foreground            $base05
@@ -96,10 +98,11 @@ color13 $base0E
 color14 $base0C
 color15 $base07
 EOF
+    mv "$kitty_tmp" "$HOME/.config/kitty/current-theme.conf"
 
     # Aplicar a las terminales Kitty abiertas
     if command -v kitty &>/dev/null; then
-        kitty @ set-colors --all "$HOME/.config/kitty/current-theme.conf" 2>/dev/null || killall -USR1 kitty 2>/dev/null
+        kitty @ set-colors --all "$HOME/.config/kitty/current-theme.conf" 2>/dev/null || killall -USR1 kitty 2>/dev/null || true
     fi
 
     # 4. Generar variables CSS dinámicas para AGS
@@ -111,7 +114,9 @@ EOF
     rgb_accent=$(hex_to_rgb "$base0D")
     rgb_fg=$(hex_to_rgb "$base05")
 
-    cat <<EOF > "$HOME/.config/ags/theme-colors.css"
+    local ags_tmp
+    ags_tmp=$(mktemp)
+    cat <<EOF > "$ags_tmp"
 /* Variables dinámicas generadas por theme-switcher.sh */
 @define-color theme_bg $base00;
 @define-color theme_fg $base05;
@@ -120,15 +125,16 @@ EOF
 @define-color theme_module_bg rgba($rgb_bg, 0.75);
 @define-color theme_hover rgba($rgb_accent, 0.25);
 EOF
+    mv "$ags_tmp" "$HOME/.config/ags/theme-colors.css"
 
-    # Recargar estilos de AGS en caliente
+    # Recargar estilos de AGS en caliente (soporte para v1 y v2)
     if command -v ags &>/dev/null && pgrep -x ags &>/dev/null; then
-        ags -r "App.resetCss(); App.applyCss('${HOME}/.config/ags/style.css');" &>/dev/null
+        ags -r "App.resetCss(); App.applyCss('${HOME}/.config/ags/style.css');" &>/dev/null || ags run-js "App.resetCss(); App.applyCss('${HOME}/.config/ags/style.css');" &>/dev/null || true
     fi
 
     # 5. Notificar a GTK/GSettings
     if command -v gsettings &>/dev/null; then
-        gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' &>/dev/null
+        gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' &>/dev/null || true
     fi
 
     # 6. Actualizar tema activo en ~/.config/themes.json
@@ -139,7 +145,7 @@ EOF
 
     # 7. Notificación visual
     if command -v notify-send &>/dev/null; then
-        notify-send "Tema cambiado" "Paleta activa: $name" -i preferences-desktop-theme
+        notify-send "Tema cambiado" "Paleta activa: $name" -i preferences-desktop-theme &>/dev/null || true
     fi
 }
 

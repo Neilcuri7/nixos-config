@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 WALLPAPER_DIR="$HOME/.config/wallpapers"
 CACHE_DIR="$HOME/.cache/wallpaper-thumbs"
@@ -12,15 +13,17 @@ fi
 mkdir -p "$CACHE_DIR"
 
 generate_entry() {
-    local wallpaper=$(readlink -f "$1")
-    local filename=$(basename "$wallpaper")
+    local wallpaper
+    wallpaper=$(readlink -f "$1")
+    local filename
+    filename=$(basename "$wallpaper")
     local thumb="$CACHE_DIR/$filename"
 
     if [ ! -f "$thumb" ] || [ "$wallpaper" -nt "$thumb" ]; then
         if command -v magick &>/dev/null; then
-            magick "$wallpaper" -thumbnail 250x150^ -gravity center -extent 250x150 "$thumb" &>/dev/null
+            magick "$wallpaper" -thumbnail 250x150^ -gravity center -extent 250x150 "$thumb" &>/dev/null || true
         elif command -v convert &>/dev/null; then
-            convert "$wallpaper" -thumbnail 250x150^ -gravity center -extent 250x150 "$thumb" &>/dev/null
+            convert "$wallpaper" -thumbnail 250x150^ -gravity center -extent 250x150 "$thumb" &>/dev/null || true
         else
             thumb="$wallpaper"
         fi
@@ -61,11 +64,12 @@ element-text {
 }
 '
 
-SELECTED_WALLPAPER=$(find -L "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) | \
-    while read -r img; do
-        generate_entry "$img"
-    done | \
-    rofi -dmenu -i -show-icons -p "󰸉 Fondo de pantalla" -theme "$ROFI_CONFIG" -theme-str "$ROFI_GRID_THEME")
+# Generar miniaturas de forma paralela (multi-hilo) para evitar congelamientos
+NPROC=$(nproc 2>/dev/null || echo 4)
+ENTRIES=$(find -L "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) -print0 | \
+    xargs -0 -P "$NPROC" -I {} bash -c 'generate_entry "$@"' _ {})
+
+SELECTED_WALLPAPER=$(echo -n "$ENTRIES" | rofi -dmenu -i -show-icons -p "󰸉 Fondo de pantalla" -theme "$ROFI_CONFIG" -theme-str "$ROFI_GRID_THEME" || true)
 
 if [ -n "$SELECTED_WALLPAPER" ]; then
     FULL_PATH="$WALLPAPER_DIR/$SELECTED_WALLPAPER"
@@ -75,25 +79,24 @@ if [ -n "$SELECTED_WALLPAPER" ]; then
     
     mkdir -p "$STATE_DIR"
     
-    # 1. Guardar la ruta seleccionada inmediatamente
-    echo "$FULL_PATH" > "$CURRENT_PATH_FILE"
-    rm -f "$CURRENT_WALLPAPER"
-    cp -L "$FULL_PATH" "$CURRENT_WALLPAPER" 2>/dev/null
+    # 1. Guardar la ruta seleccionada atómicamente
+    printf "%s" "$FULL_PATH" > "$CURRENT_PATH_FILE.tmp" && mv "$CURRENT_PATH_FILE.tmp" "$CURRENT_PATH_FILE"
+    cp -L "$FULL_PATH" "$CURRENT_WALLPAPER.tmp" 2>/dev/null && mv "$CURRENT_WALLPAPER.tmp" "$CURRENT_WALLPAPER"
 
     # 2. Iniciar la nueva instancia de swaybg
-    OLD_PIDS=$(pgrep swaybg)
+    OLD_PIDS=$(pgrep swaybg || true)
     swaybg -i "$FULL_PATH" -m fill &
     NEW_PID=$!
 
     # 3. Eliminar instancias anteriores suavemente
     if [ -n "$OLD_PIDS" ]; then
-        (sleep 0.15 && for pid in $OLD_PIDS; do [ "$pid" != "$NEW_PID" ] && kill "$pid" 2>/dev/null; done) &
+        (sleep 0.15 && for pid in $OLD_PIDS; do [ "$pid" != "$NEW_PID" ] && kill "$pid" 2>/dev/null || true; done) &
     fi
 
     # 4. Si el tema activo es 'matugen-wallpaper', actualizar los colores del nuevo fondo automáticamente
     THEMES_CONFIG="$HOME/.config/themes.json"
     if [ -f "$THEMES_CONFIG" ] && command -v jq &>/dev/null; then
-        ACTIVE_THEME=$(jq -r '.active_theme // empty' "$THEMES_CONFIG" 2>/dev/null)
+        ACTIVE_THEME=$(jq -r '.active_theme // empty' "$THEMES_CONFIG" 2>/dev/null || true)
         if [ "$ACTIVE_THEME" = "matugen-wallpaper" ]; then
             "$HOME/scripts/theme-switcher.sh" wallpaper "$FULL_PATH" &
         fi
