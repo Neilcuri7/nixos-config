@@ -64,12 +64,12 @@ element-text {
 }
 '
 
-# Generar miniaturas de forma paralela (multi-hilo) para evitar congelamientos
+# Generar miniaturas de forma paralela (multi-hilo) e inyectar directamente en rofi vía tubería
+# (evita que la sustitución de comandos de bash $(...) elimine los bytes nulos \0 necesarios para los iconos)
 NPROC=$(nproc 2>/dev/null || echo 4)
-ENTRIES=$(find -L "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) -print0 | \
-    xargs -0 -P "$NPROC" -I {} bash -c 'generate_entry "$@"' _ {})
-
-SELECTED_WALLPAPER=$(echo -n "$ENTRIES" | rofi -dmenu -i -show-icons -p "󰸉 Fondo de pantalla" -theme "$ROFI_CONFIG" -theme-str "$ROFI_GRID_THEME" || true)
+SELECTED_WALLPAPER=$(find -L "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) -print0 | \
+    xargs -0 -P "$NPROC" -I {} bash -c 'generate_entry "$@"' _ {} | \
+    rofi -dmenu -i -show-icons -p "󰸉 Fondo de pantalla" -theme "$ROFI_CONFIG" -theme-str "$ROFI_GRID_THEME" || true)
 
 if [ -n "$SELECTED_WALLPAPER" ]; then
     FULL_PATH="$WALLPAPER_DIR/$SELECTED_WALLPAPER"
