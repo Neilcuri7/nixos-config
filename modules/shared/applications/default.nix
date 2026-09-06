@@ -41,6 +41,7 @@
         pkgs.file-roller
         pkgs.obs-studio
         pkgs.gpu-screen-recorder-ui
+        pkgs.wpsoffice
         inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
         inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-ide
       ];
