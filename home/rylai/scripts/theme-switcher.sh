@@ -12,26 +12,20 @@ fi
 
 ACTION="${1:-menu}"
 
-# Función central para emitir señales POSIX de recarga en caliente
 reload_environment() {
-    # 1. Recargar Hyprland (para releer colors.conf)
     if command -v hyprctl &>/dev/null && [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
         hyprctl reload &>/dev/null || true
     fi
 
-    # 2. Recargar instancias de Kitty abiertas
     killall -SIGUSR1 kitty 2>/dev/null || true
 
-    # 3. Recargar estilos CSS de Waybar
     killall -SIGUSR2 waybar 2>/dev/null || true
 
-    # 4. Recargar estilos de SwayNC
     if command -v swaync-client &>/dev/null; then
         swaync-client --reload-css &>/dev/null || true
     fi
 }
 
-# Función para aplicar una paleta base16 fija en todos los archivos de destino
 apply_palette() {
     local base00="$1" base01="$2" base02="$3" base03="$4"
     local base04="$5" base05="$6" base06="$7" base07="$8"
@@ -42,9 +36,7 @@ apply_palette() {
 
     mkdir -p "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/waybar" "$HOME/.config/swaync" "$HOME/.config/rofi"
 
-    # 1. Generar colores para Hyprland
     cat <<EOF > "$HOME/.config/hypr/colors.conf"
-# Colores generados por theme-switcher.sh ($name)
 \$background = rgb(${base00#\#})
 \$foreground = rgb(${base05#\#})
 \$primary = rgb(${base0D#\#})
@@ -55,9 +47,7 @@ apply_palette() {
 \$outline = rgb(${base03#\#})
 EOF
 
-    # 2. Generar colores para Kitty
     cat <<EOF > "$HOME/.config/kitty/current-theme.conf"
-# Tema generado automáticamente por theme-switcher.sh ($name)
 background            $base00
 foreground            $base05
 selection_background  $base02
@@ -68,7 +58,6 @@ cursor_text_color     $base00
 active_border_color   $base0D
 inactive_border_color $base02
 
-# Paleta para terminal
 color0  $base00
 color1  $base08
 color2  $base0B
@@ -78,7 +67,6 @@ color5  $base0E
 color6  $base0C
 color7  $base05
 
-# Colores brillantes
 color8  $base03
 color9  $base08
 color10 $base0B
@@ -89,9 +77,7 @@ color14 $base0C
 color15 $base07
 EOF
 
-    # 3. Generar colores para Waybar
     cat <<EOF > "$HOME/.config/waybar/colors.css"
-/* Variables generadas por theme-switcher.sh ($name) */
 @define-color background $base00;
 @define-color foreground $base05;
 @define-color primary $base0D;
@@ -104,9 +90,7 @@ EOF
 @define-color outline $base03;
 EOF
 
-    # 4. Generar colores para SwayNC
     cat <<EOF > "$HOME/.config/swaync/colors.css"
-/* Variables generadas por theme-switcher.sh ($name) */
 @define-color cc-bg $base01;
 @define-color noti-bg $base00;
 @define-color noti-bg-hover $base02;
@@ -116,9 +100,7 @@ EOF
 @define-color accent-color $base0D;
 EOF
 
-    # 5. Generar colores para Rofi
     cat <<EOF > "$HOME/.config/rofi/colors.rasi"
-/* Variables generadas por theme-switcher.sh ($name) */
 * {
     background:  ${base00}ee;
     selected:    ${base02}dd;
@@ -129,22 +111,18 @@ EOF
 }
 EOF
 
-    # 6. Actualizar tema activo en themes.json
+    mkdir -p "$HOME/.config/wlogout"
+    cp "$HOME/.config/waybar/colors.css" "$HOME/.config/wlogout/colors.css" 2>/dev/null || true
+
     if command -v jq &>/dev/null && [ -f "$CONFIG_FILE" ]; then
         local tmp
         tmp=$(mktemp)
         jq --arg id "$theme_id" '.active_theme = $id' "$CONFIG_FILE" > "$tmp" 2>/dev/null && mv "$tmp" "$CONFIG_FILE"
     fi
 
-    # 7. Recargar todas las aplicaciones abiertas
     reload_environment
-
-    if command -v notify-send &>/dev/null; then
-        notify-send "Tema cambiado" "Paleta activa: $name" -i preferences-desktop-theme &>/dev/null || true
-    fi
 }
 
-# Función para aplicar un tema por su ID desde themes.json
 apply_theme() {
     local theme_id="$1"
     local name="$2"

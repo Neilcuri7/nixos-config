@@ -1,11 +1,9 @@
-{ config, pkgs, lib, ... }:
+{ config, lib, ... }:
 
 let
   modifier = "SUPER";
-  wallpaperPath = ../../../modules/shared/assets/wallpapers/877911.png;
 in
 {
-  # Teclado en español e inglés con Alt+Shift
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
@@ -39,10 +37,9 @@ in
         "${config.home.homeDirectory}/scripts/wallpaper.sh --restore"
         "${config.home.homeDirectory}/scripts/theme-switcher.sh init"
         "swaync"
-        "waybar"
         "hypridle"
-        "wl-paste --type text --watch cliphist store" # Guardar texto en el historial
-        "wl-paste --type image --watch cliphist store" # Guardar imágenes en el historial
+        "wl-paste --type text --watch cliphist store"
+        "wl-paste --type image --watch cliphist store"
       ];
 
       input = {
@@ -97,17 +94,13 @@ in
         preserve_split = true;
       };
 
-      # Reglas de ventanas (Se deshabilitan temporalmente o se actualizan a la nueva sintaxis si es necesario)
-      # windowrulev2 = [];
-
-      # Atajos de Teclado (Keybindings de Lucifers_NIX)
       bind = [
         "$mainMod, Return, exec, $terminal"
         "$mainMod, W, exec, $browser"
         "$mainMod, E, exec, $fileManager"
         "$mainMod, V, exec, ${config.home.homeDirectory}/scripts/rofi-clipboard.sh"
-        "$mainMod, N, exec, swaync-client -t -sw" # Abrir/cerrar panel e historial de notificaciones
-        "$mainMod SHIFT, N, exec, swaync-client -C" # Limpiar todas las notificaciones
+        "$mainMod, N, exec, swaync-client -t -sw"
+        "$mainMod SHIFT, N, exec, swaync-client -C"
         "$mainMod, Q, killactive,"
         "$mainMod, F, fullscreen,"
         "$mainMod CTRL, F, fullscreen, 1"
@@ -115,6 +108,7 @@ in
         "$mainMod SHIFT, P, pin"
         "$mainMod, T, exec, kitty yazi"
         "$mainMod, S, exec, grim -g \"$(slurp)\" - | swappy -f -"
+        "$mainMod, equal, exec, grim - | swappy -f -"
         "$mainMod, H, exec, ${config.home.homeDirectory}/scripts/hypr-cheatsheet.sh"
         "$mainMod SHIFT, W, exec, ${config.home.homeDirectory}/scripts/wallpaper.sh --select"
         "$mainMod SHIFT, Return, exec, rofi -show drun -show-icons -theme ${config.home.homeDirectory}/.config/rofi/config.rasi"
@@ -126,7 +120,6 @@ in
         "$mainMod SHIFT, G, exec, ${config.home.homeDirectory}/scripts/gamemode.sh"
         "$mainMod SHIFT, I, layoutmsg, togglesplit"
 
-        # Mover foco entre ventanas
         "$mainMod, left, movefocus, l"
         "$mainMod, right, movefocus, r"
         "$mainMod, up, movefocus, u"
@@ -135,7 +128,6 @@ in
         "$mainMod, k, movefocus, u"
         "$mainMod, j, movefocus, d"
 
-        # Mover ventana activa
         "$mainMod SHIFT, left, movewindow, l"
         "$mainMod SHIFT, right, movewindow, r"
         "$mainMod SHIFT, up, movewindow, u"
@@ -145,7 +137,6 @@ in
         "$mainMod SHIFT, k, movewindow, u"
         "$mainMod SHIFT, j, movewindow, d"
 
-        # Navegación por Workspaces (1-10)
         "$mainMod, 1, workspace, 1"
         "$mainMod, 2, workspace, 2"
         "$mainMod, 3, workspace, 3"
@@ -157,7 +148,6 @@ in
         "$mainMod, 9, workspace, 9"
         "$mainMod, 0, workspace, 10"
 
-        # Mover ventana activa a Workspace (1-10)
         "$mainMod SHIFT, 1, movetoworkspace, 1"
         "$mainMod SHIFT, 2, movetoworkspace, 2"
         "$mainMod SHIFT, 3, movetoworkspace, 3"
@@ -169,7 +159,6 @@ in
         "$mainMod SHIFT, 9, movetoworkspace, 9"
         "$mainMod SHIFT, 0, movetoworkspace, 10"
 
-        # Enviar ventana activa a Workspace en segundo plano sin cambiar de workspace (1-10)
         "$mainMod CTRL, 1, movetoworkspacesilent, 1"
         "$mainMod CTRL, 2, movetoworkspacesilent, 2"
         "$mainMod CTRL, 3, movetoworkspacesilent, 3"
@@ -181,11 +170,9 @@ in
         "$mainMod CTRL, 9, movetoworkspacesilent, 9"
         "$mainMod CTRL, 0, movetoworkspacesilent, 10"
 
-        # Special Workspace (Scratchpad)
         "$mainMod, space, togglespecialworkspace,"
         "$mainMod SHIFT, space, movetoworkspace, special"
 
-        # GPU Screen Recorder (Wayland Workaround - Default UI hotkeys)
         "ALT, Z, exec, gsr-ui-cli toggle-show"
         "ALT, F9, exec, gsr-ui-cli toggle-record"
         "ALT, F7, exec, gsr-ui-cli toggle-pause"
@@ -195,13 +182,11 @@ in
         "ALT, F12, exec, gsr-ui-cli replay-save-10-min"
       ];
 
-      # Mouse Binds
       bindm = [
         "$mainMod, mouse:272, movewindow"
         "$mainMod, mouse:273, resizewindow"
       ];
 
-      # Teclas Multimedia
       binde = [
         ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
         ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
@@ -212,33 +197,11 @@ in
     };
   };
 
-
-  # Copiar la configuración del tema de Rofi
-  home.file.".config/rofi/config.rasi" = {
-    source = ../theme/rofi.rasi;
-  };
-
-  # Copiar scripts personalizados
-  home.file."scripts" = {
-    source = ../scripts;
-    recursive = true;
-    executable = true;
-  };
-
-  # Copiar wallpapers portables
-  home.file.".config/wallpapers" = {
-    source = ../../../modules/shared/assets/wallpapers;
-    recursive = true;
-  };
-
-
-
-  # Configuración de Swappy para Screenshots
   xdg.configFile."swappy/config".text = ''
     [Default]
     save_dir=$HOME/Pictures/Screenshots
     save_filename_format=swappy-%Y%m%d-%H%M%S.png
-    show_panel=true
+    show_panel=false
     line_size=5
     text_size=20
     text_font=sans-serif

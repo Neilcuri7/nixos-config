@@ -9,25 +9,19 @@
     inputs.airi.homeModules.ai
   ];
 
-  # Home Manager - Configuración de Usuario Solamente (REGLA #9)
-  # Prohibido usar home.packages. Todos los paquetes se declaran en NixOS.
-
   home.username = "rylai";
   home.homeDirectory = "/home/rylai";
 
-  # Asegurar directorio base para la activación de codex en airi
   home.file.".codex/.keep".text = "";
 
-  # Opción 3: Variables de entorno y MimeApps (Navegador predeterminado: Brave)
   home.sessionVariables = {
     BROWSER = "brave";
     TERMINAL = "kitty";
     TERM = "xterm-256color";
     EDITOR = "micro";
-    VISUAL = "kate";
+    VISUAL = "kwrite";
   };
 
-  # Terminal por defecto para aplicaciones XDG / GLib / Thunar
   xdg.configFile."xdg-terminals.list".text = "kitty.desktop\n";
 
   dconf.settings = {
@@ -44,29 +38,29 @@
       "application/xhtml+xml" = "brave-browser.desktop";
       "x-scheme-handler/http" = "brave-browser.desktop";
       "x-scheme-handler/https" = "brave-browser.desktop";
-      "text/plain" = "org.kde.kate.desktop";
+      "text/plain" = "org.kde.kwrite.desktop";
       "text/markdown" = "typora.desktop";
-      "text/x-csrc" = "org.kde.kate.desktop";
-      "text/x-c++src" = "org.kde.kate.desktop";
-      "text/x-chdr" = "org.kde.kate.desktop";
-      "text/x-java" = "org.kde.kate.desktop";
-      "text/x-python" = "org.kde.kate.desktop";
-      "text/x-script.python" = "org.kde.kate.desktop";
-      "text/javascript" = "org.kde.kate.desktop";
-      "application/javascript" = "org.kde.kate.desktop";
-      "application/typescript" = "org.kde.kate.desktop";
-      "text/css" = "org.kde.kate.desktop";
-      "application/json" = "org.kde.kate.desktop";
-      "application/x-shellscript" = "org.kde.kate.desktop";
-      "text/x-shellscript" = "org.kde.kate.desktop";
-      "text/rust" = "org.kde.kate.desktop";
-      "text/x-go" = "org.kde.kate.desktop";
-      "text/x-sql" = "org.kde.kate.desktop";
-      "text/x-nix" = "org.kde.kate.desktop";
-      "text/x-yaml" = "org.kde.kate.desktop";
-      "application/x-yaml" = "org.kde.kate.desktop";
-      "application/xml" = "org.kde.kate.desktop";
-      "text/xml" = "org.kde.kate.desktop";
+      "text/x-csrc" = "org.kde.kwrite.desktop";
+      "text/x-c++src" = "org.kde.kwrite.desktop";
+      "text/x-chdr" = "org.kde.kwrite.desktop";
+      "text/x-java" = "org.kde.kwrite.desktop";
+      "text/x-python" = "org.kde.kwrite.desktop";
+      "text/x-script.python" = "org.kde.kwrite.desktop";
+      "text/javascript" = "org.kde.kwrite.desktop";
+      "application/javascript" = "org.kde.kwrite.desktop";
+      "application/typescript" = "org.kde.kwrite.desktop";
+      "text/css" = "org.kde.kwrite.desktop";
+      "application/json" = "org.kde.kwrite.desktop";
+      "application/x-shellscript" = "org.kde.kwrite.desktop";
+      "text/x-shellscript" = "org.kde.kwrite.desktop";
+      "text/rust" = "org.kde.kwrite.desktop";
+      "text/x-go" = "org.kde.kwrite.desktop";
+      "text/x-sql" = "org.kde.kwrite.desktop";
+      "text/x-nix" = "org.kde.kwrite.desktop";
+      "text/x-yaml" = "org.kde.kwrite.desktop";
+      "application/x-yaml" = "org.kde.kwrite.desktop";
+      "application/xml" = "org.kde.kwrite.desktop";
+      "text/xml" = "org.kde.kwrite.desktop";
       "image/png" = "imv.desktop";
       "image/jpeg" = "imv.desktop";
       "image/gif" = "imv.desktop";
@@ -96,7 +90,6 @@
     ];
   };
 
-  # Tema de Cursor (Natsuki)
   home.pointerCursor = {
     enable = true;
     gtk.enable = true;
@@ -113,7 +106,6 @@
     size = 24;
   };
 
-  # Configuración visual / Dotfiles en $HOME
   gtk = {
     enable = true;
     iconTheme = {
@@ -132,6 +124,16 @@
   home.file."Pictures/wallpapers" = {
     source = ../../modules/shared/assets/wallpapers;
     recursive = true;
+  };
+
+  home.file.".config/rofi/config.rasi" = {
+    source = ./theme/rofi.rasi;
+  };
+
+  home.file."scripts" = {
+    source = ./scripts;
+    recursive = true;
+    executable = true;
   };
 
   home.file.".config/matugen" = {

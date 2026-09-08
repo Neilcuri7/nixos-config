@@ -55,7 +55,7 @@
     base16Scheme = "${pkgs.base16-schemes}/share/themes/nord.yaml";
     polarity = "dark";
     opacity = {
-      terminal = 0.90;
+      terminal = 0.70;
       popups = 0.85;
     };
     fonts = {

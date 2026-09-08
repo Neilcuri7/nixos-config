@@ -9,14 +9,13 @@ KEYBINDINGS="󰌌 ─── [ APLICACIONES Y LANZADORES ] ───
 󰉋 Super + E                 : Explorador de archivos (Thunar)
 󰈔 Super + T                 : Gestor de archivos Yazi (en Kitty)
 󰅍 Super + V                 : Historial de portapapeles (Cliphist + Rofi)
-󰞅 Super + Shift + E         : Seleccionador de Emojis (Rofi)
 󰸉 Super + Shift + W         : Selector de fondo de pantalla (Rofi)
 
 󰊓 ─── [ GESTIÓN DE VENTANAS ] ───
 󰅖 Super + Q                 : Cerrar ventana activa
 󰕰 Super + Shift + F         : Alternar ventana flotante (Toggle floating)
 󰐃 Super + Shift + P         : Anclar ventana flotante (Pin en todos los escritorios)
-󰊓 Super + Ctrl + F          : Maximizar ventana (Sin tapar barra AGS)
+󰊓 Super + Ctrl + F          : Maximizar ventana
 󰊓 Super + F                 : Pantalla completa total (Fullscreen)
 󰕰 Super + P                 : Modo Pseudo-tile
 󰤼 Super + Shift + I         : Alternar split horizontal/vertical
@@ -37,9 +36,10 @@ KEYBINDINGS="󰌌 ─── [ APLICACIONES Y LANZADORES ] ───
 󰌽 Alt + Shift               : Cambiar distribución de teclado (us / es)
 󰂚 Super + N                 : Ver historial / panel de notificaciones (SwayNC)
 󰂛 Super + Shift + N         : Limpiar todas las notificaciones
-󰄄 Super + S                 : Captura de pantalla (Grim + Slurp + Swappy)
+󰄄 Super + S                 : Captura de pantalla de área (Grim + Slurp + Swappy)
+󰄄 Super + =                 : Captura de pantalla completa (Grim + Swappy)
 󰈊 Super + Shift + O         : Selector de color (Hyprpicker)
-󰔎 Super + Shift + T         : Cambiar tema claro / oscuro (GTK)
+󰔎 Super + Shift + T         : Menú de temas (Nord, Catppuccin, Gruvbox, etc.)
 󰊴 Super + Shift + G         : Activar/Desactivar Gamemode
 󰌾 Super + Shift + L         : Bloquear pantalla (Swaylock)
 󰐥 Super + Shift + X         : Menú de apagado (Wlogout)

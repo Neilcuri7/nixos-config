@@ -30,7 +30,22 @@
         "all-outputs": true,
         "sort-by-number": true,
         "show-special": false,
-        "format": "{icon}",
+        "format": "{icon} {windows}",
+        "format-window-separator": " ",
+        "window-rewrite-default": "󰘔",
+        "window-rewrite": {
+            "title<.*youtube.*>": "",
+            "class<brave-browser>": "",
+            "class<firefox>": "",
+            "class<kitty>": "󰞷",
+            "class<thunar>": "󰉋",
+            "class<code|VSCodium|codium-url-handler>": "󰨞",
+            "class<discord|vesktop>": "󰙯",
+            "class<spotify>": "",
+            "class<org.kde.kwrite>": "󱞁",
+            "class<micro>": "󰷈",
+            "class<mpv>": ""
+        },
         "format-icons": {
             "1": "一",
             "2": "二",
@@ -74,7 +89,6 @@
             "custom/stats-icon",
             "cpu",
             "memory",
-            "disk",
             "temperature"
         ]
     },
@@ -95,12 +109,6 @@
         "interval": 3,
         "format": " {percentage}%",
         "tooltip-format": "RAM Usada: {used:0.1f}GiB / {total:0.1f}GiB"
-    },
-
-    "disk": {
-        "interval": 30,
-        "format": "󰋊 {percentage_used}%",
-        "path": "/"
     },
 
     "temperature": {
@@ -137,20 +145,22 @@
     "group/controls": {
         "orientation": "horizontal",
         "drawer": {
-            "transition-duration": 500,
+            "transition-duration": 400,
             "transition-left-to-right": false,
             "click-to-reveal": true
         },
         "modules": [
+            "pulseaudio#icon",
             "pulseaudio",
+            "pulseaudio#microphone",
             "backlight"
         ]
     },
 
-    "pulseaudio": {
-        "format": "{icon} {volume}%",
-        "format-bluetooth": "{icon} {volume}%",
-        "format-muted": "󰝟 Mudo",
+    "pulseaudio#icon": {
+        "format": "{icon}",
+        "format-bluetooth": "{icon}",
+        "format-muted": "󰝟",
         "format-icons": {
             "headphone": "",
             "hands-free": "",
@@ -160,9 +170,27 @@
             "car": "",
             "default": ["󰕿", "󰖀", "󰕾"]
         },
+        "tooltip-format": "Audio: {volume}% (Clic der: Mezclador, Clic izq: Expandir controles)",
+        "scroll-step": 5,
+        "on-click-right": "pavucontrol || true",
+        "on-click-middle": "pamixer -t"
+    },
+
+    "pulseaudio": {
+        "format": "󰕾 {volume}%",
+        "format-muted": "󰝟 Mudo",
         "scroll-step": 5,
         "on-click": "pamixer -t",
         "on-click-right": "pavucontrol || true"
+    },
+
+    "pulseaudio#microphone": {
+        "format": "{format_source}",
+        "format-source": "󰍬 {volume}%",
+        "format-source-muted": "󰍭 Mudo",
+        "scroll-step": 5,
+        "on-click": "pamixer --default-source -t",
+        "on-click-right": "pavucontrol -t 4 || true"
     },
 
     "backlight": {
@@ -173,16 +201,15 @@
     },
 
     "network": {
-        "format-wifi": "󰤨 {essid}",
-        "format-ethernet": "󰈀 Conectado",
-        "format-linked": "󰈀 (Sin IP)",
-        "format-disconnected": "󰤭 Desconectado",
+        "format-wifi": "󰤨",
+        "format-ethernet": "󰈀",
+        "format-linked": "󰈀",
+        "format-disconnected": "󰤭",
         "format-alt": "{ifname}: {ipaddr}/{cidr}",
         "tooltip-format": "{ifname} via {gwaddr} 󰩟",
         "tooltip-format-wifi": "{essid} ({signalStrength}%) ",
-        "tooltip-format-ethernet": "{ifname} ",
-        "tooltip-format-disconnected": "Desconectado",
-        "max-length": 25
+        "tooltip-format-ethernet": "Ethernet: {ipaddr} ",
+        "tooltip-format-disconnected": "Desconectado"
     },
 
     "battery": {

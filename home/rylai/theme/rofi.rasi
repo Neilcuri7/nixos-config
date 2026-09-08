@@ -1,76 +1,84 @@
+@import "colors.rasi"
+
 * {
-    font: "JetBrainsMono Nerd Font 12";
+    font: "JetBrainsMono Nerd Font 11";
     background-color: transparent;
-    text-color: #cdd6f4;
+    text-color: @text;
     margin: 0;
     padding: 0;
 }
 
 window {
-    background-color: #1e1e2e;
+    background-color: @background;
     border: 2px;
-    border-color: #89b4fa;
-    border-radius: 0px;
-    width: 520px;
-    padding: 12px;
+    border-color: @border-col;
+    border-radius: 16px;
+    width: 600px;
+    padding: 16px;
 }
 
 mainbox {
-    spacing: 8px;
+    spacing: 12px;
     children: [ inputbar, listview ];
 }
 
 inputbar {
-    background-color: #313244;
-    border-radius: 0px;
-    padding: 6px 10px;
+    background-color: @selected;
+    border: 1px;
+    border-color: @border-col;
+    border-radius: 12px;
+    padding: 8px 14px;
     children: [ prompt, entry ];
 }
 
 prompt {
-    text-color: #89b4fa;
+    text-color: @accent;
+    font: "JetBrainsMono Nerd Font Bold 11.5";
     margin: 0px 8px 0px 0px;
 }
 
 entry {
-    placeholder: "Buscar aplicación...";
-    placeholder-color: #6c7086;
-    text-color: #cdd6f4;
+    placeholder: "Buscar...";
+    placeholder-color: @placeholder;
+    text-color: @text;
 }
 
 listview {
-    lines: 7;
+    lines: 8;
     columns: 1;
     fixed-height: false;
-    spacing: 4px;
+    spacing: 6px;
     cycle: true;
 }
 
 element {
-    padding: 6px 10px;
-    border-radius: 0px;
-    spacing: 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    spacing: 12px;
     background-color: transparent;
     children: [ element-icon, element-text ];
 }
 
 element-icon {
-    size: 28px;
+    size: 26px;
 }
 
 element-text {
     vertical-align: 0.5;
-    text-color: #cdd6f4;
+    text-color: @text;
 }
 
 element selected {
-    background-color: #89b4fa;
+    background-color: alpha(@accent, 0.25);
+    border: 1px;
+    border-color: @accent;
 }
 
 element selected element-text {
-    text-color: #11111b;
+    text-color: @accent;
+    font: "JetBrainsMono Nerd Font Bold 11";
 }
 
 element selected element-icon {
-    size: 28px;
+    size: 26px;
 }

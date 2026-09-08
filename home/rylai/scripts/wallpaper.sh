@@ -9,26 +9,19 @@ MATUGEN_CONFIG="$HOME/.config/matugen/config.toml"
 
 mkdir -p "$STATE_DIR" "$WALLPAPER_DIR"
 
-# Función para recargar todas las aplicaciones en caliente sin sobrecosto de CPU
 reload_environment() {
-    # 1. Recargar bordes y reglas de Hyprland
     if command -v hyprctl &>/dev/null && [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
         hyprctl reload &>/dev/null || true
     fi
 
-    # 2. Recargar instancias de Kitty abiertas vía señal SIGUSR1
     killall -SIGUSR1 kitty 2>/dev/null || true
-
-    # 3. Recargar estilos CSS de Waybar vía señal SIGUSR2
     killall -SIGUSR2 waybar 2>/dev/null || true
 
-    # 4. Recargar estilos de SwayNC
     if command -v swaync-client &>/dev/null; then
         swaync-client --reload-css &>/dev/null || true
     fi
 }
 
-# Función central para aplicar un wallpaper
 set_wallpaper() {
     local target_wall="$1"
 
@@ -42,11 +35,9 @@ set_wallpaper() {
     local full_path
     full_path=$(readlink -f "$target_wall")
 
-    # Guardar estado de forma atómica
     printf "%s" "$full_path" > "$CURRENT_PATH_FILE.tmp" && mv "$CURRENT_PATH_FILE.tmp" "$CURRENT_PATH_FILE"
     cp -L "$full_path" "$CURRENT_WALLPAPER.tmp" 2>/dev/null && mv "$CURRENT_WALLPAPER.tmp" "$CURRENT_WALLPAPER"
 
-    # Iniciar swaybg con reemplazo suave para evitar parpadeos negros
     local old_pids
     old_pids=$(pgrep swaybg || true)
     swaybg -i "$full_path" -m fill &
@@ -56,12 +47,12 @@ set_wallpaper() {
         (sleep 0.15 && for pid in $old_pids; do [ "$pid" != "$new_pid" ] && kill "$pid" 2>/dev/null || true; done) &
     fi
 
-    # Generar paleta dinámica con Matugen (~20ms)
+    mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout"
+
     if command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
-        matugen image "$full_path" -c "$MATUGEN_CONFIG" &>/dev/null || true
+        matugen image "$full_path" -c "$MATUGEN_CONFIG" || true
     fi
 
-    # Actualizar estado de temas si existe themes.json
     local themes_config="$HOME/.config/themes.json"
     if [ -f "$themes_config" ] && command -v jq &>/dev/null; then
         local tmp
@@ -69,15 +60,9 @@ set_wallpaper() {
         jq '.active_theme = "matugen-wallpaper"' "$themes_config" > "$tmp" 2>/dev/null && mv "$tmp" "$themes_config"
     fi
 
-    # Recargar componentes en caliente
     reload_environment
-
-    if command -v notify-send &>/dev/null; then
-        notify-send "Fondo de Pantalla" "Paleta sincronizada en caliente" -i preferences-desktop-wallpaper &>/dev/null || true
-    fi
 }
 
-# Función para restaurar el fondo al iniciar sesión (usado en exec-once)
 restore_wallpaper() {
     local wall_to_set=""
 
@@ -102,7 +87,6 @@ restore_wallpaper() {
     fi
 
     if [ -n "$wall_to_set" ] && [ -f "$wall_to_set" ]; then
-        # Iniciar swaybg
         local old_pids
         old_pids=$(pgrep swaybg || true)
         swaybg -i "$wall_to_set" -m fill &
@@ -112,15 +96,13 @@ restore_wallpaper() {
             (sleep 0.15 && for pid in $old_pids; do [ "$pid" != "$new_pid" ] && kill "$pid" 2>/dev/null || true; done) &
         fi
 
-        # Si aún no existen los archivos de colores, generarlos
-        if [ ! -f "$HOME/.config/waybar/colors.css" ] && command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
+        if { [ ! -f "$HOME/.config/hypr/colors.conf" ] || [ ! -f "$HOME/.config/waybar/colors.css" ]; } && command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
             matugen image "$wall_to_set" -c "$MATUGEN_CONFIG" &>/dev/null || true
             reload_environment
         fi
     fi
 }
 
-# Función para seleccionar wallpaper con interfaz Rofi ligera con miniaturas
 select_wallpaper() {
     if [ ! -d "$WALLPAPER_DIR" ]; then
         notify-send "Wallpapers" "Directorio no encontrado: $WALLPAPER_DIR"
@@ -138,31 +120,72 @@ select_wallpaper() {
     }
 
     local rofi_theme_str='
+        @import "colors.rasi"
         window {
-            width: 75%;
-            height: 70%;
-            border-radius: 16px;
+            width: 68%;
+            height: 60%;
+            background-color: @background;
+            border: 2px;
+            border-color: @border-col;
+            border-radius: 18px;
+            padding: 18px;
+        }
+        mainbox {
+            spacing: 14px;
+            children: [ inputbar, listview ];
+        }
+        inputbar {
+            background-color: @selected;
+            border: 1px;
+            border-color: @border-col;
+            border-radius: 12px;
+            padding: 8px 14px;
+            children: [ prompt, entry ];
+        }
+        prompt {
+            text-color: @accent;
+            font: "JetBrainsMono Nerd Font Bold 12";
+            margin: 0 8px 0 0;
+        }
+        entry {
+            placeholder: "Filtrar wallpaper...";
+            placeholder-color: @placeholder;
+            text-color: @text;
         }
         listview {
             columns: 4;
             lines: 2;
-            spacing: 12px;
-            padding: 10px;
+            spacing: 16px;
+            padding: 10px 4px;
             cycle: true;
         }
         element {
             orientation: vertical;
-            padding: 8px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 14px;
+            background-color: alpha(@selected, 0.4);
+            border: 1px solid alpha(@border-col, 0.5);
+            transition: all 0.2s ease-in-out;
+        }
+        element selected {
+            background-color: alpha(@accent, 0.22);
+            border: 2px solid @accent;
         }
         element-icon {
-            size: 180px;
+            size: 140px;
             horizontal-align: 0.5;
+            border-radius: 10px;
         }
         element-text {
             horizontal-align: 0.5;
             vertical-align: 0.5;
-            margin: 4px 0 0 0;
+            margin: 8px 0 0 0;
+            text-color: @text;
+            font: "JetBrainsMono Nerd Font 10.5";
+        }
+        element selected element-text {
+            text-color: @accent;
+            font: "JetBrainsMono Nerd Font Bold 10.5";
         }
     '
 
