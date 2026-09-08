@@ -119,8 +119,8 @@ select_wallpaper() {
         shopt -u nullglob
     }
 
+    local ROFI_CONFIG="$HOME/.config/rofi/config.rasi"
     local rofi_theme_str='
-        @import "colors.rasi"
         window {
             width: 68%;
             height: 60%;
@@ -163,13 +163,14 @@ select_wallpaper() {
             orientation: vertical;
             padding: 12px;
             border-radius: 14px;
-            background-color: alpha(@selected, 0.4);
-            border: 1px solid alpha(@border-col, 0.5);
-            transition: all 0.2s ease-in-out;
+            background-color: @selected / 40%;
+            border: 1px;
+            border-color: @border-col / 50%;
         }
         element selected {
-            background-color: alpha(@accent, 0.22);
-            border: 2px solid @accent;
+            background-color: @accent / 22%;
+            border: 2px;
+            border-color: @accent;
         }
         element-icon {
             size: 140px;
@@ -190,7 +191,7 @@ select_wallpaper() {
     '
 
     local choice
-    choice=$(list_walls | rofi -dmenu -i -show-icons -p "󰸉 Fondo de pantalla" -theme-str "$rofi_theme_str" || true)
+    choice=$(list_walls | rofi -dmenu -i -show-icons -p "󰸉 Fondo de pantalla" -theme "$ROFI_CONFIG" -theme-str "$rofi_theme_str" || true)
 
     if [ -n "$choice" ]; then
         set_wallpaper "$WALLPAPER_DIR/$choice"

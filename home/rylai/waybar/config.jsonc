@@ -170,9 +170,8 @@
             "car": "",
             "default": ["󰕿", "󰖀", "󰕾"]
         },
-        "tooltip-format": "Audio: {volume}% (Clic der: Mezclador, Clic izq: Expandir controles)",
+        "tooltip-format": "Audio: {volume}% (Clic para expandir controles)",
         "scroll-step": 5,
-        "on-click-right": "pavucontrol || true",
         "on-click-middle": "pamixer -t"
     },
 
@@ -180,8 +179,7 @@
         "format": "󰕾 {volume}%",
         "format-muted": "󰝟 Mudo",
         "scroll-step": 5,
-        "on-click": "pamixer -t",
-        "on-click-right": "pavucontrol || true"
+        "on-click": "pamixer -t"
     },
 
     "pulseaudio#microphone": {
@@ -189,8 +187,7 @@
         "format-source": "󰍬 {volume}%",
         "format-source-muted": "󰍭 Mudo",
         "scroll-step": 5,
-        "on-click": "pamixer --default-source -t",
-        "on-click-right": "pavucontrol -t 4 || true"
+        "on-click": "pamixer --default-source -t"
     },
 
     "backlight": {
