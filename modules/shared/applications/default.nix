@@ -36,7 +36,7 @@
         pkgs.zathura
         pkgs.imv
         pkgs.typora
-        pkgs.kdePackages.kwrite
+        pkgs.kdePackages.kate
         pkgs.discord
         pkgs.file-roller
         pkgs.obs-studio
