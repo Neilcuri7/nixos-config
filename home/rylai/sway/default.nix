@@ -2,135 +2,10 @@
 
 let
   modifier = "Mod4"; # Tecla Super / Windows
-  wallpaperPath = ../assets/wallpapers/877911.png;
+  wallpaperPath = ../../../modules/shared/assets/wallpapers/877911.png;
 in
 {
-  # 1. Configuración de Waybar
-  programs.waybar = {
-    enable = true;
-    systemd.enable = true;
-
-    settings.mainBar = {
-      layer = "top";
-      position = "top";
-      height = 30;
-
-      modules-left = [
-        "sway/workspaces"
-        "sway/mode"
-      ];
-
-      modules-center = [
-        "clock"
-      ];
-
-      modules-right = [
-        "pulseaudio"
-        "network"
-        "cpu"
-        "memory"
-        "battery"
-        "sway/language"
-      ];
-
-      "sway/workspaces" = {
-        disable-scroll = true;
-        all-outputs = true;
-        format = "{icon}";
-        format-icons = {
-          "1" = "一";
-          "2" = "二";
-          "3" = "三";
-          "4" = "四";
-          "5" = "五";
-          "6" = "六";
-          "7" = "七";
-          "8" = "八";
-          "9" = "九";
-          "10" = "十";
-        };
-      };
-
-      clock = {
-        format = "󰥔 {:%a %b %d  %H:%M}";
-        tooltip-format = "{:%Y-%m-%d}";
-      };
-
-      cpu = {
-        format = " {usage}%";
-        interval = 5;
-      };
-
-      memory = {
-        format = " {}%";
-        interval = 5;
-      };
-
-      battery = {
-        states = {
-          warning = 30;
-          critical = 15;
-        };
-        format = "{icon} {capacity}%";
-        format-charging = " {capacity}%";
-        format-icons = [ "" "" "" "" "" ];
-      };
-
-      network = {
-        format-wifi = " {essid}";
-        format-ethernet = " {ifname}";
-        format-disconnected = " Desconectado";
-      };
-
-      pulseaudio = {
-        format = "{icon} {volume}%";
-        format-muted = " Mudo";
-        format-icons = {
-          headphone = "";
-          default = [ "" "" "" ];
-        };
-        on-click = "${lib.getExe pkgs.pavucontrol}";
-      };
-    };
-
-    style = ''
-      * {
-        border: none;
-        border-radius: 0;
-        font-family: "JetBrainsMono Nerd Font", monospace;
-        font-size: 13px;
-        min-height: 0;
-      }
-
-      window#waybar {
-        background: #1d2021;
-        color: #ebdbb2;
-      }
-
-      #workspaces button {
-        padding: 0 8px;
-        background: transparent;
-        color: #ebdbb2;
-        border-bottom: 2px solid transparent;
-      }
-
-      #workspaces button.focused {
-        border-bottom: 2px solid #b8bb26;
-        background: #3c3836;
-      }
-
-      #workspaces button.urgent {
-        border-bottom: 2px solid #fabd2f;
-      }
-
-      #clock, #pulseaudio, #network, #cpu, #memory, #battery, #mode {
-        padding: 0 10px;
-        margin: 0 2px;
-      }
-    '';
-  };
-
-  # 2. Configuración de Sway
+  # Configuración de Sway
   wayland.windowManager.sway = {
     enable = true;
     wrapperFeatures = {
@@ -144,11 +19,12 @@ in
       inherit modifier;
 
       terminal = "kitty";
-      menu = "${pkgs.wofi}/bin/wofi --show drun";
+      menu = "rofi -show drun -show-icons -theme ${config.home.homeDirectory}/.config/rofi/config.rasi";
 
       # Fondo de pantalla y servicios de inicio
       startup = [
-        { command = "${config.home.homeDirectory}/scripts/init-wallpaper.sh"; }
+        { command = "${config.home.homeDirectory}/scripts/wallpaper.sh --restore"; }
+        { command = "swaync"; }
       ];
 
       # Integración con Waybar (Reemplaza swaybar nativo)

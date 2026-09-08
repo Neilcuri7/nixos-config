@@ -9,7 +9,7 @@
     ../../modules/shared/services/sops.nix
   ];
 
-  networking.hostName = "desktop";
+  networking.hostName = "haimiya";
   time.timeZone = "America/Bogota";
   time.hardwareClockInLocalTime = true;
   i18n.defaultLocale = "es_CO.UTF-8";
@@ -82,7 +82,7 @@
   # Configuración de Stylix (Tema Nord unificado)
   stylix = {
     enable = true;
-    image = ../../home/rylai/assets/wallpapers/877911.png;
+    image = ../../modules/shared/assets/wallpapers/877911.png;
     base16Scheme = "${pkgs.base16-schemes}/share/themes/nord.yaml";
     polarity = "dark";
     opacity = {

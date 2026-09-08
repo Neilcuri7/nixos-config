@@ -79,6 +79,9 @@
   # Configuración de SwayNC (Centro de Notificaciones)
   services.swaync = {
     enable = true;
+    style = ''
+      @import "colors.css";
+    '';
     settings = {
       positionX = "right";
       positionY = "top";

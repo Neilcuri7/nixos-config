@@ -57,10 +57,10 @@
     in
     {
       nixosConfigurations = {
-        desktop = nixpkgs.lib.nixosSystem {
+        haimiya = nixpkgs.lib.nixosSystem {
           inherit system specialArgs;
           modules = [
-            ./hosts/desktop
+            ./hosts/haimiya
             sops-nix.nixosModules.sops
             spicetify-nix.nixosModules.default
             stylix.nixosModules.stylix
@@ -76,10 +76,10 @@
           ];
         };
 
-        laptop = nixpkgs.lib.nixosSystem {
+        chinatsu = nixpkgs.lib.nixosSystem {
           inherit system specialArgs;
           modules = [
-            ./hosts/laptop
+            ./hosts/chinatsu
             sops-nix.nixosModules.sops
             spicetify-nix.nixosModules.default
             stylix.nixosModules.stylix

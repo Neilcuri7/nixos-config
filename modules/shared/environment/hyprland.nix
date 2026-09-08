@@ -3,6 +3,11 @@
 {
   options.myPlatform.environment.hyprland = {
     enable = lib.mkEnableOption "Hyprland Wayland Compositor";
+    autoLoginUser = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = "rylai";
+      description = "User to auto-login, or null to disable";
+    };
   };
 
   config = lib.mkIf config.myPlatform.environment.hyprland.enable {
@@ -24,11 +29,15 @@
     services.tumbler.enable = true; # Para miniatura de imágenes
 
     environment.systemPackages = with pkgs; [
-      inputs.ags.packages.${pkgs.system}.default
+      waybar
       swaybg
       matugen
       swaynotificationcenter
+      libnotify
+      imagemagick
+      jq
       rofi
+      pavucontrol
       wlogout
       swaylock
       hypridle
@@ -68,9 +77,9 @@
       enable = true;
       wayland.enable = true;
     };
-    services.displayManager.autoLogin = {
+    services.displayManager.autoLogin = lib.mkIf (config.myPlatform.environment.hyprland.autoLoginUser != null) {
       enable = true;
-      user = "rylai";
+      user = config.myPlatform.environment.hyprland.autoLoginUser;
     };
 
     xdg.portal = {

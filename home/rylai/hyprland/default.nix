@@ -2,7 +2,7 @@
 
 let
   modifier = "SUPER";
-  wallpaperPath = ../assets/wallpapers/877911.png;
+  wallpaperPath = ../../../modules/shared/assets/wallpapers/877911.png;
 in
 {
   # Teclado en español e inglés con Alt+Shift
@@ -12,6 +12,9 @@ in
     configType = "hyprlang";
 
     settings = {
+      source = [
+        "${config.home.homeDirectory}/.config/hypr/colors.conf"
+      ];
       "$mainMod" = modifier;
       "$terminal" = "kitty";
       "$fileManager" = "thunar";
@@ -33,10 +36,10 @@ in
         "hyprctl setcursor Natsuki 24"
         "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
         "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
-        "${config.home.homeDirectory}/scripts/init-wallpaper.sh"
+        "${config.home.homeDirectory}/scripts/wallpaper.sh --restore"
         "${config.home.homeDirectory}/scripts/theme-switcher.sh init"
         "swaync"
-        "ags"
+        "waybar"
         "hypridle"
         "wl-paste --type text --watch cliphist store" # Guardar texto en el historial
         "wl-paste --type image --watch cliphist store" # Guardar imágenes en el historial
@@ -57,6 +60,8 @@ in
         gaps_out = 6;
         border_size = 2;
         layout = "dwindle";
+        "col.active_border" = lib.mkForce "$primary $secondary 45deg";
+        "col.inactive_border" = lib.mkForce "$outline";
       };
 
       decoration = {
@@ -108,16 +113,15 @@ in
         "$mainMod CTRL, F, fullscreen, 1"
         "$mainMod, P, pseudo,"
         "$mainMod SHIFT, P, pin"
-        "$mainMod SHIFT, E, exec, rofi -show emoji -theme ${config.home.homeDirectory}/.config/rofi/config.rasi"
         "$mainMod, T, exec, kitty yazi"
         "$mainMod, S, exec, grim -g \"$(slurp)\" - | swappy -f -"
         "$mainMod, H, exec, ${config.home.homeDirectory}/scripts/hypr-cheatsheet.sh"
-        "$mainMod SHIFT, W, exec, ${config.home.homeDirectory}/scripts/rofi-wallpaper.sh"
+        "$mainMod SHIFT, W, exec, ${config.home.homeDirectory}/scripts/wallpaper.sh --select"
         "$mainMod SHIFT, Return, exec, rofi -show drun -show-icons -theme ${config.home.homeDirectory}/.config/rofi/config.rasi"
         "$mainMod SHIFT, F, togglefloating,"
         "$mainMod SHIFT, L, exec, swaylock"
         "$mainMod SHIFT, X, exec, wlogout"
-        "$mainMod SHIFT, T, exec, gsettings set org.gnome.desktop.interface color-scheme $([ \"$(gsettings get org.gnome.desktop.interface color-scheme)\" = \"'prefer-dark'\" ] && echo 'prefer-light' || echo 'prefer-dark')"
+        "$mainMod SHIFT, T, exec, ${config.home.homeDirectory}/scripts/theme-switcher.sh menu"
         "$mainMod SHIFT, O, exec, hyprpicker -a -f hex"
         "$mainMod SHIFT, G, exec, ${config.home.homeDirectory}/scripts/gamemode.sh"
         "$mainMod SHIFT, I, layoutmsg, togglesplit"
@@ -208,11 +212,6 @@ in
     };
   };
 
-  # Copiar la configuración de AGS (Barra nativa de Lucifers_NIX)
-  home.file.".config/ags" = {
-    source = ./ags;
-    recursive = true;
-  };
 
   # Copiar la configuración del tema de Rofi
   home.file.".config/rofi/config.rasi" = {
@@ -228,7 +227,7 @@ in
 
   # Copiar wallpapers portables
   home.file.".config/wallpapers" = {
-    source = ../assets/wallpapers;
+    source = ../../../modules/shared/assets/wallpapers;
     recursive = true;
   };
 

@@ -9,7 +9,7 @@
     ../../modules/shared/services/sops.nix
   ];
 
-  networking.hostName = "laptop";
+  networking.hostName = "chinatsu";
   time.timeZone = "America/Bogota";
   time.hardwareClockInLocalTime = true;
   i18n.defaultLocale = "es_CO.UTF-8";
@@ -46,6 +46,24 @@
     isNormalUser = true;
     shell = pkgs.zsh;
     extraGroups = [ "wheel" "networkmanager" "video" "audio" "docker" ];
+  };
+
+  # Configuración de Stylix (Tema unificado)
+  stylix = {
+    enable = true;
+    image = ../../modules/shared/assets/wallpapers/877911.png;
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/nord.yaml";
+    polarity = "dark";
+    opacity = {
+      terminal = 0.90;
+      popups = 0.85;
+    };
+    fonts = {
+      monospace = {
+        package = pkgs.nerd-fonts.jetbrains-mono;
+        name = "JetBrainsMono Nerd Font";
+      };
+    };
   };
 
   system.stateVersion = "24.11";

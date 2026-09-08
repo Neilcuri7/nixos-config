@@ -1,0 +1,176 @@
+/* Waybar Estilo Minimal - Optimizado para GPUs de bajo consumo */
+@import "colors.css";
+
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 13px;
+    font-weight: 600;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+}
+
+window#waybar {
+    background: transparent;
+    color: @foreground;
+}
+
+/* Contenedores agrupados estilo islas flotantes */
+.modules-left,
+.modules-center,
+.modules-right {
+    background-color: alpha(@surface, 0.85);
+    border: 1px solid alpha(@outline, 0.3);
+    border-radius: 18px;
+    padding: 3px 10px;
+    margin: 0 4px;
+}
+
+/* Workspaces */
+#workspaces {
+    padding: 0;
+    margin: 0 2px;
+}
+
+#workspaces button {
+    padding: 0 6px;
+    margin: 0 2px;
+    border-radius: 12px;
+    color: @on_surface;
+    background-color: transparent;
+    transition: all 0.2s ease-in-out;
+}
+
+#workspaces button.active {
+    color: @primary;
+    background-color: alpha(@primary, 0.2);
+    border-radius: 12px;
+    min-width: 24px;
+}
+
+#workspaces button:hover {
+    background-color: alpha(@on_surface, 0.15);
+}
+
+#workspaces button.urgent {
+    color: @error;
+    background-color: alpha(@error, 0.25);
+}
+
+/* Módulos individuales */
+#mpris,
+#clock,
+#pulseaudio,
+#backlight,
+#network,
+#battery,
+#tray,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#custom-stats-icon {
+    padding: 2px 8px;
+    margin: 0 2px;
+    border-radius: 12px;
+    color: @foreground;
+}
+
+/* Reloj central destacado */
+#clock {
+    color: @primary;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+#clock:hover {
+    background-color: alpha(@primary, 0.15);
+}
+
+/* Mpris */
+#mpris {
+    color: @secondary;
+}
+
+/* Estadísticas de sistema */
+#custom-stats-icon {
+    color: @primary;
+    padding-right: 4px;
+}
+
+#cpu {
+    color: @secondary;
+}
+
+#memory {
+    color: @tertiary;
+}
+
+#disk {
+    color: @on_surface;
+}
+
+#temperature {
+    color: @primary;
+}
+
+#temperature.critical {
+    color: @error;
+}
+
+/* Controles de hardware */
+#pulseaudio {
+    color: @secondary;
+}
+
+#pulseaudio.muted {
+    color: @error;
+}
+
+#backlight {
+    color: @tertiary;
+}
+
+#network {
+    color: @primary;
+}
+
+#network.disconnected {
+    color: @error;
+}
+
+/* Batería */
+#battery {
+    color: @secondary;
+}
+
+#battery.charging {
+    color: @primary;
+}
+
+#battery.warning:not(.charging) {
+    color: #f9e2af;
+}
+
+#battery.critical:not(.charging) {
+    color: @error;
+    animation: blink 1s steps(2) infinite;
+}
+
+@keyframes blink {
+    to {
+        background-color: alpha(@error, 0.35);
+    }
+}
+
+#tray {
+    margin-left: 4px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+}
