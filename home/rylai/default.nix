@@ -4,6 +4,7 @@
   imports = [
     ./hyprland
     ./waybar
+    ./programs
     ./theme/desktop-tools.nix
     inputs.airi.homeModules.ai
   ];
@@ -16,47 +17,6 @@
 
   # Asegurar directorio base para la activación de codex en airi
   home.file.".codex/.keep".text = "";
-
-  programs.bash = {
-    enable = true;
-    shellAliases = {
-      brave-dev = "brave --remote-debugging-port=9222 --user-data-dir=\"$HOME/.config/brave-dev\" &>/dev/null & disown";
-    };
-  };
-
-  programs.zsh = {
-    enable = true;
-    autosuggestion.enable = true;
-    syntaxHighlighting.enable = true;
-    shellAliases = {
-      brave-dev = "brave --remote-debugging-port=9222 --user-data-dir=\"$HOME/.config/brave-dev\" &>/dev/null & disown";
-    };
-    history = {
-      size = 10000;
-      share = true;
-    };
-  };
-
-  # Opción 2: Configuración de Git con firma SSH
-  programs.git = {
-    enable = true;
-    signing = {
-      key = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
-      signByDefault = true;
-    };
-    settings = {
-      user = {
-        name = "Neilcuri7";
-        email = "u20231b866@upc.edu.pe";
-      };
-      init.defaultBranch = "main";
-      pull.rebase = true;
-      commit.gpgsign = true;
-      gpg.format = "ssh";
-      credential."https://github.com".helper = "!${pkgs.gh}/bin/gh auth git-credential";
-      credential."https://gist.github.com".helper = "!${pkgs.gh}/bin/gh auth git-credential";
-    };
-  };
 
   # Opción 3: Variables de entorno y MimeApps (Navegador predeterminado: Brave)
   home.sessionVariables = {
@@ -162,130 +122,7 @@
     };
   };
 
-  programs.fastfetch = {
-    enable = true;
-    settings = {
-      "$schema" = "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json";
-      logo = {
-        type = "auto";
-        padding = {
-          top = 1;
-          left = 2;
-        };
-      };
-      display = {
-        separator = " :  ";
-      };
-      modules = [
-        "break"
-        {
-          type = "custom";
-          format = "┌─ Hardware ────────────────────────────────────────────────────────┐";
-        }
-        {
-          type = "cpu";
-          key = " CPU         ";
-        }
-        {
-          type = "gpu";
-          key = " GPU         ";
-        }
-        {
-          type = "display";
-          key = " Display     ";
-        }
-        {
-          type = "disk";
-          key = " Disk        ";
-        }
-        {
-          type = "memory";
-          key = " Memory      ";
-        }
-        {
-          type = "custom";
-          format = "└───────────────────────────────────────────────────────────────────┘";
-        }
-        "break"
-        {
-          type = "custom";
-          format = "┌─ Software ────────────────────────────────────────────────────────┐";
-        }
-        {
-          type = "os";
-          key = " OS          ";
-        }
-        {
-          type = "kernel";
-          key = " Kernel      ";
-        }
-        {
-          type = "packages";
-          key = " Packages    ";
-        }
-        {
-          type = "shell";
-          key = " Shell       ";
-        }
-        {
-          type = "custom";
-          format = "└───────────────────────────────────────────────────────────────────┘";
-        }
-        "break"
-        {
-          type = "custom";
-          format = "┌─ DE / WM ─────────────────────────────────────────────────────────┐";
-        }
-        {
-          type = "de";
-          key = " DE          ";
-        }
-        {
-          type = "wm";
-          key = " WM          ";
-        }
-        {
-          type = "terminal";
-          key = " Terminal    ";
-        }
-        {
-          type = "custom";
-          format = "└───────────────────────────────────────────────────────────────────┘";
-        }
-        "break"
-        {
-          type = "custom";
-          format = "┌─ Uptime / Age ────────────────────────────────────────────────────┐";
-        }
-        {
-          type = "uptime";
-          key = " Uptime      ";
-        }
-        {
-          type = "custom";
-          format = "└───────────────────────────────────────────────────────────────────┘";
-        }
-        "break"
-      ];
-    };
-  };
 
-  programs.yazi = {
-    enable = true;
-    enableBashIntegration = true;
-    shellWrapperName = "y";
-    settings = {
-      opener = {
-        edit = [
-          {
-            run = "micro \"$@\"";
-            block = true;
-            for = "unix";
-          }
-        ];
-      };
-    };
-  };
 
   home.file.".config/themes.json" = {
     source = ./theme/themes.json;
