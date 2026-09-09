@@ -97,11 +97,11 @@ in
       "ALT, F10, exec, gsr-ui-cli replay-save"
       "ALT, F11, exec, gsr-ui-cli replay-save-1-min"
       "ALT, F12, exec, gsr-ui-cli replay-save-10-min"
-      "$mainMod, D, exec, bash -c 'curl -s -X POST \"${AOI_BACKEND_URL:-http://127.0.0.1:8000}/api/v1/audio/ptt/start\"'"
+      "$mainMod, D, exec, bash -c \"curl -s -X POST \\\"\${AOI_BACKEND_URL:-http://127.0.0.1:8000}/api/v1/audio/ptt/start\\\"\""
     ];
 
     bindr = [
-      "$mainMod, D, exec, bash -c 'curl -s -X POST \"${AOI_BACKEND_URL:-http://127.0.0.1:8000}/api/v1/audio/ptt/stop\"'"
+      "$mainMod, D, exec, bash -c \"curl -s -X POST \\\"\${AOI_BACKEND_URL:-http://127.0.0.1:8000}/api/v1/audio/ptt/stop\\\"\""
     ];
 
     bindm = [
