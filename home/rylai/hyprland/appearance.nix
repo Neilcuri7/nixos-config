@@ -53,5 +53,9 @@
     dwindle = {
       preserve_split = true;
     };
+
+    windowrule = [
+      "opacity 0.85 0.85, match:class thunar"
+    ];
   };
 }

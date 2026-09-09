@@ -163,12 +163,12 @@ select_wallpaper() {
             orientation: vertical;
             padding: 12px;
             border-radius: 14px;
-            background-color: @selected / 40%;
+            background-color: transparent;
             border: 1px;
-            border-color: @border-col / 50%;
+            border-color: @border-col;
         }
         element selected {
-            background-color: @accent / 22%;
+            background-color: @selected-accent;
             border: 2px;
             border-color: @accent;
         }
