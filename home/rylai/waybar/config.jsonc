@@ -144,32 +144,19 @@
         "orientation": "horizontal",
         "drawer": {
             "transition-duration": 400,
-            "transition-left-to-right": false,
+            "transition-left-to-right": true,
             "click-to-reveal": true
         },
         "modules": [
-            "pulseaudio#icon",
+            "custom/volume-icon",
             "pulseaudio",
             "pulseaudio#microphone"
         ]
     },
 
-    "pulseaudio#icon": {
-        "format": "{icon}",
-        "format-bluetooth": "{icon}",
-        "format-muted": "󰝟",
-        "format-icons": {
-            "headphone": "",
-            "hands-free": "",
-            "headset": "",
-            "phone": "",
-            "portable": "",
-            "car": "",
-            "default": ["󰕿", "󰖀", "󰕾"]
-        },
-        "tooltip-format": "Audio: {volume}% (Clic para expandir controles)",
-        "scroll-step": 5,
-        "on-click-middle": "pamixer -t"
+    "custom/volume-icon": {
+        "format": "󰕾",
+        "tooltip": true
     },
 
     "pulseaudio": {
