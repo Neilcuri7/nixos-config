@@ -58,7 +58,6 @@ window#waybar {
 #clock,
 #pulseaudio,
 #pulseaudio.icon,
-#backlight,
 #network,
 #battery,
 #tray,
@@ -119,10 +118,6 @@ window#waybar {
 #pulseaudio.muted,
 #pulseaudio.microphone.source-muted {
     color: @error;
-}
-
-#backlight {
-    color: @tertiary;
 }
 
 #network {

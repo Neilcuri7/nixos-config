@@ -152,8 +152,7 @@
         "modules": [
             "pulseaudio#icon",
             "pulseaudio",
-            "pulseaudio#microphone",
-            "backlight"
+            "pulseaudio#microphone"
         ]
     },
 
@@ -188,13 +187,6 @@
         "format-source-muted": "󰍭 Mudo",
         "scroll-step": 5,
         "on-click": "pamixer --default-source -t"
-    },
-
-    "backlight": {
-        "device": "intel_backlight",
-        "format": "{icon} {percent}%",
-        "format-icons": ["󰃞", "󰃟", "󰃠"],
-        "scroll-step": 5
     },
 
     "network": {
