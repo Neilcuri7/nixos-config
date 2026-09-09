@@ -14,8 +14,8 @@ reload_environment() {
         hyprctl reload &>/dev/null || true
     fi
 
-    killall -SIGUSR1 kitty 2>/dev/null || true
-    killall -SIGUSR2 waybar 2>/dev/null || true
+    pkill -USR1 -x kitty 2>/dev/null || true
+    pkill -USR2 -x waybar 2>/dev/null || true
 
     if command -v swaync-client &>/dev/null; then
         swaync-client --reload-css &>/dev/null || true
@@ -114,7 +114,7 @@ select_wallpaper() {
         shopt -s nullglob
         for file in *.{jpg,jpeg,png,webp,gif}; do
             [[ -f "$file" ]] || continue
-            echo -e "$file\0icon\x1f$WALLPAPER_DIR/$file"
+            printf '%s\0icon\x1f%s\n' "$file" "$WALLPAPER_DIR/$file"
         done
         shopt -u nullglob
     }

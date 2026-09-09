@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 ROFI_CONFIG="$HOME/.config/rofi/config.rasi"
 
@@ -21,7 +22,7 @@ KEYBINDINGS="󰌌 ─── [ APLICACIONES Y LANZADORES ] ───
 󰤼 Super + Shift + I         : Alternar split horizontal/vertical
 
 󰁔 ─── [ NAVEGACIÓN Y FOCO ] ───
-󰁔 Super + Flechas / H,J,K,L : Mover foco entre ventanas
+󰁔 Super + Flechas / J,K,L   : Mover foco entre ventanas
 󰁔 Super + Shift + Flechas/HJKL: Mover ventana activa
 󰍽 Super + Mouse Clic Izq    : Mover ventana libremente
 󰍽 Super + Mouse Clic Der    : Redimensionar ventana libremente

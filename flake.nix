@@ -14,10 +14,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    ags = {
-      url = "github:Aylur/ags/v1";
-    };
-
     antigravity-nix = {
       url = "github:jacopone/antigravity-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -45,13 +41,6 @@
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays = [
-          (final: prev: {
-            nodePackages = {
-              typescript = final.typescript;
-            };
-          })
-        ];
       };
       specialArgs = { inherit inputs; };
     in

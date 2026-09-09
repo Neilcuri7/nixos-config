@@ -40,6 +40,9 @@
 
   virtualisation.docker.enable = true;
 
+  services.udisks2.enable = true;
+  services.gvfs.enable = true;
+
   programs.zsh.enable = true;
 
   users.users.rylai = {

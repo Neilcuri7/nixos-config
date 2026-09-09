@@ -28,7 +28,7 @@ in
       "$mainMod, equal, exec, grim - | swappy -f -"
       "$mainMod, H, exec, ${config.home.homeDirectory}/scripts/hypr-cheatsheet.sh"
       "$mainMod SHIFT, W, exec, ${config.home.homeDirectory}/scripts/wallpaper.sh --select"
-      "$mainMod SHIFT, Return, exec, rofi -show drun -show-icons -theme ${config.home.homeDirectory}/.config/rofi/config.rasi"
+      "$mainMod SHIFT, Return, exec, $menu"
       "$mainMod SHIFT, F, togglefloating,"
       "$mainMod SHIFT, L, exec, swaylock"
       "$mainMod SHIFT, X, exec, wlogout"

@@ -12,8 +12,6 @@
   home.username = "rylai";
   home.homeDirectory = "/home/rylai";
 
-  home.file.".codex/.keep".text = "";
-
   home.sessionVariables = {
     BROWSER = "brave";
     TERMINAL = "kitty";
