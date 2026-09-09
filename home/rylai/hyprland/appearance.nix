@@ -55,7 +55,7 @@
     };
 
     windowrule = [
-      "opacity 0.90 0.90, ^([tT]hunar)$"
+      "opacity 0.90 0.90, match:class (?i)thunar"
     ];
   };
 }
