@@ -95,8 +95,7 @@
 
     "custom/stats-icon": {
         "format": "󰍛",
-        "tooltip": true,
-        "tooltip-format": "Estadísticas del Sistema (Clic para expandir)"
+        "tooltip": true
     },
 
     "cpu": {
@@ -107,8 +106,7 @@
 
     "memory": {
         "interval": 3,
-        "format": " {percentage}%",
-        "tooltip-format": "RAM Usada: {used:0.1f}GiB / {total:0.1f}GiB"
+        "format": "  {used:0.1f}GiB / {total:0.1f}GiB"
     },
 
     "temperature": {
@@ -118,20 +116,20 @@
     },
 
     "clock": {
-        "format": "󰥔 {:%H:%M}",
-        "format-alt": "󰥔 {:%A, %d de %B de %Y - %H:%M}",
+        "format": "{:%H:%M}",
+        "format-alt": "{:%A, %d de %B de %Y - %H:%M}",
         "tooltip-format": "<tt><small>{calendar}</small></tt>",
         "calendar": {
-            "mode"          : "month",
-            "mode-mon-col"  : 3,
-            "weeks-pos"     : "right",
-            "on-scroll"     : 1,
+            "mode": "month",
+            "mode-mon-col": 3,
+            "weeks-pos": "right",
+            "on-scroll": 1,
             "format": {
-                "months":     "<span color='#89b4fa'><b>{}</b></span>",
-                "days":       "<span color='#cdd6f4'><b>{}</b></span>",
-                "weeks":      "<span color='#94e2d5'><b>W{}</b></span>",
-                "weekdays":   "<span color='#f9e2af'><b>{}</b></span>",
-                "today":      "<span color='#11111b' background='#89b4fa'><b><u>{}</u></b></span>"
+                "months": "<span color='#89b4fa'><b>{}</b></span>",
+                "days": "<span color='#cdd6f4'><b>{}</b></span>",
+                "weeks": "<span color='#94e2d5'><b>W{}</b></span>",
+                "weekdays": "<span color='#f9e2af'><b>{}</b></span>",
+                "today": "<span color='#11111b' background='#89b4fa'><b><u>{}</u></b></span>"
             }
         },
         "actions": {

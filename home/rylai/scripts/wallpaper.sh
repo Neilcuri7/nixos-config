@@ -50,7 +50,7 @@ set_wallpaper() {
     mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout"
 
     if command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
-        matugen image "$full_path" -c "$MATUGEN_CONFIG" || true
+        matugen image "$full_path" -c "$MATUGEN_CONFIG" --source-color-index 0 || true
     fi
 
     local themes_config="$HOME/.config/themes.json"
