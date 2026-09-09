@@ -55,7 +55,8 @@
     };
 
     windowrule = [
-      "opacity 0.85 0.85, match:class thunar"
+      "opacity 0.90 0.90, ^(thunar)$"
+      "opacity 0.90 0.90, match:class thunar"
     ];
   };
 }
