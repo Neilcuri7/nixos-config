@@ -146,7 +146,7 @@
         "orientation": "horizontal",
         "drawer": {
             "transition-duration": 400,
-            "transition-left-to-right": false,
+            "transition-left-to-right": true,
             "click-to-reveal": true
         },
         "modules": [
