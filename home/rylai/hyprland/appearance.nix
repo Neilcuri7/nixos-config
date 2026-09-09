@@ -54,9 +54,8 @@
       preserve_split = true;
     };
 
-    windowrule = [
-      "opacity 0.90 0.90, ^(thunar)$"
-      "opacity 0.90 0.90, match:class thunar"
+    windowrulev2 = [
+      "opacity 0.90 0.90, class:^(thunar)$"
     ];
   };
 }
