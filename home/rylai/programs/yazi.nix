@@ -16,6 +16,22 @@
       ];
     };
     settings = {
+      open = {
+        prepend_rules = [
+          { url = "*/"; use = [ "open" "reveal" ]; }
+          { mime = "text/*"; use = [ "edit" "reveal" ]; }
+          { mime = "application/json"; use = [ "edit" "reveal" ]; }
+          { mime = "application/x-ndjson"; use = [ "edit" "reveal" ]; }
+          { mime = "application/*toml"; use = [ "edit" "reveal" ]; }
+          { mime = "application/x-yaml"; use = [ "edit" "reveal" ]; }
+          { mime = "application/xml"; use = [ "edit" "reveal" ]; }
+          { mime = "application/x-shellscript"; use = [ "edit" "reveal" ]; }
+          { mime = "application/javascript"; use = [ "edit" "reveal" ]; }
+          { mime = "application/typescript"; use = [ "edit" "reveal" ]; }
+          { url = "*.*"; use = [ "edit" "reveal" ]; }
+          { url = "*"; use = [ "edit" "reveal" ]; }
+        ];
+      };
       opener = {
         edit = [
           {
