@@ -50,3 +50,69 @@
 @define-color sidebar_fg_color {{ colors.on_background.default.hex }};
 @define-color sidebar_backdrop_color @window_bg_color;
 @define-color sidebar_border_color {{ colors.outline.default.hex }};
+
+/* Base GTK widgets override */
+window, dialog {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
+}
+
+.view, treeview, iconview, textview, .standard-view {
+    background-color: @view_bg_color;
+    color: @view_fg_color;
+}
+
+.view:selected, treeview:selected, iconview:selected, .standard-view:selected {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+headerbar, toolbar, .menubar, menubar {
+    background-color: @headerbar_bg_color;
+    color: @headerbar_fg_color;
+    border-color: @borders;
+}
+
+.sidebar, .sidebar .view, treeview.sidebar, .shortcuts-pane {
+    background-color: @sidebar_bg_color;
+    color: @sidebar_fg_color;
+}
+
+entry, searchbar {
+    background-color: @card_bg_color;
+    color: @theme_text_color;
+    border-color: @borders;
+}
+
+/* Thunar Specific Styling */
+.thunar window,
+.thunar .standard-view,
+.thunar .standard-view .view,
+.thunar treeview {
+    background-color: @view_bg_color;
+    color: @view_fg_color;
+}
+
+.thunar .sidebar,
+.thunar .shortcuts-pane,
+.thunar .shortcuts-pane .view {
+    background-color: @sidebar_bg_color;
+    color: @sidebar_fg_color;
+}
+
+.thunar .location-bar,
+.thunar .path-bar-box,
+.thunar entry {
+    background-color: @card_bg_color;
+    color: @theme_text_color;
+    border-color: @borders;
+}
+
+/* Swappy Screenshot Tool Specific Styling */
+#swappy-window,
+#swappy-window window,
+#swappy-window .view,
+#swappy-window toolbar {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
+}

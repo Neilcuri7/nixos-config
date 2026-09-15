@@ -24,6 +24,9 @@
             adblock
             shuffle
           ];
+          enabledCustomApps = with spicePkgs.apps; [
+            marketplace
+          ];
         };
 
       programs.gpu-screen-recorder.enable = true;
