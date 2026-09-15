@@ -6,5 +6,6 @@
     ./git.nix
     ./fastfetch.nix
     ./yazi.nix
+    ./micro.nix
   ];
 }

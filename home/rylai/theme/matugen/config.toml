@@ -24,3 +24,8 @@ output_path = "~/.config/rofi/colors.rasi"
 [templates.wlogout]
 input_path = "~/.config/matugen/templates/waybar-colors.css"
 output_path = "~/.config/wlogout/colors.css"
+
+[templates.micro]
+input_path = "~/.config/matugen/templates/micro-colors.micro"
+output_path = "~/.config/micro/colorschemes/current-theme.micro"
+

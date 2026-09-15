@@ -11,12 +11,12 @@
 
     "modules-left": [
         "hyprland/workspaces",
-        "mpris",
         "group/stats"
     ],
 
     "modules-center": [
-        "clock"
+        "clock",
+        "mpris"
     ],
 
     "modules-right": [

@@ -57,7 +57,7 @@ set_wallpaper() {
     fi
 
     if [ "$active_theme" = "matugen-wallpaper" ] || [ -z "$active_theme" ]; then
-        mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout"
+        mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes"
 
         if command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
             matugen image "$full_path" -c "$MATUGEN_CONFIG" --source-color-index 0 || true

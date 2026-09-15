@@ -26,18 +26,6 @@
           }
         ];
       };
-      open = {
-        rules = [
-          { name = "*/"; use = [ "edit" "open" "reveal" ]; }
-          { mime = "text/*"; use = [ "edit" "reveal" ]; }
-          { mime = "application/json"; use = [ "edit" "reveal" ]; }
-          { mime = "application/x-ndjson"; use = [ "edit" "reveal" ]; }
-          { mime = "application/*toml"; use = [ "edit" "reveal" ]; }
-          { mime = "application/x-yaml"; use = [ "edit" "reveal" ]; }
-          { mime = "application/xml"; use = [ "edit" "reveal" ]; }
-          { name = "*"; use = [ "edit" "open" "reveal" ]; }
-        ];
-      };
     };
   };
 }

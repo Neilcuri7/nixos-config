@@ -56,7 +56,7 @@ apply_matugen() {
     fi
 
     if [ -n "$wall_path" ] && [ -f "$wall_path" ] && command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
-        mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout"
+        mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes"
         matugen image "$wall_path" -c "$MATUGEN_CONFIG" --source-color-index 0 || true
         reload_environment
     fi
@@ -70,7 +70,7 @@ apply_palette() {
     local theme_id="${17}"
     local name="${18}"
 
-    mkdir -p "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/waybar" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout"
+    mkdir -p "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/waybar" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes"
 
     cat <<EOF > "$HOME/.config/hypr/colors.conf"
 \$background = rgb(${base00#\#})
@@ -146,6 +146,31 @@ EOF
     text:            ${base05};
     placeholder:     ${base04}88;
 }
+EOF
+
+    cat <<EOF > "$HOME/.config/micro/colorschemes/current-theme.micro"
+color-link default "$base05,default"
+color-link comment "$base03,default"
+color-link identifier "$base08,default"
+color-link constant "$base09,default"
+color-link constant.string "$base0B,default"
+color-link constant.number "$base09,default"
+color-link statement "$base0E,default"
+color-link symbol "$base0C,default"
+color-link preproc "$base0D,default"
+color-link type "$base0A,default"
+color-link special "$base0C,default"
+color-link underlined "$base0D,default"
+color-link error "bold $base08,default"
+color-link todo "bold $base0A,default"
+color-link statusline "$base05,$base01"
+color-link tabbar "$base04,$base01"
+color-link line-number "$base03,default"
+color-link current-line-number "bold $base0D,default"
+color-link cursor-line "$base02,default"
+color-link color-column "$base02,default"
+color-link divider "$base03,default"
+color-link indent-char "$base03,default"
 EOF
 
     cp "$HOME/.config/waybar/colors.css" "$HOME/.config/wlogout/colors.css" 2>/dev/null || true
