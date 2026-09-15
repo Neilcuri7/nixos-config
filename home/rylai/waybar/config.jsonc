@@ -15,11 +15,11 @@
     ],
 
     "modules-center": [
-        "clock",
-        "mpris"
+        "clock"
     ],
 
     "modules-right": [
+        "mpris",
         "group/controls",
         "network",
         "battery",

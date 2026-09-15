@@ -13,6 +13,11 @@
           run = "hidden toggle";
           desc = "Alternar archivos ocultos";
         }
+        {
+          on = [ "<Enter>" ];
+          run = "enter";
+          desc = "Entrar a carpeta o abrir archivo";
+        }
       ];
     };
     settings = {
