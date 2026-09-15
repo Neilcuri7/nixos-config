@@ -24,7 +24,7 @@
       opener = {
         edit = [
           {
-            run = ''micro "$@"'';
+            run = ''if [ -f "$0" ]; then micro "$0" "$@"; else micro "$@"; fi'';
             block = true;
             desc = "micro";
             for = "unix";
