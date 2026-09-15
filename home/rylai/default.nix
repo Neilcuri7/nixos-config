@@ -144,6 +144,7 @@
     waybar.enable = false;
     kitty.enable = false;
     rofi.enable = false;
+    micro.enable = false;
   };
 
   home.stateVersion = "24.11";
