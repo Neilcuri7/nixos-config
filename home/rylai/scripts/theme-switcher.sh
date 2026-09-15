@@ -2,6 +2,14 @@
 set -euo pipefail
 
 CONFIG_FILE="$HOME/.config/themes.json"
+STATE_DIR="$HOME/.local/state/theme"
+ACTIVE_THEME_FILE="$STATE_DIR/active_theme.txt"
+WALLPAPER_STATE_DIR="$HOME/.local/state/wallpaper"
+CURRENT_PATH_FILE="$WALLPAPER_STATE_DIR/current_path.txt"
+CURRENT_WALLPAPER="$WALLPAPER_STATE_DIR/current"
+MATUGEN_CONFIG="$HOME/.config/matugen/config.toml"
+
+mkdir -p "$STATE_DIR"
 
 if [ ! -f "$CONFIG_FILE" ]; then
     if command -v notify-send &>/dev/null; then
@@ -25,6 +33,35 @@ reload_environment() {
     fi
 }
 
+apply_matugen() {
+    printf "%s" "matugen-wallpaper" > "$ACTIVE_THEME_FILE.tmp" && mv "$ACTIVE_THEME_FILE.tmp" "$ACTIVE_THEME_FILE"
+
+    local wall_path=""
+    if [ -f "$CURRENT_PATH_FILE" ]; then
+        wall_path=$(tr -d '\r\n' < "$CURRENT_PATH_FILE" || true)
+    fi
+
+    if [ -z "$wall_path" ] || [ ! -f "$wall_path" ]; then
+        if [ -f "$CURRENT_WALLPAPER" ] && [ -s "$CURRENT_WALLPAPER" ]; then
+            wall_path="$CURRENT_WALLPAPER"
+        fi
+    fi
+
+    if [ -z "$wall_path" ] || [ ! -f "$wall_path" ]; then
+        local first_found
+        first_found=$(find -L "$HOME/Pictures/wallpapers" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) 2>/dev/null | head -n 1 || true)
+        if [ -n "$first_found" ]; then
+            wall_path="$first_found"
+        fi
+    fi
+
+    if [ -n "$wall_path" ] && [ -f "$wall_path" ] && command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
+        mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout"
+        matugen image "$wall_path" -c "$MATUGEN_CONFIG" --source-color-index 0 || true
+        reload_environment
+    fi
+}
+
 apply_palette() {
     local base00="$1" base01="$2" base02="$3" base03="$4"
     local base04="$5" base05="$6" base06="$7" base07="$8"
@@ -33,7 +70,7 @@ apply_palette() {
     local theme_id="${17}"
     local name="${18}"
 
-    mkdir -p "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/waybar" "$HOME/.config/swaync" "$HOME/.config/rofi"
+    mkdir -p "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/waybar" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout"
 
     cat <<EOF > "$HOME/.config/hypr/colors.conf"
 \$background = rgb(${base00#\#})
@@ -111,14 +148,9 @@ EOF
 }
 EOF
 
-    mkdir -p "$HOME/.config/wlogout"
     cp "$HOME/.config/waybar/colors.css" "$HOME/.config/wlogout/colors.css" 2>/dev/null || true
 
-    if command -v jq &>/dev/null && [ -f "$CONFIG_FILE" ]; then
-        local tmp
-        tmp=$(mktemp)
-        jq --arg id "$theme_id" '.active_theme = $id' "$CONFIG_FILE" > "$tmp" 2>/dev/null && mv "$tmp" "$CONFIG_FILE"
-    fi
+    printf "%s" "$theme_id" > "$ACTIVE_THEME_FILE.tmp" && mv "$ACTIVE_THEME_FILE.tmp" "$ACTIVE_THEME_FILE"
 
     reload_environment
 }
@@ -165,7 +197,7 @@ case "$ACTION" in
         if [ -n "${2:-}" ]; then
             "$HOME/scripts/wallpaper.sh" --set "$2"
         else
-            "$HOME/scripts/wallpaper.sh" --restore
+            apply_matugen
         fi
         ;;
 
@@ -183,7 +215,10 @@ case "$ACTION" in
 
         if [ -n "$SELECTED" ]; then
             if [[ "$SELECTED" == *"Matugen"* ]]; then
-                "$HOME/scripts/wallpaper.sh" --select
+                apply_matugen
+                if command -v notify-send &>/dev/null; then
+                    notify-send "Gestor de Temas" "Colores dinámicos de Matugen aplicados" -i preferences-desktop-theme
+                fi
             else
                 SELECTED_NAME=$(echo "$SELECTED" | sed -E 's/^[^ ]+ +//')
                 for i in $(seq 0 $((THEMES_COUNT - 1))); do
@@ -191,6 +226,9 @@ case "$ACTION" in
                     if [ "$NAME" = "$SELECTED_NAME" ]; then
                         ID=$(jq -r ".themes[$i].id" "$CONFIG_FILE")
                         apply_theme "$ID" "$NAME"
+                        if command -v notify-send &>/dev/null; then
+                            notify-send "Gestor de Temas" "Tema aplicado: $NAME" -i preferences-desktop-theme
+                        fi
                         break
                     fi
                 done
@@ -199,19 +237,28 @@ case "$ACTION" in
         ;;
 
     "init")
-        ACTIVE_ID=$(jq -r '.active_theme // "matugen-wallpaper"' "$CONFIG_FILE" 2>/dev/null || echo "matugen-wallpaper")
-        if [ "$ACTIVE_ID" = "matugen-wallpaper" ]; then
-            "$HOME/scripts/wallpaper.sh" --restore
+        ACTIVE_ID="matugen-wallpaper"
+        if [ -f "$ACTIVE_THEME_FILE" ]; then
+            ACTIVE_ID=$(tr -d '\r\n' < "$ACTIVE_THEME_FILE" || echo "matugen-wallpaper")
+        fi
+
+        if [ "$ACTIVE_ID" = "matugen-wallpaper" ] || [ -z "$ACTIVE_ID" ]; then
+            apply_matugen
         else
             THEMES_COUNT=$(jq '.themes | length' "$CONFIG_FILE")
+            THEME_FOUND=false
             for i in $(seq 0 $((THEMES_COUNT - 1))); do
                 ID=$(jq -r ".themes[$i].id" "$CONFIG_FILE")
                 if [ "$ID" = "$ACTIVE_ID" ]; then
                     NAME=$(jq -r ".themes[$i].name" "$CONFIG_FILE")
                     apply_theme "$ID" "$NAME"
+                    THEME_FOUND=true
                     break
                 fi
             done
+            if [ "$THEME_FOUND" = false ]; then
+                apply_matugen
+            fi
         fi
         ;;
 

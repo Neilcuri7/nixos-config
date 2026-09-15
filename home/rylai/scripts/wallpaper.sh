@@ -2,12 +2,15 @@
 set -euo pipefail
 
 WALLPAPER_DIR="$HOME/Pictures/wallpapers"
-STATE_DIR="$HOME/.local/state/wallpaper"
-CURRENT_PATH_FILE="$STATE_DIR/current_path.txt"
-CURRENT_WALLPAPER="$STATE_DIR/current"
+WALLPAPER_STATE_DIR="$HOME/.local/state/wallpaper"
+CURRENT_PATH_FILE="$WALLPAPER_STATE_DIR/current_path.txt"
+CURRENT_WALLPAPER="$WALLPAPER_STATE_DIR/current"
+
+THEME_STATE_DIR="$HOME/.local/state/theme"
+ACTIVE_THEME_FILE="$THEME_STATE_DIR/active_theme.txt"
 MATUGEN_CONFIG="$HOME/.config/matugen/config.toml"
 
-mkdir -p "$STATE_DIR" "$WALLPAPER_DIR"
+mkdir -p "$WALLPAPER_STATE_DIR" "$WALLPAPER_DIR" "$THEME_STATE_DIR"
 
 reload_environment() {
     if command -v hyprctl &>/dev/null && [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
@@ -47,20 +50,22 @@ set_wallpaper() {
         (sleep 0.15 && for pid in $old_pids; do [ "$pid" != "$new_pid" ] && kill "$pid" 2>/dev/null || true; done) &
     fi
 
-    mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout"
-
-    if command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
-        matugen image "$full_path" -c "$MATUGEN_CONFIG" --source-color-index 0 || true
+    # Comprobar el tema activo
+    local active_theme="matugen-wallpaper"
+    if [ -f "$ACTIVE_THEME_FILE" ]; then
+        active_theme=$(tr -d '\r\n' < "$ACTIVE_THEME_FILE" || echo "matugen-wallpaper")
     fi
 
-    local themes_config="$HOME/.config/themes.json"
-    if [ -f "$themes_config" ] && command -v jq &>/dev/null; then
-        local tmp
-        tmp=$(mktemp)
-        jq '.active_theme = "matugen-wallpaper"' "$themes_config" > "$tmp" 2>/dev/null && mv "$tmp" "$themes_config"
-    fi
+    if [ "$active_theme" = "matugen-wallpaper" ] || [ -z "$active_theme" ]; then
+        mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout"
 
-    reload_environment
+        if command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
+            matugen image "$full_path" -c "$MATUGEN_CONFIG" --source-color-index 0 || true
+        fi
+
+        printf "%s" "matugen-wallpaper" > "$ACTIVE_THEME_FILE"
+        reload_environment
+    fi
 }
 
 restore_wallpaper() {
@@ -95,11 +100,6 @@ restore_wallpaper() {
         if [ -n "$old_pids" ]; then
             (sleep 0.15 && for pid in $old_pids; do [ "$pid" != "$new_pid" ] && kill "$pid" 2>/dev/null || true; done) &
         fi
-
-        if { [ ! -f "$HOME/.config/hypr/colors.conf" ] || [ ! -f "$HOME/.config/waybar/colors.css" ]; } && command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
-            matugen image "$wall_to_set" -c "$MATUGEN_CONFIG" &>/dev/null || true
-            reload_environment
-        fi
     fi
 }
 
@@ -110,13 +110,14 @@ select_wallpaper() {
     fi
 
     list_walls() {
-        cd "$WALLPAPER_DIR" || exit 1
-        shopt -s nullglob
-        for file in *.{jpg,jpeg,png,webp,gif}; do
-            [[ -f "$file" ]] || continue
-            printf '%s\0icon\x1f%s\n' "$file" "$WALLPAPER_DIR/$file"
-        done
-        shopt -u nullglob
+        (
+            cd "$WALLPAPER_DIR" || exit 1
+            shopt -s nullglob
+            for file in *.{jpg,jpeg,png,webp,gif}; do
+                [[ -f "$file" ]] || continue
+                printf '%s\0icon\x1f%s\n' "$file" "$WALLPAPER_DIR/$file"
+            done
+        )
     }
 
     local ROFI_CONFIG="$HOME/.config/rofi/config.rasi"
