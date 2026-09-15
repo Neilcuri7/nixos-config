@@ -145,6 +145,8 @@
     kitty.enable = false;
     rofi.enable = false;
     micro.enable = false;
+    gtk.enable = false;
+    gnome.enable = false;
   };
 
   home.stateVersion = "24.11";

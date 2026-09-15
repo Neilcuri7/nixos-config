@@ -56,7 +56,7 @@ apply_matugen() {
     fi
 
     if [ -n "$wall_path" ] && [ -f "$wall_path" ] && command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
-        mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes"
+        mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes" "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
         matugen image "$wall_path" -c "$MATUGEN_CONFIG" --source-color-index 0 || true
         reload_environment
     fi
@@ -70,7 +70,7 @@ apply_palette() {
     local theme_id="${17}"
     local name="${18}"
 
-    mkdir -p "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/waybar" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes"
+    mkdir -p "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/waybar" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes" "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
 
     cat <<EOF > "$HOME/.config/hypr/colors.conf"
 \$background = rgb(${base00#\#})
@@ -171,8 +171,51 @@ color-link cursor-line "$base02,default"
 color-link color-column "$base02,default"
 color-link divider "$base03,default"
 color-link indent-char "$base03,default"
+    cat <<EOF > "$HOME/.config/gtk-3.0/gtk.css"
+/* GTK 3 Theme Palette */
+@define-color theme_bg_color $base00;
+@define-color theme_fg_color $base05;
+@define-color theme_base_color $base01;
+@define-color theme_text_color $base05;
+@define-color theme_selected_bg_color $base0D;
+@define-color theme_selected_fg_color $base00;
+@define-color insensitive_bg_color $base01;
+@define-color insensitive_fg_color $base03;
+@define-color insensitive_base_color $base01;
+@define-color theme_unfocused_bg_color $base00;
+@define-color theme_unfocused_fg_color $base04;
+@define-color theme_unfocused_base_color $base01;
+@define-color theme_unfocused_text_color $base04;
+@define-color theme_unfocused_selected_bg_color $base0D;
+@define-color theme_unfocused_selected_fg_color $base00;
+@define-color borders $base03;
+@define-color unfocused_borders $base02;
+@define-color warning_color $base0A;
+@define-color error_color $base08;
+@define-color success_color $base0B;
+
+/* Libadwaita / Modern GTK */
+@define-color accent_color $base0D;
+@define-color accent_bg_color $base0D;
+@define-color accent_fg_color $base00;
+@define-color window_bg_color $base00;
+@define-color window_fg_color $base05;
+@define-color view_bg_color $base01;
+@define-color view_fg_color $base05;
+@define-color headerbar_bg_color $base00;
+@define-color headerbar_fg_color $base05;
+@define-color headerbar_border_color $base03;
+@define-color headerbar_backdrop_color @window_bg_color;
+@define-color card_bg_color $base01;
+@define-color card_fg_color $base05;
+@define-color card_border_color $base03;
+@define-color sidebar_bg_color $base00;
+@define-color sidebar_fg_color $base05;
+@define-color sidebar_backdrop_color @window_bg_color;
+@define-color sidebar_border_color $base03;
 EOF
 
+    cp "$HOME/.config/gtk-3.0/gtk.css" "$HOME/.config/gtk-4.0/gtk.css" 2>/dev/null || true
     cp "$HOME/.config/waybar/colors.css" "$HOME/.config/wlogout/colors.css" 2>/dev/null || true
 
     printf "%s" "$theme_id" > "$ACTIVE_THEME_FILE.tmp" && mv "$ACTIVE_THEME_FILE.tmp" "$ACTIVE_THEME_FILE"
