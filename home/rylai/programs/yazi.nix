@@ -35,7 +35,7 @@
       opener = {
         edit = [
           {
-            run = ''micro "$@"'';
+            run = "micro %s";
             block = true;
             desc = "micro";
             for = "unix";
