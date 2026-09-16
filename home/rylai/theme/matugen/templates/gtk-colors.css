@@ -116,3 +116,63 @@ entry, searchbar {
     background-color: @window_bg_color;
     color: @window_fg_color;
 }
+
+/* Pavucontrol Audio Mixer */
+#pavucontrol-window,
+.pavucontrol-window,
+window#pavucontrol-window {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
+}
+
+#pavucontrol-window notebook,
+#pavucontrol-window notebook > stack {
+    background-color: @view_bg_color;
+}
+
+#pavucontrol-window notebook tab {
+    background-color: @card_bg_color;
+    color: @theme_text_color;
+    border-color: @borders;
+    padding: 6px 12px;
+}
+
+#pavucontrol-window notebook tab:checked {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+scale highlight,
+progressbar.horizontal progress,
+levelbar block.filled {
+    background-color: @accent_bg_color;
+    border-radius: 4px;
+}
+
+scale trough,
+progressbar.horizontal trough,
+levelbar trough {
+    background-color: @card_bg_color;
+    border-radius: 4px;
+}
+
+/* System Dialogs, File Chooser (Open/Save File) & Yad */
+filechooser,
+filechooser .sidebar,
+filechooser treeview {
+    background-color: @view_bg_color;
+    color: @view_fg_color;
+}
+
+filechooser .sidebar {
+    background-color: @sidebar_bg_color;
+    color: @sidebar_fg_color;
+}
+
+messagedialog,
+dialog,
+.yad-window {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
+}
+

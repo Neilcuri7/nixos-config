@@ -56,7 +56,7 @@ apply_matugen() {
     fi
 
     if [ -n "$wall_path" ] && [ -f "$wall_path" ] && command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
-        mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes" "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
+        mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes" "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0" "$HOME/.config/yazi"
         matugen image "$wall_path" -c "$MATUGEN_CONFIG" --source-color-index 0 || true
         reload_environment
     fi
@@ -70,7 +70,7 @@ apply_palette() {
     local theme_id="${17}"
     local name="${18}"
 
-    mkdir -p "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/waybar" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes" "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
+    mkdir -p "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/waybar" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes" "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0" "$HOME/.config/yazi"
 
     cat <<EOF > "$HOME/.config/hypr/colors.conf"
 \$background = rgb(${base00#\#})
@@ -279,6 +279,152 @@ entry, searchbar {
     background-color: @window_bg_color;
     color: @window_fg_color;
 }
+
+/* Pavucontrol Audio Mixer */
+#pavucontrol-window,
+.pavucontrol-window,
+window#pavucontrol-window {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
+}
+
+#pavucontrol-window notebook,
+#pavucontrol-window notebook > stack {
+    background-color: @view_bg_color;
+}
+
+#pavucontrol-window notebook tab {
+    background-color: @card_bg_color;
+    color: @theme_text_color;
+    border-color: @borders;
+    padding: 6px 12px;
+}
+
+#pavucontrol-window notebook tab:checked {
+    background-color: @accent_bg_color;
+    color: @accent_fg_color;
+}
+
+scale highlight,
+progressbar.horizontal progress,
+levelbar block.filled {
+    background-color: @accent_bg_color;
+    border-radius: 4px;
+}
+
+scale trough,
+progressbar.horizontal trough,
+levelbar trough {
+    background-color: @card_bg_color;
+    border-radius: 4px;
+}
+
+/* System Dialogs, File Chooser (Open/Save File) & Yad */
+filechooser,
+filechooser .sidebar,
+filechooser treeview {
+    background-color: @view_bg_color;
+    color: @view_fg_color;
+}
+
+filechooser .sidebar {
+    background-color: @sidebar_bg_color;
+    color: @sidebar_fg_color;
+}
+
+messagedialog,
+dialog,
+.yad-window {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
+}
+EOF
+
+    cat <<EOF > "$HOME/.config/yazi/theme.toml"
+# Yazi Theme
+[mgr]
+cwd = { fg = "$base0D" }
+hovered = { fg = "$base00", bg = "$base0D", bold = true }
+preview_hovered = { underline = true }
+find_keyword = { fg = "$base0E", bold = true, italic = true }
+find_position = { fg = "$base0C", bg = "reset", bold = true }
+marker_copied = { fg = "$base0B", bg = "$base0B" }
+marker_cut = { fg = "$base08", bg = "$base08" }
+marker_marked = { fg = "$base0D", bg = "$base0D" }
+marker_selected = { fg = "$base0E", bg = "$base0E" }
+tab_active = { fg = "$base00", bg = "$base0D" }
+tab_inactive = { fg = "$base05", bg = "$base01" }
+tab_width = 1
+count_copied = { fg = "$base00", bg = "$base0B" }
+count_cut = { fg = "$base00", bg = "$base08" }
+count_selected = { fg = "$base00", bg = "$base0E" }
+border_symbol = "rounded"
+border_style = { fg = "$base03" }
+
+[status]
+separator_open = ""
+separator_close = ""
+separator_style = { fg = "$base02", bg = "$base02" }
+mode_normal = { fg = "$base00", bg = "$base0D", bold = true }
+mode_select = { fg = "$base00", bg = "$base0E", bold = true }
+mode_unset = { fg = "$base00", bg = "$base0C", bold = true }
+progress_label = { fg = "$base05", bold = true }
+progress_normal = { fg = "$base0D", bg = "$base02" }
+progress_error = { fg = "$base08", bg = "$base02" }
+permissions_t = { fg = "$base0D" }
+permissions_r = { fg = "$base0E" }
+permissions_w = { fg = "$base08" }
+permissions_x = { fg = "$base0B" }
+permissions_s = { fg = "$base03" }
+
+[input]
+border = { fg = "$base0D" }
+title = { fg = "$base0D" }
+value = { fg = "$base05" }
+selected = { bg = "$base02" }
+
+[select]
+border = { fg = "$base0D" }
+active = { fg = "$base0D", bold = true }
+inactive = { fg = "$base05" }
+
+[tasks]
+border = { fg = "$base0D" }
+title = { fg = "$base0D" }
+hovered = { fg = "$base0D", underline = true }
+
+[which]
+cols = 3
+mask = { bg = "$base01" }
+cand = { fg = "$base0D" }
+rest = { fg = "$base05" }
+desc = { fg = "$base03" }
+separator = "  "
+separator_style = { fg = "$base03" }
+
+[completion]
+border = { fg = "$base0D" }
+active = { fg = "$base00", bg = "$base0D" }
+inactive = { fg = "$base05" }
+
+[filetype]
+rules = [
+  { url = "*/", fg = "$base0D", bold = true },
+  { mime = "image/*", fg = "$base0E" },
+  { mime = "video/*", fg = "$base0E" },
+  { mime = "audio/*", fg = "$base0C" },
+  { mime = "application/*zip", fg = "$base08" },
+  { mime = "application/x-tar", fg = "$base08" },
+  { mime = "application/x-bzip*", fg = "$base08" },
+  { mime = "application/x-7z-compressed", fg = "$base08" },
+  { mime = "application/x-rar", fg = "$base08" },
+  { mime = "text/*", fg = "$base05" },
+  { mime = "application/json", fg = "$base0C" },
+  { mime = "application/*toml", fg = "$base0C" },
+  { mime = "application/x-yaml", fg = "$base0C" },
+  { mime = "application/x-executable", fg = "$base0B", bold = true },
+  { mime = "application/x-shellscript", fg = "$base0B" }
+]
 EOF
 
     cp "$HOME/.config/gtk-3.0/gtk.css" "$HOME/.config/gtk-4.0/gtk.css" 2>/dev/null || true
