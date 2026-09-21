@@ -178,6 +178,8 @@ color-link cursor-line "$base02,default"
 color-link color-column "$base02,default"
 color-link divider "$base03,default"
 color-link indent-char "$base03,default"
+EOF
+
     cat <<EOF > "$HOME/.config/gtk-3.0/gtk.css"
 /* GTK 3 Theme Palette */
 @define-color theme_bg_color $base00;
@@ -481,8 +483,12 @@ apply_theme() {
 
 case "$ACTION" in
     "wallpaper"|"matugen"|"wallust")
+        local wp_script="$HOME/scripts/wallpaper.sh"
+        if [ ! -f "$wp_script" ] && [ -f "$(dirname "$0")/wallpaper.sh" ]; then
+            wp_script="$(dirname "$0")/wallpaper.sh"
+        fi
         if [ -n "${2:-}" ]; then
-            "$HOME/scripts/wallpaper.sh" --set "$2"
+            "$wp_script" --set "$2"
         else
             apply_wallpaper_theme
         fi

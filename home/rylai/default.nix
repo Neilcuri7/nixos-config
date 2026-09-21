@@ -169,6 +169,7 @@
     micro.enable = false;
     gtk.enable = false;
     gnome.enable = false;
+    yazi.enable = false;
   };
 
   home.stateVersion = "24.11";

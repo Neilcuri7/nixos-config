@@ -115,7 +115,7 @@ select_wallpaper() {
     list_walls() {
         (
             cd "$WALLPAPER_DIR" || exit 1
-            shopt -s nullglob
+            shopt -s nullglob nocaseglob
             for file in *.{jpg,jpeg,png,webp,gif}; do
                 [[ -f "$file" ]] || continue
                 printf '%s\0icon\x1f%s\n' "$file" "$WALLPAPER_DIR/$file"
