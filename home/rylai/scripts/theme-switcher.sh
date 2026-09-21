@@ -8,6 +8,7 @@ WALLPAPER_STATE_DIR="$HOME/.local/state/wallpaper"
 CURRENT_PATH_FILE="$WALLPAPER_STATE_DIR/current_path.txt"
 CURRENT_WALLPAPER="$WALLPAPER_STATE_DIR/current"
 MATUGEN_CONFIG="$HOME/.config/matugen/config.toml"
+WALLUST_CONFIG="$HOME/.config/wallust/wallust.toml"
 
 mkdir -p "$STATE_DIR"
 
@@ -33,8 +34,8 @@ reload_environment() {
     fi
 }
 
-apply_matugen() {
-    printf "%s" "matugen-wallpaper" > "$ACTIVE_THEME_FILE.tmp" && mv "$ACTIVE_THEME_FILE.tmp" "$ACTIVE_THEME_FILE"
+apply_wallpaper_theme() {
+    printf "%s" "wallust-wallpaper" > "$ACTIVE_THEME_FILE.tmp" && mv "$ACTIVE_THEME_FILE.tmp" "$ACTIVE_THEME_FILE"
 
     local wall_path=""
     if [ -f "$CURRENT_PATH_FILE" ]; then
@@ -55,9 +56,14 @@ apply_matugen() {
         fi
     fi
 
-    if [ -n "$wall_path" ] && [ -f "$wall_path" ] && command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
+    if [ -n "$wall_path" ] && [ -f "$wall_path" ]; then
         mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes" "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0" "$HOME/.config/yazi"
-        matugen image "$wall_path" -c "$MATUGEN_CONFIG" --source-color-index 0 || true
+        
+        if command -v wallust &>/dev/null && [ -f "$WALLUST_CONFIG" ]; then
+            wallust run "$wall_path" -C "$WALLUST_CONFIG" || true
+        elif command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
+            matugen image "$wall_path" -c "$MATUGEN_CONFIG" --mode dark --type scheme-fidelity --contrast 0.0 --source-color-index 0 || true
+        fi
         reload_environment
     fi
 }
@@ -473,17 +479,17 @@ apply_theme() {
 }
 
 case "$ACTION" in
-    "wallpaper"|"matugen")
+    "wallpaper"|"matugen"|"wallust")
         if [ -n "${2:-}" ]; then
             "$HOME/scripts/wallpaper.sh" --set "$2"
         else
-            apply_matugen
+            apply_wallpaper_theme
         fi
         ;;
 
     "menu")
         ROFI_CONFIG="$HOME/.config/rofi/config.rasi"
-        THEME_OPTIONS="󰸉  Extraer colores del Wallpaper (Matugen)\n"
+        THEME_OPTIONS="󰸉  Extraer colores del Wallpaper (Wallust)\n"
         THEMES_COUNT=$(jq '.themes | length' "$CONFIG_FILE")
         for i in $(seq 0 $((THEMES_COUNT - 1))); do
             NAME=$(jq -r ".themes[$i].name" "$CONFIG_FILE")
@@ -494,10 +500,10 @@ case "$ACTION" in
         SELECTED=$(echo -e -n "$THEME_OPTIONS" | rofi -dmenu -p "󰔎 Seleccionar Tema" -theme "$ROFI_CONFIG" -theme-str 'window { width: 480px; }' || true)
 
         if [ -n "$SELECTED" ]; then
-            if [[ "$SELECTED" == *"Matugen"* ]]; then
-                apply_matugen
+            if [[ "$SELECTED" == *"Wallust"* ]] || [[ "$SELECTED" == *"Matugen"* ]]; then
+                apply_wallpaper_theme
                 if command -v notify-send &>/dev/null; then
-                    notify-send "Gestor de Temas" "Colores dinámicos de Matugen aplicados" -i preferences-desktop-theme
+                    notify-send "Gestor de Temas" "Colores dinámicos de Wallust aplicados" -i preferences-desktop-theme
                 fi
             else
                 SELECTED_NAME=$(echo "$SELECTED" | sed -E 's/^[^ ]+ +//')
@@ -517,13 +523,13 @@ case "$ACTION" in
         ;;
 
     "init")
-        ACTIVE_ID="matugen-wallpaper"
+        ACTIVE_ID="wallust-wallpaper"
         if [ -f "$ACTIVE_THEME_FILE" ]; then
-            ACTIVE_ID=$(tr -d '\r\n' < "$ACTIVE_THEME_FILE" || echo "matugen-wallpaper")
+            ACTIVE_ID=$(tr -d '\r\n' < "$ACTIVE_THEME_FILE" || echo "wallust-wallpaper")
         fi
 
-        if [ "$ACTIVE_ID" = "matugen-wallpaper" ] || [ -z "$ACTIVE_ID" ]; then
-            apply_matugen
+        if [ "$ACTIVE_ID" = "wallust-wallpaper" ] || [ "$ACTIVE_ID" = "matugen-wallpaper" ] || [ -z "$ACTIVE_ID" ]; then
+            apply_wallpaper_theme
         else
             THEMES_COUNT=$(jq '.themes | length' "$CONFIG_FILE")
             THEME_FOUND=false
@@ -537,7 +543,7 @@ case "$ACTION" in
                 fi
             done
             if [ "$THEME_FOUND" = false ]; then
-                apply_matugen
+                apply_wallpaper_theme
             fi
         fi
         ;;

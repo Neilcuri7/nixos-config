@@ -30,6 +30,10 @@
         };
 
       programs.gpu-screen-recorder.enable = true;
+      programs.localsend = {
+        enable = true;
+        openFirewall = true;
+      };
 
       environment.systemPackages = [
         pkgs.firefox

@@ -1,0 +1,10 @@
+@define-color background {{background}};
+@define-color foreground {{foreground}};
+@define-color primary {{color4}};
+@define-color secondary {{color5}};
+@define-color tertiary {{color6}};
+@define-color error {{color1}};
+@define-color surface {{color0}};
+@define-color on_surface {{color7}};
+@define-color surface_variant {{color8}};
+@define-color outline {{color8}};

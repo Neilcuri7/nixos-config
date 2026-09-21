@@ -9,6 +9,7 @@ CURRENT_WALLPAPER="$WALLPAPER_STATE_DIR/current"
 THEME_STATE_DIR="$HOME/.local/state/theme"
 ACTIVE_THEME_FILE="$THEME_STATE_DIR/active_theme.txt"
 MATUGEN_CONFIG="$HOME/.config/matugen/config.toml"
+WALLUST_CONFIG="$HOME/.config/wallust/wallust.toml"
 
 mkdir -p "$WALLPAPER_STATE_DIR" "$WALLPAPER_DIR" "$THEME_STATE_DIR"
 
@@ -51,19 +52,21 @@ set_wallpaper() {
     fi
 
     # Comprobar el tema activo
-    local active_theme="matugen-wallpaper"
+    local active_theme="wallust-wallpaper"
     if [ -f "$ACTIVE_THEME_FILE" ]; then
-        active_theme=$(tr -d '\r\n' < "$ACTIVE_THEME_FILE" || echo "matugen-wallpaper")
+        active_theme=$(tr -d '\r\n' < "$ACTIVE_THEME_FILE" || echo "wallust-wallpaper")
     fi
 
-    if [ "$active_theme" = "matugen-wallpaper" ] || [ -z "$active_theme" ]; then
-        mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes"
+    if [ "$active_theme" = "wallust-wallpaper" ] || [ "$active_theme" = "matugen-wallpaper" ] || [ -z "$active_theme" ]; then
+        mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes" "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0" "$HOME/.config/yazi"
 
-        if command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
-            matugen image "$full_path" -c "$MATUGEN_CONFIG" --source-color-index 0 || true
+        if command -v wallust &>/dev/null && [ -f "$WALLUST_CONFIG" ]; then
+            wallust run "$full_path" -C "$WALLUST_CONFIG" || true
+        elif command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
+            matugen image "$full_path" -c "$MATUGEN_CONFIG" --mode dark --type scheme-fidelity --contrast 0.0 --source-color-index 0 || true
         fi
 
-        printf "%s" "matugen-wallpaper" > "$ACTIVE_THEME_FILE"
+        printf "%s" "wallust-wallpaper" > "$ACTIVE_THEME_FILE"
         reload_environment
     fi
 }

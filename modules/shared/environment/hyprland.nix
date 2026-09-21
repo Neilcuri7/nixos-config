@@ -32,6 +32,7 @@
     environment.systemPackages = with pkgs; [
       waybar
       swaybg
+      wallust
       matugen
       swaynotificationcenter
       libnotify

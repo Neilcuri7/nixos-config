@@ -1,0 +1,9 @@
+* {
+    background:      {{color0}}ee;
+    selected:        {{color8}}dd;
+    selected-accent: {{color4}}40;
+    accent:          {{color4}};
+    border-col:      {{color8}};
+    text:            {{foreground}};
+    placeholder:     {{color7}}55;
+}

@@ -156,6 +156,11 @@
     recursive = true;
   };
 
+  home.file.".config/wallust" = {
+    source = ./theme/wallust;
+    recursive = true;
+  };
+
   stylix.targets = {
     hyprland.enable = false;
     waybar.enable = false;

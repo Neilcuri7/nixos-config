@@ -1,0 +1,7 @@
+@define-color cc-bg rgba({{color0 | red}}, {{color0 | green}}, {{color0 | blue}}, 0.85);
+@define-color noti-bg rgba({{color0 | red}}, {{color0 | green}}, {{color0 | blue}}, 0.9);
+@define-color noti-bg-hover rgba({{color8 | red}}, {{color8 | green}}, {{color8 | blue}}, 0.9);
+@define-color text-color {{foreground}};
+@define-color text-color-disabled rgba({{color7 | red}}, {{color7 | green}}, {{color7 | blue}}, 0.4);
+@define-color border-color {{color4}};
+@define-color accent-color {{color4}};

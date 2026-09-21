@@ -1,0 +1,17 @@
+# Wallust configuration - faithful wallpaper color generation
+backend = "resized"
+color_space = "lab"
+palette = "dark16"
+check_contrast = true
+
+[templates]
+waybar = { template = "waybar-colors.css", target = "~/.config/waybar/colors.css" }
+kitty = { template = "kitty-colors.conf", target = "~/.config/kitty/current-theme.conf" }
+hyprland = { template = "hyprland-colors.conf", target = "~/.config/hypr/colors.conf" }
+swaync = { template = "swaync-colors.css", target = "~/.config/swaync/colors.css" }
+rofi = { template = "rofi-colors.rasi", target = "~/.config/rofi/colors.rasi" }
+wlogout = { template = "waybar-colors.css", target = "~/.config/wlogout/colors.css" }
+micro = { template = "micro-colors.micro", target = "~/.config/micro/colorschemes/current-theme.micro" }
+gtk3 = { template = "gtk-colors.css", target = "~/.config/gtk-3.0/gtk.css" }
+gtk4 = { template = "gtk-colors.css", target = "~/.config/gtk-4.0/gtk.css" }
+yazi = { template = "yazi-theme.toml", target = "~/.config/yazi/theme.toml" }

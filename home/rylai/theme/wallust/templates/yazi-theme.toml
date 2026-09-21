@@ -1,0 +1,85 @@
+# Yazi Theme - Wallust generated
+
+[mgr]
+cwd = { fg = "{{color4}}" }
+hovered = { fg = "{{background}}", bg = "{{color4}}", bold = true }
+preview_hovered = { underline = true }
+find_keyword = { fg = "{{color5}}", bold = true, italic = true }
+find_position = { fg = "{{color6}}", bg = "reset", bold = true }
+marker_copied = { fg = "{{color2}}", bg = "{{color2}}" }
+marker_cut = { fg = "{{color1}}", bg = "{{color1}}" }
+marker_marked = { fg = "{{color4}}", bg = "{{color4}}" }
+marker_selected = { fg = "{{color5}}", bg = "{{color5}}" }
+tab_active = { fg = "{{background}}", bg = "{{color4}}" }
+tab_inactive = { fg = "{{foreground}}", bg = "{{color0}}" }
+tab_width = 1
+count_copied = { fg = "{{background}}", bg = "{{color2}}" }
+count_cut = { fg = "{{background}}", bg = "{{color1}}" }
+count_selected = { fg = "{{background}}", bg = "{{color5}}" }
+border_symbol = "rounded"
+border_style = { fg = "{{color8}}" }
+
+[status]
+separator_open = ""
+separator_close = ""
+separator_style = { fg = "{{color8}}", bg = "{{color8}}" }
+mode_normal = { fg = "{{background}}", bg = "{{color4}}", bold = true }
+mode_select = { fg = "{{background}}", bg = "{{color5}}", bold = true }
+mode_unset = { fg = "{{background}}", bg = "{{color6}}", bold = true }
+progress_label = { fg = "{{foreground}}", bold = true }
+progress_normal = { fg = "{{color4}}", bg = "{{color8}}" }
+progress_error = { fg = "{{color1}}", bg = "{{color8}}" }
+permissions_t = { fg = "{{color4}}" }
+permissions_r = { fg = "{{color5}}" }
+permissions_w = { fg = "{{color1}}" }
+permissions_x = { fg = "{{color2}}" }
+permissions_s = { fg = "{{color8}}" }
+
+[input]
+border = { fg = "{{color4}}" }
+title = { fg = "{{color4}}" }
+value = { fg = "{{foreground}}" }
+selected = { bg = "{{color8}}" }
+
+[select]
+border = { fg = "{{color4}}" }
+active = { fg = "{{color4}}", bold = true }
+inactive = { fg = "{{foreground}}" }
+
+[tasks]
+border = { fg = "{{color4}}" }
+title = { fg = "{{color4}}" }
+hovered = { fg = "{{color4}}", underline = true }
+
+[which]
+cols = 3
+mask = { bg = "{{color0}}" }
+cand = { fg = "{{color4}}" }
+rest = { fg = "{{foreground}}" }
+desc = { fg = "{{color8}}" }
+separator = "  "
+separator_style = { fg = "{{color8}}" }
+
+[completion]
+border = { fg = "{{color4}}" }
+active = { fg = "{{background}}", bg = "{{color4}}" }
+inactive = { fg = "{{foreground}}" }
+
+[filetype]
+rules = [
+  { url = "*/", fg = "{{color4}}", bold = true },
+  { mime = "image/*", fg = "{{color5}}" },
+  { mime = "video/*", fg = "{{color5}}" },
+  { mime = "audio/*", fg = "{{color6}}" },
+  { mime = "application/*zip", fg = "{{color1}}" },
+  { mime = "application/x-tar", fg = "{{color1}}" },
+  { mime = "application/x-bzip*", fg = "{{color1}}" },
+  { mime = "application/x-7z-compressed", fg = "{{color1}}" },
+  { mime = "application/x-rar", fg = "{{color1}}" },
+  { mime = "text/*", fg = "{{foreground}}" },
+  { mime = "application/json", fg = "{{color6}}" },
+  { mime = "application/*toml", fg = "{{color6}}" },
+  { mime = "application/x-yaml", fg = "{{color6}}" },
+  { mime = "application/x-executable", fg = "{{color2}}", bold = true },
+  { mime = "application/x-shellscript", fg = "{{color2}}" }
+]
