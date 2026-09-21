@@ -23,7 +23,7 @@ mainbox {
 }
 
 inputbar {
-    background-color: @selected;
+    background-color: @input-bg;
     border: 1px;
     border-color: @border-col;
     border-radius: 12px;

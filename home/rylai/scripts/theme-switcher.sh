@@ -144,13 +144,14 @@ EOF
 
     cat <<EOF > "$HOME/.config/rofi/colors.rasi"
 * {
-    background:      ${base00}ee;
-    selected:        ${base02}dd;
-    selected-accent: ${base0D}40;
+    background:      ${base00}e8;
+    input-bg:        ${base01}55;
+    selected:        ${base02}50;
+    selected-accent: ${base0D}30;
     accent:          ${base0D};
-    border-col:      ${base03};
+    border-col:      ${base03}60;
     text:            ${base05};
-    placeholder:     ${base04}88;
+    placeholder:     ${base04}70;
 }
 EOF
 

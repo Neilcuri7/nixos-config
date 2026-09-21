@@ -1,9 +1,10 @@
 * {
-    background:      {{color0}}ee;
-    selected:        {{color8}}dd;
-    selected-accent: {{color4}}40;
-    accent:          {{color4}};
-    border-col:      {{color8}};
+    background:      {{color0}}e8;
+    input-bg:        {{color8}}33;
+    selected:        {{color8}}50;
+    selected-accent: {{color4}}30;
+    accent:          {{color12}};
+    border-col:      {{color8}}60;
     text:            {{foreground}};
-    placeholder:     {{color7}}55;
+    placeholder:     {{color7}}70;
 }

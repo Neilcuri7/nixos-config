@@ -1,6 +1,5 @@
-# Wallust configuration - faithful wallpaper color generation
-backend = "resized"
-color_space = "lab"
+backend = "kmeans"
+color_space = "lch"
 palette = "dark16"
 check_contrast = true
 
