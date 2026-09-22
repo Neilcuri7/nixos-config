@@ -257,19 +257,25 @@ entry, searchbar {
 }
 
 /* Thunar Specific Styling */
+.thunar,
 .thunar window,
 .thunar .standard-view,
 .thunar .standard-view .view,
-.thunar treeview {
-    background-color: @view_bg_color;
-    color: @view_fg_color;
-}
-
+.thunar .standard-view iconview,
+.thunar .standard-view treeview,
+.thunar .view,
+.thunar treeview,
+.thunar iconview,
+.thunar scrolledwindow,
 .thunar .sidebar,
 .thunar .shortcuts-pane,
-.thunar .shortcuts-pane .view {
-    background-color: @sidebar_bg_color;
-    color: @sidebar_fg_color;
+.thunar .shortcuts-pane .view,
+.thunar .sidebar .view,
+.thunar .sidebar treeview,
+.thunar paned,
+.thunar notebook {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
 }
 
 .thunar .location-bar,
@@ -331,14 +337,10 @@ levelbar trough {
 /* System Dialogs, File Chooser (Open/Save File) & Yad */
 filechooser,
 filechooser .sidebar,
-filechooser treeview {
-    background-color: @view_bg_color;
-    color: @view_fg_color;
-}
-
-filechooser .sidebar {
-    background-color: @sidebar_bg_color;
-    color: @sidebar_fg_color;
+filechooser treeview,
+filechooser .view {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
 }
 
 messagedialog,
