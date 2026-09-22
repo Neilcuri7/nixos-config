@@ -80,6 +80,8 @@
         pkgs.imagemagick
         pkgs.tinty
         pkgs.micro
+        pkgs.lazysql
+        (pkgs.callPackage ./pkgs/croft.nix { })
         inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-cli
       ];
     })
