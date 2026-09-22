@@ -1,10 +1,10 @@
 * {
-    background:      {{color0}}e8;
-    input-bg:        {{color8}}33;
-    selected:        {{color8}}50;
-    selected-accent: {{color4}}30;
+    background:      {{background}}ee;
+    input-bg:        rgba({{color4 | red}}, {{color4 | green}}, {{color4 | blue}}, 0.14);
+    selected:        rgba({{color4 | red}}, {{color4 | green}}, {{color4 | blue}}, 0.20);
+    selected-accent: rgba({{color4 | red}}, {{color4 | green}}, {{color4 | blue}}, 0.30);
     accent:          {{color12}};
-    border-col:      {{color8}}60;
+    border-col:      rgba({{color4 | red}}, {{color4 | green}}, {{color4 | blue}}, 0.35);
     text:            {{foreground}};
-    placeholder:     {{color7}}70;
+    placeholder:     {{color7}}80;
 }

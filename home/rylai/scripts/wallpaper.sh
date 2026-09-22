@@ -126,12 +126,12 @@ select_wallpaper() {
     local ROFI_CONFIG="$HOME/.config/rofi/config.rasi"
     local rofi_theme_str='
         window {
-            width: 68%;
-            height: 60%;
+            width: 70%;
+            height: 62%;
             background-color: @background;
             border: 2px;
-            border-color: @border-col;
-            border-radius: 18px;
+            border-color: @accent;
+            border-radius: 20px;
             padding: 18px;
         }
         mainbox {
@@ -139,7 +139,7 @@ select_wallpaper() {
             children: [ inputbar, listview ];
         }
         inputbar {
-            background-color: @selected;
+            background-color: @input-bg;
             border: 1px;
             border-color: @border-col;
             border-radius: 12px;
@@ -167,9 +167,9 @@ select_wallpaper() {
             orientation: vertical;
             padding: 12px;
             border-radius: 14px;
-            background-color: transparent;
+            background-color: rgba(255, 255, 255, 0.03);
             border: 1px;
-            border-color: @border-col;
+            border-color: transparent;
         }
         element selected {
             background-color: @selected-accent;
