@@ -82,7 +82,7 @@
   # Configuración de Stylix (Tema Nord unificado)
   stylix = {
     enable = true;
-    image = ../../modules/shared/assets/wallpapers/877911.png;
+    image = ../../modules/shared/assets/wallpapers/angel.jpg;
     base16Scheme = "${pkgs.base16-schemes}/share/themes/nord.yaml";
     polarity = "dark";
     opacity = {
