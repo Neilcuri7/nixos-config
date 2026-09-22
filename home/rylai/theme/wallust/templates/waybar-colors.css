@@ -1,8 +1,8 @@
 @define-color background {{background}};
 @define-color foreground {{foreground}};
 @define-color primary {{color12}};
-@define-color secondary {{color13}};
-@define-color tertiary {{color14}};
+@define-color secondary {{color10}};
+@define-color tertiary {{color11}};
 @define-color error {{color9}};
 @define-color surface {{color0}};
 @define-color on_surface {{foreground}};
