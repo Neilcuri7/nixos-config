@@ -16,7 +16,7 @@ tab_width = 1
 count_copied = { fg = "{{ colors.on_primary.default.hex }}", bg = "{{ colors.tertiary.default.hex }}" }
 count_cut = { fg = "{{ colors.on_primary.default.hex }}", bg = "{{ colors.error.default.hex }}" }
 count_selected = { fg = "{{ colors.on_primary.default.hex }}", bg = "{{ colors.secondary.default.hex }}" }
-border_symbol = "rounded"
+border_symbol = "│"
 border_style = { fg = "{{ colors.outline.default.hex }}" }
 
 [status]

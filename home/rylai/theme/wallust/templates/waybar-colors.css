@@ -1,10 +1,10 @@
 @define-color background {{background}};
 @define-color foreground {{foreground}};
-@define-color primary {{color4}};
-@define-color secondary {{color5}};
-@define-color tertiary {{color6}};
-@define-color error {{color1}};
+@define-color primary {{color12}};
+@define-color secondary {{color13}};
+@define-color tertiary {{color14}};
+@define-color error {{color9}};
 @define-color surface {{color0}};
 @define-color on_surface {{foreground}};
-@define-color surface_variant rgba({{color4 | red}}, {{color4 | green}}, {{color4 | blue}}, 0.15);
-@define-color outline rgba({{color4 | red}}, {{color4 | green}}, {{color4 | blue}}, 0.30);
+@define-color surface_variant rgba({{color12 | red}}, {{color12 | green}}, {{color12 | blue}}, 0.15);
+@define-color outline rgba({{color12 | red}}, {{color12 | green}}, {{color12 | blue}}, 0.30);

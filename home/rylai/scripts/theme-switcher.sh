@@ -367,7 +367,7 @@ tab_width = 1
 count_copied = { fg = "$base00", bg = "$base0B" }
 count_cut = { fg = "$base00", bg = "$base08" }
 count_selected = { fg = "$base00", bg = "$base0E" }
-border_symbol = "rounded"
+border_symbol = "│"
 border_style = { fg = "$base03" }
 
 [status]

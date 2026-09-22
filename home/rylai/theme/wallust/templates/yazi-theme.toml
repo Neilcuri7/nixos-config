@@ -16,7 +16,7 @@ tab_width = 1
 count_copied = { fg = "{{background}}", bg = "{{color2}}" }
 count_cut = { fg = "{{background}}", bg = "{{color1}}" }
 count_selected = { fg = "{{background}}", bg = "{{color5}}" }
-border_symbol = "rounded"
+border_symbol = "│"
 border_style = { fg = "{{color8}}" }
 
 [status]

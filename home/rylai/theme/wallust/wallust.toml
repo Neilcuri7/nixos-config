@@ -1,7 +1,8 @@
 backend = "resized"
 color_space = "lch"
-palette = "dark16"
+palette = "harddark16"
 check_contrast = true
+fallback_generator = "interpolate"
 
 [templates]
 waybar = { template = "waybar-colors.css", target = "~/.config/waybar/colors.css" }
