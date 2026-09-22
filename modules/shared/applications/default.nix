@@ -49,6 +49,7 @@
         pkgs.typora
         pkgs.kdePackages.kate
         pkgs.discord
+        pkgs.telegram-desktop
         pkgs.file-roller
         pkgs.obs-studio
         pkgs.gpu-screen-recorder-ui
