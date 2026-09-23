@@ -7,6 +7,7 @@
     ../../modules/shared/environment/hyprland.nix
     ../../modules/shared/hardware
     ../../modules/shared/services/sops.nix
+    ../../modules/shared/services/input-remapper.nix
   ];
 
   networking.hostName = "haimiya";
@@ -64,7 +65,10 @@
       pipewire.enable = true;
       power.enable = false;
     };
-    services.sops.enable = true;
+    services = {
+      sops.enable = true;
+      input-remapper.enable = true;
+    };
   };
 
   virtualisation.docker.enable = true;

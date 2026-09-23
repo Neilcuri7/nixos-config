@@ -7,6 +7,7 @@
     ../../modules/shared/environment/hyprland.nix
     ../../modules/shared/hardware
     ../../modules/shared/services/sops.nix
+    ../../modules/shared/services/input-remapper.nix
   ];
 
   networking.hostName = "chinatsu";
