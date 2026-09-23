@@ -54,6 +54,7 @@
         pkgs.obs-studio
         pkgs.gpu-screen-recorder-ui
         pkgs.wpsoffice
+        pkgs.rustdesk
         inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
         inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-ide
       ];
