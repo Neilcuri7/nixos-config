@@ -113,6 +113,7 @@
 
       environment.systemPackages = with pkgs; [
         protonup-qt
+        lunar-client
       ];
     })
   ];
