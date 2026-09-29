@@ -1,12 +1,6 @@
 { config, pkgs, ... }:
 
 {
-  programs.starship = {
-    enable = true;
-    enableBashIntegration = true;
-    enableZshIntegration = true;
-  };
-
   programs.kitty = {
     enable = true;
     settings = {
