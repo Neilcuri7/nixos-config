@@ -181,10 +181,6 @@
         format = "via [$symbol($version )]($style)";
       };
 
-      pnpm = {
-        symbol = "󰋜 ";
-        format = "via [$symbol($version )]($style)";
-      };
 
       package = {
         symbol = "󰏗 ";

@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+show_help() {
+  cat << 'HELP_EOF'
+======================================================================
+         Conversor Universal de Documentos a Markdown (NixOS)
+======================================================================
+
+USO:
+    converter <archivo> [directorio_salida]
+    converter -h | --help
+
+DESCRIPCIÓN:
+    Convierte archivos de documentos a formato Markdown (.md).
+    - Para archivos Word (.docx): Utiliza Pandoc y extrae imágenes asociadas.
+    - Para archivos PDF (.pdf)  : Utiliza Docling dentro de un entorno FHS en
+                                  NixOS para extraer texto, OCR, tablas y layout.
+
+ARGUMENTOS:
+    <archivo>              Ruta al archivo .docx o .pdf que deseas convertir.
+    [directorio_salida]    (Opcional) Carpeta donde se guardará el resultado.
+                           Si no se indica, se guarda en el mismo directorio del archivo.
+
+OPCIONES:
+    -h, --help             Muestra este mensaje de ayuda.
+
+EJEMPLOS:
+    converter documento.docx
+    converter /ruta/hacia/informe.pdf
+    converter tesis.docx ./salida_markdown/
+======================================================================
+HELP_EOF
+}
+
+if [ -z "$1" ]; then
+  show_help
+  exit 1
+fi
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$1" = "help" ]; then
+  show_help
+  exit 0
+fi
+
+INPUT_FILE="$(realpath "$1")"
+OUTPUT_DIR="${2:-$(dirname "$INPUT_FILE")}"
+
+if [ ! -f "$INPUT_FILE" ]; then
+  echo "Error: El archivo '$INPUT_FILE' no existe."
+  exit 1
+fi
+
+FILENAME=$(basename -- "$INPUT_FILE")
+BASENAME="${FILENAME%.*}"
+EXTENSION="${FILENAME##*.}"
+EXTENSION_LOWER=$(echo "$EXTENSION" | tr '[:upper:]' '[:lower:]')
+
+mkdir -p "$OUTPUT_DIR"
+
+if [ "$EXTENSION_LOWER" = "docx" ]; then
+  echo "-> Detectado archivo Word (.docx)."
+  echo "-> Convirtiendo con Pandoc..."
+  
+  MEDIA_DIR="$OUTPUT_DIR/${BASENAME}_media"
+  OUTPUT_MD="$OUTPUT_DIR/${BASENAME}.md"
+  
+  nix-shell -p pandoc --run "pandoc \"$INPUT_FILE\" -t gfm --extract-media=\"$MEDIA_DIR\" -o \"$OUTPUT_MD\""
+  
+  echo "-> ¡Completado!"
+  echo "   Markdown: $OUTPUT_MD"
+  if [ -d "$MEDIA_DIR" ]; then
+    echo "   Imágenes: $MEDIA_DIR"
+  fi
+
+elif [ "$EXTENSION_LOWER" = "pdf" ]; then
+  echo "-> Detectado archivo PDF (.pdf)."
+  echo "-> Preparando entorno Docling en NixOS..."
+
+  # Entorno virtual persistente en cache para no reinstalar cada vez
+  CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}"
+  VENV_DIR="$CACHE_DIR/converter-venv"
+  SHELL_NIX="$SCRIPT_DIR/converter-shell.nix"
+
+  nix-shell "$SHELL_NIX" --run "
+    if [ ! -d '$VENV_DIR' ]; then
+      echo '-> Creando entorno virtual local en $VENV_DIR...'
+      python -m venv '$VENV_DIR'
+      source '$VENV_DIR/bin/activate'
+      echo '-> Instalando Docling (primera ejecución)...'
+      pip install --upgrade pip
+      pip install docling
+    else
+      source '$VENV_DIR/bin/activate'
+    fi
+
+    echo '-> Ejecutando Docling...'
+    docling '$INPUT_FILE' --output '$OUTPUT_DIR'
+  "
+
+  echo "-> ¡Completado!"
+  echo "   Salida guardada en: $OUTPUT_DIR"
+
+else
+  echo "Error: Extensión '.$EXTENSION' no soportada. Usa .docx o .pdf"
+  exit 1
+fi

@@ -20,6 +20,10 @@
     VISUAL = "kwrite";
   };
 
+  home.sessionPath = [
+    "$HOME/scripts"
+  ];
+
   xdg.configFile."xdg-terminals.list".text = "kitty.desktop\n";
 
   dconf.settings = {
