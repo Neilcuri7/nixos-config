@@ -84,12 +84,14 @@ elif [ "$EXTENSION_LOWER" = "pdf" ]; then
   VENV_DIR="$CACHE_DIR/converter-venv"
   SHELL_NIX="$SCRIPT_DIR/converter-shell.nix"
 
-  nix-shell "$SHELL_NIX" --run "
+  ENV_BIN="$(nix-build --no-out-link "$SHELL_NIX")/bin/docling-fhs-env"
+
+  "$ENV_BIN" -c "
     if [ ! -d '$VENV_DIR' ]; then
       echo '-> Creando entorno virtual local en $VENV_DIR...'
       python -m venv '$VENV_DIR'
       source '$VENV_DIR/bin/activate'
-      echo '-> Instalando Docling (primera ejecución)...'
+      echo '-> Instalando Docling (primera ejecución, puede tardar unos minutos)...'
       pip install --upgrade pip
       pip install docling
     else

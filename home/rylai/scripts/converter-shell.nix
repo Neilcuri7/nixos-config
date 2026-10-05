@@ -1,6 +1,6 @@
 { pkgs ? import <nixpkgs> {} }:
 
-(pkgs.buildFHSEnv {
+pkgs.buildFHSEnv {
   name = "docling-fhs-env";
   targetPkgs = pkgs: (with pkgs; [
     python311
@@ -23,4 +23,4 @@
     pandoc
   ]);
   runScript = "bash";
-}).env
+}
