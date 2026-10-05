@@ -18,7 +18,7 @@
     libjpeg
     openjpeg
     libpng
-    poppler_utils
+    poppler-utils
     tesseract
     pandoc
   ]);
