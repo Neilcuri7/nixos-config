@@ -16,11 +16,12 @@ USO:
 DESCRIPCIÓN:
     Convierte archivos de documentos a formato Markdown (.md).
     - Para archivos Word (.docx): Utiliza Pandoc y extrae imágenes asociadas.
+    - Para archivos Word (.doc) : Utiliza Antiword + Pandoc para formato heredado.
     - Para archivos PDF (.pdf)  : Utiliza Docling dentro de un entorno FHS en
                                   NixOS para extraer texto, OCR, tablas y layout.
 
 ARGUMENTOS:
-    <archivo>              Ruta al archivo .docx o .pdf que deseas convertir.
+    <archivo>              Ruta al archivo .docx, .doc o .pdf que deseas convertir.
     [directorio_salida]    (Opcional) Carpeta donde se guardará el resultado.
                            Si no se indica, se guarda en el mismo directorio del archivo.
 
@@ -29,6 +30,7 @@ OPCIONES:
 
 EJEMPLOS:
     converter documento.docx
+    converter archivo_antiguo.doc
     converter /ruta/hacia/informe.pdf
     converter tesis.docx ./salida_markdown/
 ======================================================================
@@ -75,6 +77,17 @@ if [ "$EXTENSION_LOWER" = "docx" ]; then
     echo "   Imágenes: $MEDIA_DIR"
   fi
 
+elif [ "$EXTENSION_LOWER" = "doc" ]; then
+  echo "-> Detectado archivo Word clásico (.doc)."
+  echo "-> Convirtiendo con Antiword y Pandoc..."
+  
+  OUTPUT_MD="$OUTPUT_DIR/${BASENAME}.md"
+  
+  nix-shell -p antiword pandoc --run "antiword -x db \"$INPUT_FILE\" | pandoc -f docbook -t gfm -o \"$OUTPUT_MD\" || antiword -m UTF-8 \"$INPUT_FILE\" > \"$OUTPUT_MD\""
+  
+  echo "-> ¡Completado!"
+  echo "   Markdown: $OUTPUT_MD"
+
 elif [ "$EXTENSION_LOWER" = "pdf" ]; then
   echo "-> Detectado archivo PDF (.pdf)."
   echo "-> Preparando entorno Docling en NixOS..."
@@ -106,6 +119,6 @@ elif [ "$EXTENSION_LOWER" = "pdf" ]; then
   echo "   Salida guardada en: $OUTPUT_DIR"
 
 else
-  echo "Error: Extensión '.$EXTENSION' no soportada. Usa .docx o .pdf"
+  echo "Error: Extensión '.$EXTENSION' no soportada. Usa .docx, .doc o .pdf"
   exit 1
 fi
