@@ -287,5 +287,6 @@
 
   home.packages = with pkgs; [
     papirus-folders
+    gtk3
   ];
 }
