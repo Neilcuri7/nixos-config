@@ -27,58 +27,76 @@ update_folder_color() {
         return 0
     fi
 
-    # Si se pasa un color hexadecimal, calculamos el color más cercano
+    if [ -z "$hex" ]; then
+        local gtk_css="$HOME/.config/gtk-3.0/gtk.css"
+        if [ -f "$gtk_css" ]; then
+            hex=$(grep -E '@define-color (accent_color|theme_selected_bg_color)' "$gtk_css" | head -n 1 | grep -oE '#[0-9a-fA-F]{6}' || true)
+        fi
+    fi
+
     local color="blue"
     if [ -n "$hex" ]; then
         hex="${hex#\#}"
         if [ ${#hex} -eq 6 ]; then
-            local r=$((16#${hex:0:2}))
-            local g=$((16#${hex:2:2}))
-            local b=$((16#${hex:4:2}))
+            local r_val=$((16#${hex:0:2}))
+            local g_val=$((16#${hex:2:2}))
+            local b_val=$((16#${hex:4:2}))
 
-            # Determinar color predominante
-            if [ "$r" -gt "$((g + 35))" ] && [ "$r" -gt "$((b + 35))" ]; then
-                if [ "$g" -gt 130 ]; then
-                    color="orange"
-                elif [ "$b" -gt 100 ]; then
-                    color="magenta"
-                else
-                    color="red"
-                fi
-            elif [ "$g" -gt "$((r + 25))" ] && [ "$g" -gt "$((b + 25))" ]; then
-                color="green"
-            elif [ "$b" -gt "$((r + 25))" ] && [ "$b" -gt "$((g + 25))" ]; then
-                if [ "$g" -gt 130 ]; then
-                    color="cyan"
-                elif [ "$r" -gt 100 ]; then
-                    color="violet"
-                else
-                    color="blue"
-                fi
-            elif [ "$r" -gt 160 ] && [ "$g" -gt 160 ] && [ "$b" -lt 120 ]; then
-                color="yellow"
-            elif [ "$g" -gt 130 ] && [ "$b" -gt 130 ]; then
-                color="teal"
-            elif [ "$r" -gt 130 ] && [ "$b" -gt 130 ]; then
-                color="pink"
-            else
-                color="nordic"
-            fi
-        fi
-    else
-        # Intentar leer el color de acento generado en gtk.css
-        local gtk_css="$HOME/.config/gtk-3.0/gtk.css"
-        if [ -f "$gtk_css" ]; then
-            local extracted_hex
-            extracted_hex=$(grep -E '@define-color (accent_color|theme_selected_bg_color)' "$gtk_css" | head -n 1 | grep -oE '#[0-9a-fA-F]{6}' || true)
-            if [ -n "$extracted_hex" ]; then
-                update_folder_color "$extracted_hex"
-                return $?
-            fi
+            # Calcular matiz (Hue) y saturación exacta usando awk
+            color=$(awk -v r="$r_val" -v g="$g_val" -v b="$b_val" 'BEGIN {
+                r_n = r / 255.0; g_n = g / 255.0; b_n = b / 255.0;
+                max = (r_n > g_n ? (r_n > b_n ? r_n : b_n) : (g_n > b_n ? g_n : b_n));
+                min = (r_n < g_n ? (r_n < b_n ? r_n : b_n) : (g_n < b_n ? g_n : b_n));
+                delta = max - min;
+                sat = (max == 0 ? 0 : delta / max);
+
+                if (delta == 0) {
+                    hue = 0;
+                } else if (max == r_n) {
+                    hue = 60 * (((g_n - b_n) / delta) % 6);
+                } else if (max == g_n) {
+                    hue = 60 * (((b_n - r_n) / delta) + 2);
+                } else {
+                    hue = 60 * (((r_n - g_n) / delta) + 4);
+                }
+                if (hue < 0) hue += 360;
+
+                # Mapeo según el matiz (360 grados cromáticos)
+                if (sat < 0.12) {
+                    print "nordic";
+                } else if (hue >= 345 || hue < 15) {
+                    print "red";
+                } else if (hue >= 15 && hue < 42) {
+                    print "orange";
+                } else if (hue >= 42 && hue < 70) {
+                    print "yellow";
+                } else if (hue >= 70 && hue < 160) {
+                    print "green";
+                } else if (hue >= 160 && hue < 190) {
+                    print "teal";
+                } else if (hue >= 190 && hue < 215) {
+                    print "cyan";
+                } else if (hue >= 215 && hue < 255) {
+                    print "blue";
+                } else if (hue >= 255 && hue < 290) {
+                    print "violet";
+                } else if (hue >= 290 && hue < 325) {
+                    print "magenta";
+                } else {
+                    print "pink";
+                }
+            }')
         fi
     fi
 
+    [ -z "$color" ] && color="blue"
     papirus-folders -C "$color" --theme Papirus-Dark &>/dev/null || true
+
+    # Forzar recarga en caliente de iconos para Thunar y aplicaciones GTK
+    if command -v gsettings &>/dev/null; then
+        gsettings set org.gnome.desktop.interface icon-theme "Papirus" &>/dev/null || true
+        gsettings set org.gnome.desktop.interface icon-theme "Papirus-Dark" &>/dev/null || true
+    fi
 }
 
 reload_environment() {
