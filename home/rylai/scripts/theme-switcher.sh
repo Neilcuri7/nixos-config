@@ -21,7 +21,70 @@ fi
 
 ACTION="${1:-menu}"
 
+update_folder_color() {
+    local hex="${1:-}"
+    if ! command -v papirus-folders &>/dev/null; then
+        return 0
+    fi
+
+    # Si se pasa un color hexadecimal, calculamos el color más cercano
+    local color="blue"
+    if [ -n "$hex" ]; then
+        hex="${hex#\#}"
+        if [ ${#hex} -eq 6 ]; then
+            local r=$((16#${hex:0:2}))
+            local g=$((16#${hex:2:2}))
+            local b=$((16#${hex:4:2}))
+
+            # Determinar color predominante
+            if [ "$r" -gt "$((g + 35))" ] && [ "$r" -gt "$((b + 35))" ]; then
+                if [ "$g" -gt 130 ]; then
+                    color="orange"
+                elif [ "$b" -gt 100 ]; then
+                    color="magenta"
+                else
+                    color="red"
+                fi
+            elif [ "$g" -gt "$((r + 25))" ] && [ "$g" -gt "$((b + 25))" ]; then
+                color="green"
+            elif [ "$b" -gt "$((r + 25))" ] && [ "$b" -gt "$((g + 25))" ]; then
+                if [ "$g" -gt 130 ]; then
+                    color="cyan"
+                elif [ "$r" -gt 100 ]; then
+                    color="violet"
+                else
+                    color="blue"
+                fi
+            elif [ "$r" -gt 160 ] && [ "$g" -gt 160 ] && [ "$b" -lt 120 ]; then
+                color="yellow"
+            elif [ "$g" -gt 130 ] && [ "$b" -gt 130 ]; then
+                color="teal"
+            elif [ "$r" -gt 130 ] && [ "$b" -gt 130 ]; then
+                color="pink"
+            else
+                color="nordic"
+            fi
+        fi
+    else
+        # Intentar leer el color de acento generado en gtk.css
+        local gtk_css="$HOME/.config/gtk-3.0/gtk.css"
+        if [ -f "$gtk_css" ]; then
+            local extracted_hex
+            extracted_hex=$(grep -E '@define-color (accent_color|theme_selected_bg_color)' "$gtk_css" | head -n 1 | grep -oE '#[0-9a-fA-F]{6}' || true)
+            if [ -n "$extracted_hex" ]; then
+                update_folder_color "$extracted_hex"
+                return $?
+            fi
+        fi
+    fi
+
+    papirus-folders -C "$color" --theme Papirus-Dark &>/dev/null || true
+}
+
 reload_environment() {
+    local accent_hex="${1:-}"
+    update_folder_color "$accent_hex"
+
     if command -v hyprctl &>/dev/null && [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
         hyprctl reload &>/dev/null || true
     fi
@@ -443,7 +506,7 @@ EOF
 
     printf "%s" "$theme_id" > "$ACTIVE_THEME_FILE.tmp" && mv "$ACTIVE_THEME_FILE.tmp" "$ACTIVE_THEME_FILE"
 
-    reload_environment
+    reload_environment "$base0D"
 }
 
 apply_theme() {
