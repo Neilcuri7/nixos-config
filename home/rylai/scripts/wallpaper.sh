@@ -137,10 +137,25 @@ set_wallpaper() {
     if [ "$active_theme" = "wallust-wallpaper" ] || [ "$active_theme" = "matugen-wallpaper" ] || [ -z "$active_theme" ]; then
         mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes" "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0" "$HOME/.config/yazi"
 
-        if command -v wallust &>/dev/null && [ -f "$WALLUST_CONFIG" ]; then
-            wallust run "$full_path" -C "$WALLUST_CONFIG" || true
-        elif command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
-            matugen image "$full_path" -c "$MATUGEN_CONFIG" --mode dark --type scheme-fidelity --contrast 0.0 --source-color-index 0 || true
+        local studio_profiles_dir="$HOME/.local/state/wallust-studio/profiles"
+        local profile_applied=false
+
+        if [ -d "$studio_profiles_dir" ] && command -v sha256sum &>/dev/null; then
+            local wall_hash
+            wall_hash=$(sha256sum "$full_path" | awk '{print $1}')
+            local saved_profile="$studio_profiles_dir/${wall_hash}.json"
+            if [ -f "$saved_profile" ] && command -v wallust &>/dev/null && [ -f "$WALLUST_CONFIG" ]; then
+                wallust cs "$saved_profile" -C "$WALLUST_CONFIG" || true
+                profile_applied=true
+            fi
+        fi
+
+        if [ "$profile_applied" = false ]; then
+            if command -v wallust &>/dev/null && [ -f "$WALLUST_CONFIG" ]; then
+                wallust run "$full_path" -C "$WALLUST_CONFIG" || true
+            elif command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
+                matugen image "$full_path" -c "$MATUGEN_CONFIG" --mode dark --type scheme-fidelity --contrast 0.0 --source-color-index 0 || true
+            fi
         fi
 
         printf "%s" "wallust-wallpaper" > "$ACTIVE_THEME_FILE"

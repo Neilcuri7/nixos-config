@@ -56,6 +56,9 @@
 
     windowrule = [
       "opacity 0.90 0.90, match:class (?i)thunar"
+      "float, match:class (?i)walluststudio"
+      "center, match:class (?i)walluststudio"
+      "size 1280 800, match:class (?i)walluststudio"
     ];
   };
 }

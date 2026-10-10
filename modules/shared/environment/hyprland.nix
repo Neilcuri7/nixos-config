@@ -64,6 +64,12 @@
       desktop-file-utils
       xfce4-exo
       gh
+      (python3.withPackages (ps: with ps; [
+        pygobject3
+        coloraide
+      ]))
+      libadwaita
+      gtk4
     ];
 
     programs.dconf.enable = true;
