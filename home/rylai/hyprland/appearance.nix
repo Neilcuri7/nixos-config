@@ -54,11 +54,11 @@
       preserve_split = true;
     };
 
-    windowrule = [
-      "opacity 0.90 0.90, match:class (?i)thunar"
-      "float, match:class (?i)walluststudio"
-      "center, match:class (?i)walluststudio"
-      "size 1280 800, match:class (?i)walluststudio"
+    windowrulev2 = [
+      "opacity 0.90 0.90, class:(?i)thunar"
+      "float, class:(?i)walluststudio"
+      "center, class:(?i)walluststudio"
+      "size 1280 800, class:(?i)walluststudio"
     ];
   };
 }
