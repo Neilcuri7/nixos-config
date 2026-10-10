@@ -97,6 +97,7 @@ class CSSManager:
             border-radius: 10px;
             padding: 4px 10px;
             border: 1px solid {c8};
+            opacity: {waybar_op};
         }}
         .mock-module {{
             background-color: {c0};
@@ -104,6 +105,7 @@ class CSSManager:
             padding: 4px 10px;
             color: {fg};
             font-size: 12px;
+            font-family: 'JetBrainsMono Nerd Font', monospace;
         }}
         .mock-workspaces .mock-ws-btn {{
             padding: 2px 8px;
@@ -120,6 +122,10 @@ class CSSManager:
             font-weight: bold;
             color: {c12};
         }}
+        .mock-mod-cpu {{ color: {c1}; }}
+        .mock-mod-ram {{ color: {c3}; }}
+        .mock-mod-audio {{ color: {c2}; }}
+        .mock-mod-bat {{ color: {c6}; }}
 
         /* Mockup Hyprland Window */
         .mock-hyprland-active-window {{
@@ -132,14 +138,22 @@ class CSSManager:
             color: {c4};
             font-weight: bold;
             font-size: 14px;
+            font-family: 'JetBrainsMono Nerd Font', monospace;
         }}
         .mock-sample-card {{
             background-color: {c0};
             border-radius: 8px;
-            padding: 12px;
+            padding: 14px;
+            border-left: 3px solid {c4};
+        }}
+        .mock-card-badge {{
+            color: {c2};
+            font-weight: bold;
+            font-size: 10px;
+            font-family: 'JetBrainsMono Nerd Font', monospace;
         }}
         .mock-card-heading {{ color: {c12}; font-weight: bold; font-size: 13px; }}
-        .mock-file-subtext {{ color: {c7}; font-size: 11px; }}
+        .mock-card-body {{ color: {c7}; font-size: 11px; }}
 
         /* Mockup Thunar */
         .mock-thunar-window {{
@@ -155,6 +169,7 @@ class CSSManager:
             border-radius: 6px;
             color: {fg};
             font-size: 13px;
+            font-family: 'JetBrainsMono Nerd Font', monospace;
         }}
         .mock-sidebar-item.selected {{
             background-color: {c4}26;
@@ -167,7 +182,9 @@ class CSSManager:
             padding: 4px 8px;
             color: {c7};
             font-size: 12px;
+            font-family: 'JetBrainsMono Nerd Font', monospace;
         }}
+        .mock-pathbar-text {{ color: {c4}; font-weight: bold; }}
         .mock-file-card {{
             background-color: {c0};
             border-radius: 8px;
@@ -176,11 +193,27 @@ class CSSManager:
         }}
         .mock-file-card:hover {{
             border-color: {c4};
+            background-color: {c8}33;
         }}
         .mock-folder-icon {{
             color: {c4};
             font-weight: bold;
-            font-size: 13px;
+            font-size: 22px;
+            font-family: 'JetBrainsMono Nerd Font', monospace;
+        }}
+        .mock-file-icon {{
+            color: {c7};
+            font-size: 22px;
+            font-family: 'JetBrainsMono Nerd Font', monospace;
+        }}
+        .mock-file-name {{
+            color: {fg};
+            font-size: 11px;
+            font-weight: bold;
+        }}
+        .mock-file-subtext {{
+            color: {c8};
+            font-size: 10px;
         }}
         """
         try:

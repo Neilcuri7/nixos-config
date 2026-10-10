@@ -156,12 +156,29 @@ class PreviewPanel(Gtk.Box):
         spacer2.set_hexpand(True)
         waybar_box.append(spacer2)
 
-        # Módulos Hardware (CPU, RAM, Audio)
+        # Módulos Hardware (CPU, RAM, Audio, Batería)
         hw_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        hw_box.add_css_class("mock-module")
-        hw_box.add_css_class("mock-sysinfo")
-        hw_lbl = Gtk.Label(label="󰍛 24%  󰕾 80%  󰁹 95%")
-        hw_box.append(hw_lbl)
+        
+        cpu_lbl = Gtk.Label(label="󰍛 24%")
+        cpu_lbl.add_css_class("mock-module")
+        cpu_lbl.add_css_class("mock-mod-cpu")
+        hw_box.append(cpu_lbl)
+
+        ram_lbl = Gtk.Label(label="󰘚 48%")
+        ram_lbl.add_css_class("mock-module")
+        ram_lbl.add_css_class("mock-mod-ram")
+        hw_box.append(ram_lbl)
+
+        vol_lbl = Gtk.Label(label="󰕾 80%")
+        vol_lbl.add_css_class("mock-module")
+        vol_lbl.add_css_class("mock-mod-audio")
+        hw_box.append(vol_lbl)
+
+        bat_lbl = Gtk.Label(label="󰁹 95%")
+        bat_lbl.add_css_class("mock-module")
+        bat_lbl.add_css_class("mock-mod-bat")
+        hw_box.append(bat_lbl)
+
         waybar_box.append(hw_box)
 
         wrapper.append(waybar_box)
@@ -178,18 +195,26 @@ class PreviewPanel(Gtk.Box):
         win_content.set_margin_top(14)
         win_content.set_margin_bottom(14)
 
-        win_title = Gtk.Label(label="Hyprland Active Window (Border & Shadow Preview)", xalign=0)
+        win_title = Gtk.Label(label="󰖲  Hyprland Active Window", xalign=0)
         win_title.add_css_class("mock-hypr-title")
         win_content.append(win_title)
 
-        sample_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        sample_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         sample_card.add_css_class("mock-sample-card")
-        c_title = Gtk.Label(label="Tema generado en tiempo real", xalign=0)
+        
+        c_badge = Gtk.Label(label="󰏘 TEMA EN VIVO", xalign=0)
+        c_badge.add_css_class("mock-card-badge")
+        sample_card.append(c_badge)
+
+        c_title = Gtk.Label(label="Ajustes de Color en Tiempo Real", xalign=0)
         c_title.add_css_class("mock-card-heading")
-        c_desc = Gtk.Label(label="Los colores de Waybar, bordes y terminal se sincronizan automáticamente con Wallust.", xalign=0)
-        c_desc.set_wrap(True)
         sample_card.append(c_title)
+
+        c_desc = Gtk.Label(label="Waybar, los bordes activos, Kitty y Thunar se adaptan dinámicamente a la paleta generada.", xalign=0)
+        c_desc.set_wrap(True)
+        c_desc.add_css_class("mock-card-body")
         sample_card.append(c_desc)
+        
         win_content.append(sample_card)
 
         hypr_win.set_child(win_content)
@@ -226,6 +251,7 @@ class PreviewPanel(Gtk.Box):
         root_box.append(sidebar)
 
         sep = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
+        sep.add_css_class("mock-thunar-sep")
         root_box.append(sep)
 
         # File view
@@ -238,30 +264,41 @@ class PreviewPanel(Gtk.Box):
         # Barra de ruta
         path_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         path_bar.add_css_class("mock-pathbar")
-        path_lbl = Gtk.Label(label="  /home/rylai  ", xalign=0)
+        path_lbl = Gtk.Label(label="  󰉋  /home/rylai  ", xalign=0)
+        path_lbl.add_css_class("mock-pathbar-text")
         path_bar.append(path_lbl)
         file_view.append(path_bar)
 
-        # Carpetas (grid simulado)
+        # Carpetas con glifos Nerd Fonts vectoriales (se colorean dinámicamente con CSS)
         folder_grid = Gtk.Grid(column_spacing=16, row_spacing=16, margin_top=8)
-        folders = [
-            ("📁 nixos-config", "Carpeta"),
-            ("📁 Documents", "Carpeta"),
-            ("📁 Pictures", "Carpeta"),
-            ("📁 .config", "Carpeta oculta"),
-            ("📄 wallpaper.sh", "Script Bash"),
-            ("📄 flake.nix", "Nix Flake"),
+        items = [
+            ("󰉋", "nixos-config", "Carpeta"),
+            ("󰉋", "Documents", "Carpeta"),
+            ("󰉋", "Pictures", "Carpeta"),
+            ("󰉋", ".config", "Carpeta oculta"),
+            ("󰈔", "wallpaper.sh", "Script Bash"),
+            ("󰈔", "flake.nix", "Nix Flake"),
         ]
 
-        for idx, (fname, ftype) in enumerate(folders):
+        for idx, (icon, fname, ftype) in enumerate(items):
             card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
             card.add_css_class("mock-file-card")
-            card.set_size_request(110, 70)
-            icon_lbl = Gtk.Label(label=fname, xalign=0.5)
-            icon_lbl.add_css_class("mock-folder-icon")
+            card.set_size_request(115, 75)
+            
+            icon_lbl = Gtk.Label(label=icon, xalign=0.5)
+            if icon == "󰉋":
+                icon_lbl.add_css_class("mock-folder-icon")
+            else:
+                icon_lbl.add_css_class("mock-file-icon")
+            
+            name_lbl = Gtk.Label(label=fname, xalign=0.5)
+            name_lbl.add_css_class("mock-file-name")
+            
             type_lbl = Gtk.Label(label=ftype, xalign=0.5)
             type_lbl.add_css_class("mock-file-subtext")
+            
             card.append(icon_lbl)
+            card.append(name_lbl)
             card.append(type_lbl)
             folder_grid.attach(card, idx % 3, idx // 3, 1, 1)
 

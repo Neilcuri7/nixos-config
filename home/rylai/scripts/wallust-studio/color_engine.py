@@ -119,7 +119,14 @@ class ColorPalette:
             self.color5 = secondary
             self.color13 = secondary
 
-    def create_adjusted_copy(self, brightness_val: float = 0, saturation_val: float = 0, contrast_val: float = 0) -> "ColorPalette":
+    def create_adjusted_copy(
+        self,
+        brightness_val: float = 0,
+        saturation_val: float = 0,
+        contrast_val: float = 0,
+        hue_shift_val: float = 0,
+        temperature_val: float = 0,
+    ) -> "ColorPalette":
         l_fac = max(0.0, 1.0 + (brightness_val / 100.0))
         c_fac = max(0.0, 1.0 + (saturation_val / 100.0))
         cont_fac = max(0.1, 1.0 + (contrast_val / 50.0))
@@ -127,12 +134,29 @@ class ColorPalette:
         d = self.to_dict()
         new_dict = {}
         for k, v in d.items():
-            adj = self.adjust_color(v, l_factor=l_fac, c_factor=c_fac)
-            r, g, b = hex_to_rgb(adj)
+            r, g, b = hex_to_rgb(v)
             h, l, s = colorsys.rgb_to_hls(r, g, b)
-            new_l = 0.5 + (l - 0.5) * cont_fac
-            new_l = max(0.0, min(1.0, new_l))
-            r2, g2, b2 = colorsys.hls_to_rgb(h, new_l, s)
+
+            # Hue shift (smooth rotation)
+            if hue_shift_val != 0:
+                h = (h + (hue_shift_val / 360.0)) % 1.0
+
+            # Color temperature (warm adds red/yellow, cool adds blue/cyan)
+            if temperature_val != 0:
+                temp_fac = temperature_val / 200.0
+                r = min(1.0, max(0.0, r + temp_fac))
+                b = min(1.0, max(0.0, b - temp_fac))
+                h, l, s = colorsys.rgb_to_hls(r, g, b)
+
+            # Lightness & Saturation factors
+            l = max(0.0, min(1.0, l * l_fac))
+            s = max(0.0, min(1.0, s * c_fac))
+
+            # Contrast factor
+            l = 0.5 + (l - 0.5) * cont_fac
+            l = max(0.0, min(1.0, l))
+
+            r2, g2, b2 = colorsys.hls_to_rgb(h, l, s)
             new_dict[k] = rgb_to_hex(r2, g2, b2)
         return ColorPalette(**new_dict)
 
