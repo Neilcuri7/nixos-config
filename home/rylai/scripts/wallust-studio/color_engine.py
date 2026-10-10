@@ -118,3 +118,57 @@ class ColorPalette:
         if secondary:
             self.color5 = secondary
             self.color13 = secondary
+
+    def create_adjusted_copy(self, brightness_val: float = 0, saturation_val: float = 0, contrast_val: float = 0) -> "ColorPalette":
+        l_fac = max(0.0, 1.0 + (brightness_val / 100.0))
+        c_fac = max(0.0, 1.0 + (saturation_val / 100.0))
+        cont_fac = max(0.1, 1.0 + (contrast_val / 50.0))
+
+        d = self.to_dict()
+        new_dict = {}
+        for k, v in d.items():
+            adj = self.adjust_color(v, l_factor=l_fac, c_factor=c_fac)
+            r, g, b = hex_to_rgb(adj)
+            h, l, s = colorsys.rgb_to_hls(r, g, b)
+            new_l = 0.5 + (l - 0.5) * cont_fac
+            new_l = max(0.0, min(1.0, new_l))
+            r2, g2, b2 = colorsys.hls_to_rgb(h, new_l, s)
+            new_dict[k] = rgb_to_hex(r2, g2, b2)
+        return ColorPalette(**new_dict)
+
+def load_current_palette() -> ColorPalette:
+    from pathlib import Path
+    kitty_theme = Path.home() / ".config" / "kitty" / "current-theme.conf"
+    defaults = {
+        "background": "#1e1e2e",
+        "foreground": "#cdd6f4",
+        "cursor": "#f5e0dc",
+        "color0": "#45475a",
+        "color1": "#f38ba8",
+        "color2": "#a6e3a1",
+        "color3": "#f9e2af",
+        "color4": "#89b4fa",
+        "color5": "#f5c2e7",
+        "color6": "#94e2d5",
+        "color7": "#bac2de",
+        "color8": "#585b70",
+        "color9": "#f38ba8",
+        "color10": "#a6e3a1",
+        "color11": "#f9e2af",
+        "color12": "#89b4fa",
+        "color13": "#f5c2e7",
+        "color14": "#94e2d5",
+        "color15": "#a6adc8",
+    }
+    if kitty_theme.exists():
+        try:
+            with open(kitty_theme, 'r') as f:
+                for line in f:
+                    parts = line.strip().split()
+                    if len(parts) >= 2:
+                        key, val = parts[0], parts[1]
+                        if key in defaults:
+                            defaults[key] = val if val.startswith('#') else f"#{val}"
+        except Exception:
+            pass
+    return ColorPalette(**defaults)

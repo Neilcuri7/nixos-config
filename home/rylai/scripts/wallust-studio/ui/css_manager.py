@@ -7,20 +7,30 @@ from typing import Dict, Any
 class CSSManager:
     def __init__(self):
         self.provider = Gtk.CssProvider()
-        Gtk.StyleContext.add_provider_for_display(
-            Gdk.Display.get_default(),
-            self.provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-        )
+        self._display_attached = False
+        self._ensure_display()
         self._debounce_id = None
 
+    def _ensure_display(self):
+        if not self._display_attached:
+            display = Gdk.Display.get_default()
+            if display:
+                Gtk.StyleContext.add_provider_for_display(
+                    display,
+                    self.provider,
+                    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION + 100
+                )
+                self._display_attached = True
+
     def update_palette_css(self, palette_dict: Dict[str, str], waybar_opacity: float = 0.9, kitty_opacity: float = 0.9, hypr_border_width: int = 2):
+        self._ensure_display()
         if self._debounce_id:
             GLib.source_remove(self._debounce_id)
         
         self._debounce_id = GLib.timeout_add(16, self._apply_palette_css, palette_dict, waybar_opacity, kitty_opacity, hypr_border_width)
 
     def _apply_palette_css(self, p: Dict[str, str], waybar_op: float, kitty_op: float, hypr_border: int):
+        self._ensure_display()
         bg = p.get("background", "#1e1e2e")
         fg = p.get("foreground", "#cdd6f4")
         c0 = p.get("color0", "#45475a")
@@ -173,7 +183,10 @@ class CSSManager:
             font-size: 13px;
         }}
         """
-        self.provider.load_from_data(css_str.encode('utf-8'))
+        try:
+            self.provider.load_from_string(css_str)
+        except Exception:
+            self.provider.load_from_data(css_str.encode('utf-8'))
         self._debounce_id = None
         return False
 

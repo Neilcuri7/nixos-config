@@ -65,14 +65,16 @@ class WallustStudioWindow(Adw.ApplicationWindow):
             self.get_application().set_accels_for_action(f"win.tab{i}", [str(i)])
 
     def on_apply(self, action, param):
-        print("Apply pressed")
+        self.controls_panel.apply_to_system()
 
     def on_cancel(self, action, param):
-        print("Cancel pressed")
         self.close()
 
     def on_restore(self, action, param):
-        print("Restore pressed")
+        self.controls_panel.restore_defaults()
 
     def on_tab(self, idx):
-        print(f"Tab {idx} pressed")
+        pages = self.controls_panel.tab_view.get_n_pages()
+        if 1 <= idx <= pages:
+            page = self.controls_panel.tab_view.get_nth_page(idx - 1)
+            self.controls_panel.tab_view.set_selected_page(page)
