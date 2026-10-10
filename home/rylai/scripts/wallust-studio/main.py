@@ -13,11 +13,16 @@ for _pat in [
     "/nix/store/*-gtk4-*/lib/girepository-1.0",
     "/nix/store/*-libadwaita-*/lib/girepository-1.0",
     "/nix/store/*-pango-*/lib/girepository-1.0",
+    "/nix/store/*-harfbuzz-*/lib/girepository-1.0",
     "/nix/store/*-gdk-pixbuf-*/lib/girepository-1.0",
     "/nix/store/*-glib-*/lib/girepository-1.0",
     "/nix/store/*-gobject-introspection-*/lib/girepository-1.0",
+    "/nix/store/*-librsvg-*/lib/girepository-1.0",
+    "/nix/store/*-at-spi2-core-*/lib/girepository-1.0",
 ]:
-    _extra_gi_paths.extend(glob.glob(_pat))
+    for _p in glob.glob(_pat):
+        if "i686" not in _p and "-32" not in _p:
+            _extra_gi_paths.append(_p)
 
 _current_gi = os.environ.get("GI_TYPELIB_PATH", "").split(":")
 for _p in _extra_gi_paths:

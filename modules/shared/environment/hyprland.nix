@@ -71,6 +71,10 @@
       libadwaita
       gtk4
       graphene
+      pango
+      harfbuzz
+      gdk-pixbuf
+      librsvg
       gobject-introspection
     ];
 
@@ -80,6 +84,7 @@
       TERMINAL = "kitty";
       NIXOS_OZONE_WL = "1";
       MOZ_ENABLE_WAYLAND = "1";
+      GI_TYPELIB_PATH = "/run/current-system/sw/lib/girepository-1.0";
     };
 
     services.displayManager.defaultSession = "hyprland";
