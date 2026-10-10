@@ -6,3 +6,9 @@ result-*
 # Claves de cifrado privadas
 keys.txt
 *.key
+
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+

@@ -70,6 +70,8 @@
       ]))
       libadwaita
       gtk4
+      graphene
+      gobject-introspection
     ];
 
     programs.dconf.enable = true;
