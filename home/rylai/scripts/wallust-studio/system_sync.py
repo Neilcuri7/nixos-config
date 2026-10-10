@@ -1,7 +1,11 @@
 import subprocess
 import os
 from typing import Optional
-from .wallust_bridge import apply_wallust_theme
+
+try:
+    from .wallust_bridge import apply_wallust_theme
+except (ImportError, ValueError):
+    from wallust_bridge import apply_wallust_theme
 
 def reload_waybar():
     try:

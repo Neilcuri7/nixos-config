@@ -42,7 +42,7 @@ from ui.window import WallustStudioWindow
 class WallustStudioApplication(Adw.Application):
     def __init__(self):
         super().__init__(application_id='com.rylai.WallustStudio',
-                         flags=Gio.ApplicationFlags.FLAGS_NONE)
+                         flags=Gio.ApplicationFlags.NON_UNIQUE)
 
     def do_activate(self):
         win = self.props.active_window

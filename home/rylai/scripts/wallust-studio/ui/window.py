@@ -12,12 +12,12 @@ class WallustStudioWindow(Adw.ApplicationWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.set_title("Wallust Studio")
-        self.set_default_size(1200, 800)
+        self.set_default_size(960, 580)
 
         # Main Layout
         self.split_view = Adw.NavigationSplitView()
-        self.split_view.set_max_sidebar_width(420)
-        self.split_view.set_min_sidebar_width(420)
+        self.split_view.set_max_sidebar_width(380)
+        self.split_view.set_min_sidebar_width(340)
         
         # CSS Manager
         self.css_manager = CSSManager()
