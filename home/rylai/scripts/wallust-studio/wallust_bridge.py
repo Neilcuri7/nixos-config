@@ -17,7 +17,7 @@ def get_current_wallpaper() -> Optional[str]:
     return None
 
 def apply_wallust_theme(palette_json_path: str, config_path: Optional[str] = None):
-    cmd = ["wallust", "cs", palette_json_path]
+    cmd = ["wallust", "cs", "-f", "pywal", palette_json_path]
     if config_path:
         cmd.extend(["-C", config_path])
     

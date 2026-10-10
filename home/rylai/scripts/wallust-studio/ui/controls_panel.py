@@ -56,37 +56,37 @@ class ControlsPanel(Gtk.Box):
         self.hue_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, -180, 180, 1)
         self.hue_scale.set_value(0)
         self.hue_scale.connect("value-changed", self._on_adjustment_changed)
-        self.add_scale_row(group, "Rotación de Tono (Hue)", self.hue_scale)
+        self.add_scale_row(group, "Rotación de Tono (Hue)", self.hue_scale, default_val=0)
 
         # Temperatura (Cálido / Frío)
         self.temp_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, -50, 50, 1)
         self.temp_scale.set_value(0)
         self.temp_scale.connect("value-changed", self._on_adjustment_changed)
-        self.add_scale_row(group, "Temperatura (Cálido / Frío)", self.temp_scale)
+        self.add_scale_row(group, "Temperatura (Cálido / Frío)", self.temp_scale, default_val=0)
 
         # Luminosidad
         self.brightness_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, -100, 100, 1)
         self.brightness_scale.set_value(0)
         self.brightness_scale.connect("value-changed", self._on_adjustment_changed)
-        self.add_scale_row(group, "Luminosidad / Brillo", self.brightness_scale)
+        self.add_scale_row(group, "Luminosidad / Brillo", self.brightness_scale, default_val=0)
 
         # Saturación
         self.saturation_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, -100, 100, 1)
         self.saturation_scale.set_value(0)
         self.saturation_scale.connect("value-changed", self._on_adjustment_changed)
-        self.add_scale_row(group, "Saturación / Intensidad", self.saturation_scale)
+        self.add_scale_row(group, "Saturación / Intensidad", self.saturation_scale, default_val=0)
 
         # Contraste
         self.contrast_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, -50, 50, 1)
         self.contrast_scale.set_value(0)
         self.contrast_scale.connect("value-changed", self._on_adjustment_changed)
-        self.add_scale_row(group, "Contraste", self.contrast_scale)
+        self.add_scale_row(group, "Contraste", self.contrast_scale, default_val=0)
 
         page.add(group)
         self.tab_view.append(page)
         self.tab_view.get_page(page).set_title("Ajustes")
 
-    def add_scale_row(self, group, title, scale):
+    def add_scale_row(self, group, title, scale, default_val=0, reset_callback=None):
         row = Adw.ActionRow(title=title)
         scale.set_hexpand(True)
         scale.set_draw_value(True)
@@ -95,7 +95,11 @@ class ControlsPanel(Gtk.Box):
         box.append(scale)
         
         reset_btn = Gtk.Button(icon_name="view-refresh-symbolic")
-        reset_btn.connect("clicked", lambda b: scale.set_value(0))
+        reset_btn.set_tooltip_text("Restaurar valor inicial")
+        if reset_callback:
+            reset_btn.connect("clicked", lambda b: reset_callback(scale))
+        else:
+            reset_btn.connect("clicked", lambda b: scale.set_value(default_val))
         box.append(reset_btn)
         
         row.add_suffix(box)
@@ -105,8 +109,8 @@ class ControlsPanel(Gtk.Box):
         page = Adw.PreferencesPage()
         
         # Grid Selector Group
-        grid_group = Adw.PreferencesGroup(title="Seleccionar Color ANSI para Ajustar")
-        grid = Gtk.Grid(column_spacing=8, row_spacing=8, halign=Gtk.Align.CENTER)
+        self.grid_group = Adw.PreferencesGroup(title="Seleccionar Color ANSI para Ajustar")
+        self.color_grid = Gtk.Grid(column_spacing=8, row_spacing=8, halign=Gtk.Align.CENTER)
         self.color_buttons = []
         
         for i in range(16):
@@ -120,10 +124,10 @@ class ControlsPanel(Gtk.Box):
             btn.set_child(lbl)
             
             self.color_buttons.append(btn)
-            grid.attach(btn, i % 4, i // 4, 1, 1)
+            self.color_grid.attach(btn, i % 4, i // 4, 1, 1)
 
-        grid_group.add(grid)
-        page.add(grid_group)
+        self.grid_group.add(self.color_grid)
+        page.add(self.grid_group)
 
         # Fine Tuning Group
         self.fine_group = Adw.PreferencesGroup(title="Ajuste Continuo de Color (Sin saltos)")
@@ -136,25 +140,47 @@ class ControlsPanel(Gtk.Box):
         self.color_name_row.add_prefix(self.color_indicator)
         self.fine_group.add(self.color_name_row)
 
-        # Sliders for individual color
+        # Sliders for individual color with reset to initial color values
         self.color_hue_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 360, 1)
         self.color_hue_scale.connect("value-changed", self._on_single_color_slider_changed)
-        self.add_scale_row(self.fine_group, "Tono (Hue 0° - 360°)", self.color_hue_scale)
+        self.add_scale_row(self.fine_group, "Tono (Hue 0° - 360°)", self.color_hue_scale, reset_callback=self._reset_single_color_hue)
 
         self.color_sat_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 100, 1)
         self.color_sat_scale.connect("value-changed", self._on_single_color_slider_changed)
-        self.add_scale_row(self.fine_group, "Saturación (0% - 100%)", self.color_sat_scale)
+        self.add_scale_row(self.fine_group, "Saturación (0% - 100%)", self.color_sat_scale, reset_callback=self._reset_single_color_sat)
 
         self.color_lum_scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 100, 1)
         self.color_lum_scale.connect("value-changed", self._on_single_color_slider_changed)
-        self.add_scale_row(self.fine_group, "Luminosidad (0% - 100%)", self.color_lum_scale)
+        self.add_scale_row(self.fine_group, "Luminosidad (0% - 100%)", self.color_lum_scale, reset_callback=self._reset_single_color_lum)
 
         page.add(self.fine_group)
         self.tab_view.append(page)
         self.tab_view.get_page(page).set_title("Paleta")
 
+        # Connect preview panel tab change to filter relevant colors
+        if hasattr(self.preview_panel, "stack"):
+            self.preview_panel.stack.connect("notify::visible-child-name", self._on_preview_tab_changed)
+
         self._update_color_swatches_ui()
         self._sync_single_color_sliders()
+
+    def _reset_single_color_hue(self, scale):
+        hex_val = getattr(self.base_palette, f"color{self.selected_color_idx}", "#888888")
+        r, g, b = hex_to_rgb(hex_val)
+        h, l, s = colorsys.rgb_to_hls(r, g, b)
+        scale.set_value(int(h * 360))
+
+    def _reset_single_color_sat(self, scale):
+        hex_val = getattr(self.base_palette, f"color{self.selected_color_idx}", "#888888")
+        r, g, b = hex_to_rgb(hex_val)
+        h, l, s = colorsys.rgb_to_hls(r, g, b)
+        scale.set_value(int(s * 100))
+
+    def _reset_single_color_lum(self, scale):
+        hex_val = getattr(self.base_palette, f"color{self.selected_color_idx}", "#888888")
+        r, g, b = hex_to_rgb(hex_val)
+        h, l, s = colorsys.rgb_to_hls(r, g, b)
+        scale.set_value(int(l * 100))
 
     def setup_environment_tab(self):
         page = Adw.PreferencesPage()
@@ -163,17 +189,17 @@ class ControlsPanel(Gtk.Box):
         self.waybar_op = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 10, 100, 1)
         self.waybar_op.set_value(90)
         self.waybar_op.connect("value-changed", self._on_env_changed)
-        self.add_scale_row(group, "Waybar Opacidad", self.waybar_op)
+        self.add_scale_row(group, "Waybar Opacidad", self.waybar_op, default_val=90)
 
         self.kitty_op = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 10, 100, 1)
         self.kitty_op.set_value(80)
         self.kitty_op.connect("value-changed", self._on_env_changed)
-        self.add_scale_row(group, "Kitty Opacidad", self.kitty_op)
+        self.add_scale_row(group, "Kitty Opacidad", self.kitty_op, default_val=80)
         
         self.hypr_border = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 0, 10, 1)
         self.hypr_border.set_value(2)
         self.hypr_border.connect("value-changed", self._on_env_changed)
-        self.add_scale_row(group, "Grosor Borde Hyprland", self.hypr_border)
+        self.add_scale_row(group, "Grosor Borde Hyprland", self.hypr_border, default_val=2)
 
         page.add(group)
         self.tab_view.append(page)
@@ -202,9 +228,35 @@ class ControlsPanel(Gtk.Box):
         
         self.append(action_bar)
 
+    def _on_preview_tab_changed(self, stack, param):
+        current_tab = stack.get_visible_child_name()
+        # Filter/highlight relevant ANSI buttons according to preview tab
+        if current_tab == "desktop":
+            self.grid_group.set_title("Colores Relevantes: Desktop / Waybar (Borde, CPU, RAM, Audio, Batería)")
+            relevant = {1, 2, 3, 4, 6, 12}
+            for i, btn in enumerate(self.color_buttons):
+                btn.set_opacity(1.0 if i in relevant else 0.35)
+            if self.selected_color_idx not in relevant:
+                self.selected_color_idx = 4
+                self._sync_single_color_sliders()
+        elif current_tab == "thunar":
+            self.grid_group.set_title("Colores Relevantes: Thunar / Carpetas (Acento 4, Tarjetas 0/8, Texto 7)")
+            relevant = {0, 4, 7, 8, 12}
+            for i, btn in enumerate(self.color_buttons):
+                btn.set_opacity(1.0 if i in relevant else 0.35)
+            if self.selected_color_idx not in relevant:
+                self.selected_color_idx = 4
+                self._sync_single_color_sliders()
+        else: # terminal
+            self.grid_group.set_title("Seleccionar Color ANSI para Ajustar (Todos 0-15)")
+            for btn in self.color_buttons:
+                btn.set_opacity(1.0)
+        self._update_color_swatches_ui()
+
     def _on_select_color_to_edit(self, btn, idx):
         self.selected_color_idx = idx
         self._sync_single_color_sliders()
+        self._update_color_swatches_ui()
 
     def _sync_single_color_sliders(self):
         hex_val = getattr(self.current_palette, f"color{self.selected_color_idx}", "#888888")
@@ -215,7 +267,22 @@ class ControlsPanel(Gtk.Box):
         self.color_hue_scale.set_value(int(h * 360))
         self.color_sat_scale.set_value(int(s * 100))
         self.color_lum_scale.set_value(int(l * 100))
-        self.color_name_row.set_subtitle(f"Color {self.selected_color_idx} ({hex_val})")
+        
+        # Color description tag
+        role_map = {
+            0: "Fondo oscuro / Superficie",
+            1: "Rojo / Error / CPU",
+            2: "Verde / Éxito / Audio",
+            3: "Amarillo / Alerta / RAM",
+            4: "Azul / Acento Principal",
+            5: "Magenta / Acento Secundario",
+            6: "Cian / Batería / Info",
+            7: "Texto / Foreground",
+            8: "Gris / Bordes sutiles",
+            12: "Azul Claro / Reloj / Resaltado"
+        }
+        role_text = f" — {role_map[self.selected_color_idx]}" if self.selected_color_idx in role_map else ""
+        self.color_name_row.set_subtitle(f"Color {self.selected_color_idx} ({hex_val}){role_text}")
         self._updating_palette = False
 
     def _on_single_color_slider_changed(self, scale):
@@ -230,7 +297,21 @@ class ControlsPanel(Gtk.Box):
         
         setattr(self.current_palette, f"color{self.selected_color_idx}", hex_val)
         setattr(self.base_palette, f"color{self.selected_color_idx}", hex_val)
-        self.color_name_row.set_subtitle(f"Color {self.selected_color_idx} ({hex_val})")
+        
+        role_map = {
+            0: "Fondo oscuro / Superficie",
+            1: "Rojo / Error / CPU",
+            2: "Verde / Éxito / Audio",
+            3: "Amarillo / Alerta / RAM",
+            4: "Azul / Acento Principal",
+            5: "Magenta / Acento Secundario",
+            6: "Cian / Batería / Info",
+            7: "Texto / Foreground",
+            8: "Gris / Bordes sutiles",
+            12: "Azul Claro / Reloj / Resaltado"
+        }
+        role_text = f" — {role_map[self.selected_color_idx]}" if self.selected_color_idx in role_map else ""
+        self.color_name_row.set_subtitle(f"Color {self.selected_color_idx} ({hex_val}){role_text}")
         
         self._update_color_swatches_ui()
         self._update_preview()
