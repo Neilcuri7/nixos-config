@@ -6,305 +6,507 @@ from gi.repository import Gtk, Adw, Gdk, Pango
 
 class PreviewPanel(Gtk.Box):
     def __init__(self, *args, **kwargs):
-        super().__init__(orientation=Gtk.Orientation.VERTICAL, *args, **kwargs)
-        self.set_margin_start(18)
-        self.set_margin_end(18)
-        self.set_margin_top(12)
-        self.set_margin_bottom(12)
+        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=14, *args, **kwargs)
+        self.set_margin_start(12)
+        self.set_margin_end(16)
+        self.set_margin_top(16)
+        self.set_margin_bottom(16)
         self.set_hexpand(True)
         self.set_vexpand(True)
+        self.add_css_class("preview-canvas-card")
 
+        # Top Centered Pill View Switcher
+        switcher_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        switcher_box.set_halign(Gtk.Align.CENTER)
+        
+        self.pill_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        self.pill_bar.add_css_class("tab-pill-box")
+
+        self.btn_terminal = Gtk.Button(label="TERMINAL")
+        self.btn_terminal.add_css_class("tab-pill-btn")
+        self.btn_terminal.add_css_class("active")
+        self.btn_terminal.connect("clicked", lambda b: self.switch_tab("terminal"))
+        self.pill_bar.append(self.btn_terminal)
+
+        self.btn_waybar = Gtk.Button(label="DESKTOP / WAYBAR")
+        self.btn_waybar.add_css_class("tab-pill-btn")
+        self.btn_waybar.connect("clicked", lambda b: self.switch_tab("waybar"))
+        self.pill_bar.append(self.btn_waybar)
+
+        self.btn_thunar = Gtk.Button(label="THUNAR FILES")
+        self.btn_thunar.add_css_class("tab-pill-btn")
+        self.btn_thunar.connect("clicked", lambda b: self.switch_tab("thunar"))
+        self.pill_bar.append(self.btn_thunar)
+
+        switcher_box.append(self.pill_bar)
+        self.append(switcher_box)
+
+        # Multi-view Stack
         self.stack = Gtk.Stack()
         self.stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
+        self.stack.set_transition_duration(150)
         self.stack.set_hexpand(True)
         self.stack.set_vexpand(True)
-
-        self.stack_switcher = Gtk.StackSwitcher(stack=self.stack)
-        self.stack_switcher.set_halign(Gtk.Align.CENTER)
-        self.stack_switcher.set_margin_bottom(14)
-
-        self.append(self.stack_switcher)
         self.append(self.stack)
 
         self.setup_terminal_view()
-        self.setup_desktop_view()
+        self.setup_waybar_view()
         self.setup_thunar_view()
 
+    def switch_tab(self, tab_name: str):
+        self.btn_terminal.remove_css_class("active")
+        self.btn_waybar.remove_css_class("active")
+        self.btn_thunar.remove_css_class("active")
+
+        if tab_name == "terminal":
+            self.btn_terminal.add_css_class("active")
+            self.stack.set_visible_child_name("terminal")
+        elif tab_name == "waybar":
+            self.btn_waybar.add_css_class("active")
+            self.stack.set_visible_child_name("waybar")
+        elif tab_name == "thunar":
+            self.btn_thunar.add_css_class("active")
+            self.stack.set_visible_child_name("thunar")
+
+    # ================= 1. TERMINAL PREVIEW (KITTY) =================
     def setup_terminal_view(self):
-        """Renderiza una ventana de terminal simulada con la cuadrícula de bloques ANSI (como la captura del usuario)"""
-        frame = Gtk.Frame()
-        frame.add_css_class("preview-term-window")
-        frame.set_hexpand(True)
-        frame.set_vexpand(True)
+        term_frame = Gtk.Frame()
+        term_frame.add_css_class("term-window-card")
+        term_frame.set_hexpand(True)
+        term_frame.set_vexpand(True)
 
-        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        vbox.set_margin_start(16)
-        vbox.set_margin_end(16)
-        vbox.set_margin_top(12)
-        vbox.set_margin_bottom(16)
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
-        # Header con botones de ventana
-        header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        for color_class in ["term-btn-close", "term-btn-min", "term-btn-max"]:
+        # Titlebar
+        titlebar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        titlebar.add_css_class("term-titlebar")
+
+        controls = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        for c in ["term-dot-red", "term-dot-yellow", "term-dot-green"]:
             dot = Gtk.Box()
-            dot.set_size_request(12, 12)
-            dot.add_css_class("term-title-btn")
-            dot.add_css_class(color_class)
-            header.append(dot)
+            dot.add_css_class("term-dot")
+            dot.add_css_class(c)
+            controls.append(dot)
+        titlebar.append(controls)
 
-        title = Gtk.Label(label="kitty — rylai@nixos:~")
-        title.set_hexpand(True)
-        title.add_css_class("term-window-title")
-        header.append(title)
-        vbox.append(header)
+        title_lbl = Gtk.Label(label="kitty — rylai@nixos:~", xalign=0)
+        title_lbl.add_css_class("term-title-text")
+        title_lbl.set_hexpand(True)
+        titlebar.append(title_lbl)
 
-        # Separador sutil
-        sep = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
-        sep.add_css_class("term-separator")
-        vbox.append(sep)
+        shell_badge = Gtk.Label(label="zsh", xalign=1)
+        shell_badge.add_css_class("term-title-text")
+        titlebar.append(shell_badge)
 
-        # Prompt simulado
-        prompt_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        prompt_lbl = Gtk.Label(label="rylai@nixos ~ ❯ colors.sh", xalign=0)
-        prompt_lbl.add_css_class("term-prompt-text")
-        prompt_box.append(prompt_lbl)
-        vbox.append(prompt_box)
+        vbox.append(titlebar)
 
-        # Cuadrícula ANSI idéntica a la imagen del usuario
-        grid = Gtk.Grid(column_spacing=6, row_spacing=4, margin_top=8, margin_bottom=8)
-        grid.set_halign(Gtk.Align.CENTER)
+        # Terminal Body
+        body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        body.add_css_class("term-body")
+        body.set_vexpand(True)
 
-        # Encabezados de columnas (def, 40m .. 47m)
-        headers = ["def", "40m", "41m", "42m", "43m", "44m", "45m", "46m", "47m"]
-        for c_idx, h_text in enumerate(headers):
-            lbl = Gtk.Label(label=h_text)
-            lbl.add_css_class("ansi-grid-header")
-            grid.attach(lbl, c_idx + 1, 0, 1, 1)
+        # Prompt 1: Successful command
+        cmd1_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        p1 = Gtk.Label(label="rylai@nixos ~ ❯ git status -s", xalign=0)
+        p1.set_use_markup(True)
+        p1.set_markup("<span class='term-user-host'>rylai@nixos</span> <span class='term-dir'>~</span> <span class='term-symbol'>❯</span> git status -s")
+        cmd1_box.append(p1)
 
-        # Filas (g, 30m .. 37m, 1;30m .. 1;37m)
-        row_labels = ["30m", "31m", "32m", "33m", "34m", "35m", "36m", "37m",
-                      "1;30m", "1;31m", "1;32m", "1;33m", "1;34m", "1;35m", "1;36m", "1;37m"]
+        out1 = Gtk.Label(label="  ✓ working tree clean (main)", xalign=0)
+        out1.add_css_class("term-success")
+        cmd1_box.append(out1)
+        body.append(cmd1_box)
 
-        for r_idx, r_text in enumerate(row_labels):
-            lbl = Gtk.Label(label=r_text, xalign=1)
-            lbl.add_css_class("ansi-grid-row-lbl")
-            grid.attach(lbl, 0, r_idx + 1, 1, 1)
+        # Prompt 2: Failed command
+        cmd2_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        p2 = Gtk.Label(label="rylai@nixos ~ ❯ curl -I https://api.local/v1", xalign=0)
+        p2.set_use_markup(True)
+        p2.set_markup("<span class='term-user-host'>rylai@nixos</span> <span class='term-dir'>~</span> <span class='term-symbol'>❯</span> curl -I https://api.local/v1")
+        cmd2_box.append(p2)
 
-            for c_idx in range(len(headers)):
-                block = Gtk.Label(label="gYw", xalign=0.5)
-                block.set_size_request(34, 20)
-                block.add_css_class("ansi-cell")
-                block.add_css_class(f"cell-fg-{r_idx % 8}")
-                block.add_css_class(f"cell-bg-{c_idx}")
-                grid.attach(block, c_idx + 1, r_idx + 1, 1, 1)
+        out2 = Gtk.Label(label="  ✖ Error 404: Endpoint Not Found", xalign=0)
+        out2.add_css_class("term-error")
+        cmd2_box.append(out2)
+        body.append(cmd2_box)
 
-        scrolled_grid = Gtk.ScrolledWindow()
-        scrolled_grid.set_child(grid)
-        scrolled_grid.set_vexpand(True)
-        vbox.append(scrolled_grid)
+        # Syntax Highlighting Box
+        syntax_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        syntax_box.add_css_class("code-syntax-box")
+        
+        s_title = Gtk.Label(label="SYNTAX HIGHLIGHTING TEST:", xalign=0)
+        s_title.add_css_class("section-header-title")
+        syntax_box.append(s_title)
 
-        # Cursor prompt final
-        cursor_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
-        c_prompt = Gtk.Label(label="rylai@nixos ~ ❯ ", xalign=0)
-        c_prompt.add_css_class("term-prompt-text")
-        c_block = Gtk.Box()
-        c_block.set_size_request(8, 16)
-        c_block.add_css_class("term-cursor")
-        cursor_box.append(c_prompt)
-        cursor_box.append(c_block)
-        vbox.append(cursor_box)
+        code_lines = [
+            "<span class='syntax-kw'>pub fn</span> <span class='syntax-fn'>sync_wallust_palette</span>(colors: &amp;<span class='syntax-type'>Palette</span>) -&gt; <span class='syntax-type'>Result</span>&lt;(), <span class='syntax-type'>Error</span>&gt; {",
+            "    <span class='syntax-kw'>let</span> accent = colors.ansi[<span class='syntax-var'>4</span>].<span class='syntax-fn'>to_hex</span>();",
+            "    compositor::<span class='syntax-fn'>set_active_border</span>(&amp;accent)?;",
+            "}"
+        ]
+        code_lbl = Gtk.Label(xalign=0)
+        code_lbl.set_use_markup(True)
+        code_lbl.set_markup("\n".join(code_lines))
+        syntax_box.append(code_lbl)
+        body.append(syntax_box)
 
-        frame.set_child(vbox)
-        self.stack.add_titled(frame, "terminal", "Terminal Kitty")
+        # ANSI 8x2 Test Swatch Grid
+        ansi_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        ansi_box.set_valign(Gtk.Align.END)
+        
+        grid_lbl = Gtk.Label(label="8X2 ANSI TEST GRID:", xalign=0)
+        grid_lbl.add_css_class("section-header-title")
+        ansi_box.append(grid_lbl)
 
-    def setup_desktop_view(self):
-        """Renderiza una simulación del entorno Waybar + Ventana Hyprland"""
-        wrapper = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
-        wrapper.set_hexpand(True)
-        wrapper.set_vexpand(True)
+        grid = Gtk.Grid(column_spacing=6, row_spacing=6)
+        grid.set_halign(Gtk.Align.FILL)
+        
+        for idx in range(16):
+            cell = Gtk.Label(label="gYw")
+            cell.set_hexpand(True)
+            cell.add_css_class("ansi-block-cell")
+            cell.add_css_class(f"cell-bg-{idx % 8 + 1}")
+            grid.attach(cell, idx % 8, idx // 8, 1, 1)
 
-        # Simulación Waybar
-        waybar_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        waybar_box.add_css_class("mock-waybar")
-        waybar_box.set_margin_top(4)
+        ansi_box.append(grid)
 
-        # Workspaces
+        # Active cursor line
+        cursor_line = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        c_p = Gtk.Label(label="rylai@nixos ~ ❯", xalign=0)
+        c_p.set_use_markup(True)
+        c_p.set_markup("<span class='term-user-host'>rylai@nixos</span> <span class='term-dir'>~</span> <span class='term-symbol'>❯</span>")
+        cursor_block = Gtk.Box()
+        cursor_block.set_size_request(8, 15)
+        cursor_block.add_css_class("term-cursor")
+        cursor_line.append(c_p)
+        cursor_line.append(cursor_block)
+        ansi_box.append(cursor_line)
+
+        body.append(ansi_box)
+
+        vbox.append(body)
+        term_frame.set_child(vbox)
+        self.stack.add_named(term_frame, "terminal")
+
+    # ================= 2. DESKTOP / WAYBAR PREVIEW =================
+    def setup_waybar_view(self):
+        container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
+        container.set_hexpand(True)
+        container.set_vexpand(True)
+
+        # Top Floating Waybar
+        waybar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        waybar.add_css_class("waybar-bar-card")
+
+        # Workspaces Left
         ws_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
-        ws_box.add_css_class("mock-module")
-        ws_box.add_css_class("mock-workspaces")
-        for i, name in enumerate(["1", "2", "3", "4"]):
-            lbl = Gtk.Label(label=name)
-            lbl.add_css_class("mock-ws-btn")
-            if i == 0:
-                lbl.add_css_class("active")
-            ws_box.append(lbl)
-        waybar_box.append(ws_box)
+        for i, num in enumerate(["1", "2", "3", "4"]):
+            btn = Gtk.Label(label=num)
+            btn.add_css_class("ws-capsule")
+            btn.add_css_class("active" if i == 0 else "inactive")
+            ws_box.append(btn)
+        waybar.append(ws_box)
 
-        # Espaciador central
-        spacer = Gtk.Box()
-        spacer.set_hexpand(True)
-        waybar_box.append(spacer)
+        # Center Clock
+        spacer1 = Gtk.Box()
+        spacer1.set_hexpand(True)
+        waybar.append(spacer1)
 
-        # Reloj central
-        clock_lbl = Gtk.Label(label="Dom 10 Oct 12:45")
-        clock_lbl.add_css_class("mock-module")
-        clock_lbl.add_css_class("mock-clock")
-        waybar_box.append(clock_lbl)
+        clock_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        clock_lbl = Gtk.Label(label="󰥔 Dom 10 Oct 12:45")
+        clock_lbl.add_css_class("waybar-clock")
+        clock_box.append(clock_lbl)
+        waybar.append(clock_box)
 
-        # Espaciador derecho
         spacer2 = Gtk.Box()
         spacer2.set_hexpand(True)
-        waybar_box.append(spacer2)
+        waybar.append(spacer2)
 
-        # Módulos Hardware (CPU, RAM, Audio, Batería)
-        hw_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        # Right Telemetry Pills
+        telem_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         
-        cpu_lbl = Gtk.Label(label="󰍛 24%")
-        cpu_lbl.add_css_class("mock-module")
-        cpu_lbl.add_css_class("mock-mod-cpu")
-        hw_box.append(cpu_lbl)
+        cpu = Gtk.Label(label="󰍛 24%")
+        cpu.add_css_class("telemetry-pill")
+        cpu.add_css_class("pill-cpu")
+        telem_box.append(cpu)
 
-        ram_lbl = Gtk.Label(label="󰘚 48%")
-        ram_lbl.add_css_class("mock-module")
-        ram_lbl.add_css_class("mock-mod-ram")
-        hw_box.append(ram_lbl)
+        ram = Gtk.Label(label="󰘚 48%")
+        ram.add_css_class("telemetry-pill")
+        ram.add_css_class("pill-ram")
+        telem_box.append(ram)
 
-        vol_lbl = Gtk.Label(label="󰕾 80%")
-        vol_lbl.add_css_class("mock-module")
-        vol_lbl.add_css_class("mock-mod-audio")
-        hw_box.append(vol_lbl)
+        vol = Gtk.Label(label="󰕾 80%")
+        vol.add_css_class("telemetry-pill")
+        vol.add_css_class("pill-audio")
+        telem_box.append(vol)
 
-        bat_lbl = Gtk.Label(label="󰁹 95%")
-        bat_lbl.add_css_class("mock-module")
-        bat_lbl.add_css_class("mock-mod-bat")
-        hw_box.append(bat_lbl)
+        bat = Gtk.Label(label="󰁹 95%")
+        bat.add_css_class("telemetry-pill")
+        bat.add_css_class("pill-battery")
+        telem_box.append(bat)
 
-        waybar_box.append(hw_box)
+        waybar.append(telem_box)
+        container.append(waybar)
 
-        wrapper.append(waybar_box)
+        # Floating Hyprland Window
+        win_frame = Gtk.Frame()
+        win_frame.add_css_class("hypr-active-window")
+        win_frame.set_hexpand(True)
+        win_frame.set_vexpand(True)
 
-        # Simulación de ventana de Hyprland con borde activo
-        hypr_win = Gtk.Frame()
-        hypr_win.add_css_class("mock-hyprland-active-window")
-        hypr_win.set_hexpand(True)
-        hypr_win.set_vexpand(True)
+        win_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
-        win_content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        win_content.set_margin_start(16)
-        win_content.set_margin_end(16)
-        win_content.set_margin_top(14)
-        win_content.set_margin_bottom(14)
+        # Window Header
+        w_head = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        w_head.add_css_class("term-titlebar")
 
-        win_title = Gtk.Label(label="󰖲  Hyprland Active Window", xalign=0)
-        win_title.add_css_class("mock-hypr-title")
-        win_content.append(win_title)
+        w_dots = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        for c in ["term-dot-red", "term-dot-yellow", "term-dot-green"]:
+            dot = Gtk.Box()
+            dot.add_css_class("term-dot")
+            dot.add_css_class(c)
+            w_dots.append(dot)
+        w_head.append(w_dots)
 
-        sample_card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        sample_card.add_css_class("mock-sample-card")
+        w_title = Gtk.Label(label="󰖲 hyprland // active_client: code-editor", xalign=0)
+        w_title.add_css_class("term-title-text")
+        w_title.set_hexpand(True)
+        w_head.append(w_title)
+
+        border_tag = Gtk.Label(label="col.active_border = 0xff7aa2f7", xalign=1)
+        border_tag.add_css_class("section-badge")
+        w_head.append(border_tag)
+
+        win_vbox.append(w_head)
+
+        # Window Interior
+        win_body = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
+        win_body.set_margin_start(16)
+        win_body.set_margin_end(16)
+        win_body.set_margin_top(16)
+        win_body.set_margin_bottom(16)
+        win_body.set_vexpand(True)
+
+        # Specimen Top Bar
+        specimen_head = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         
-        c_badge = Gtk.Label(label="󰏘 TEMA EN VIVO", xalign=0)
-        c_badge.add_css_class("mock-card-badge")
-        sample_card.append(c_badge)
+        head_titles = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        s_sub = Gtk.Label(label="CALIBRADOR DE CONTRASTE NÓRDICO", xalign=0)
+        s_sub.add_css_class("section-header-title")
+        s_main = Gtk.Label(label="Libadwaita Color Specimen", xalign=0)
+        s_main.add_css_class("slider-label")
+        head_titles.append(s_sub)
+        head_titles.append(s_main)
+        specimen_head.append(head_titles)
 
-        c_title = Gtk.Label(label="Ajustes de Color en Tiempo Real", xalign=0)
-        c_title.add_css_class("mock-card-heading")
-        sample_card.append(c_title)
+        sp_fill = Gtk.Box()
+        sp_fill.set_hexpand(True)
+        specimen_head.append(sp_fill)
 
-        c_desc = Gtk.Label(label="Waybar, los bordes activos, Kitty y Thunar se adaptan dinámicamente a la paleta generada.", xalign=0)
-        c_desc.set_wrap(True)
-        c_desc.add_css_class("mock-card-body")
-        sample_card.append(c_desc)
-        
-        win_content.append(sample_card)
+        wcag_pill = Gtk.Label(label="● WCAG AAA • 8.4:1 RATIO • CONTRASTE ÓPTIMO")
+        wcag_pill.add_css_class("contrast-badge")
+        specimen_head.append(wcag_pill)
 
-        hypr_win.set_child(win_content)
-        wrapper.append(hypr_win)
+        win_body.append(specimen_head)
 
-        self.stack.add_titled(wrapper, "desktop", "Desktop / Waybar")
+        # 3 Cards Grid
+        cards_grid = Gtk.Grid(column_spacing=12, row_spacing=12)
+        cards_grid.set_hexpand(True)
+        cards_grid.set_vexpand(True)
 
+        # Card 1: Primary Typography
+        c1 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        c1.add_css_class("preview-content-card")
+        c1.set_hexpand(True)
+        c1_head = Gtk.Label(label="TIPOGRAFÍA PRIMARIA   INTER / 400", xalign=0)
+        c1_head.add_css_class("section-header-title")
+        c1_body = Gtk.Label(
+            label="El veloz murciélago hindú comía feliz cardillo y kiwi. La cigüeña tocaba el saxofón detrás del palenque de paja.",
+            xalign=0
+        )
+        c1_body.set_wrap(True)
+        c1_body.add_css_class("slider-label")
+        c1_foot = Gtk.Label(label="Aa Bb Gg 0-9               PASS", xalign=0)
+        c1_foot.add_css_class("section-header-title")
+        c1.append(c1_head)
+        c1.append(c1_body)
+        c1.append(c1_foot)
+        cards_grid.attach(c1, 0, 0, 1, 1)
+
+        # Card 2: Monospace Syntax
+        c2 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        c2.add_css_class("preview-content-card")
+        c2.set_hexpand(True)
+        c2_head = Gtk.Label(label="SINTAXIS MONOSPACE   JETBRAINS MONO", xalign=0)
+        c2_head.add_css_class("section-header-title")
+        c2_code = Gtk.Label(xalign=0)
+        c2_code.set_use_markup(True)
+        c2_code.set_markup(
+            "<span class='syntax-kw'>const</span> <span class='syntax-fn'>theme</span> = {\n"
+            "  <span class='syntax-var'>accent</span>: <span class='syntax-str'>\"#7aa2f7\"</span>,\n"
+            "  <span class='syntax-var'>engine</span>: <span class='syntax-str'>\"wallust_v2\"</span>\n"
+            "};"
+        )
+        c2_foot = Gtk.Label(label="UTF-8 // Wayland          SYNCED", xalign=0)
+        c2_foot.add_css_class("section-header-title")
+        c2.append(c2_head)
+        c2.append(c2_code)
+        c2.append(c2_foot)
+        cards_grid.attach(c2, 1, 0, 1, 1)
+
+        # Card 3: Color Curves
+        c3 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        c3.add_css_class("preview-content-card")
+        c3.set_hexpand(True)
+        c3_head = Gtk.Label(label="CURVA LUMA ESPECTRAL    CIE LAB", xalign=0)
+        c3_head.add_css_class("section-header-title")
+        c3_desc = Gtk.Label(label="Distribución balanceada de reflectancia sobre fondo oscuro a 60 FPS.", xalign=0)
+        c3_desc.set_wrap(True)
+        c3_desc.add_css_class("slider-label")
+        c3_foot = Gtk.Label(label="Delta E: &lt; 1.2        CALIBRADO", xalign=0)
+        c3_foot.add_css_class("section-header-title")
+        c3.append(c3_head)
+        c3.append(c3_desc)
+        c3.append(c3_foot)
+        cards_grid.attach(c3, 2, 0, 1, 1)
+
+        win_body.append(cards_grid)
+        win_vbox.append(win_body)
+        win_frame.set_child(win_vbox)
+
+        container.append(win_frame)
+
+        # Bottom Decorators Pill
+        status_pill = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        status_pill.add_css_class("bottom-status-pill")
+        sp_l = Gtk.Label(label="Hyprland Decorators Ready: Gaps: 6px • Rounding: 12px • Active Border: 2px Solid Accent", xalign=0)
+        sp_r = Gtk.Label(label="● LIVE REFRESH 60FPS", xalign=1)
+        sp_r.add_css_class("term-success")
+        sp_l.set_hexpand(True)
+        status_pill.append(sp_l)
+        status_pill.append(sp_r)
+        container.append(status_pill)
+
+        self.stack.add_named(container, "waybar")
+
+    # ================= 3. THUNAR FILES PREVIEW =================
     def setup_thunar_view(self):
-        """Renderiza una simulación de Thunar/GTK con Sidebar y Carpetas coloreadas con el acento"""
         thunar_frame = Gtk.Frame()
-        thunar_frame.add_css_class("mock-thunar-window")
+        thunar_frame.add_css_class("thunar-shell-card")
         thunar_frame.set_hexpand(True)
         thunar_frame.set_vexpand(True)
 
-        root_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        root_box.set_hexpand(True)
-        root_box.set_vexpand(True)
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+
+        # Titlebar
+        t_head = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        t_head.add_css_class("term-titlebar")
+
+        t_dots = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        for c in ["term-dot-red", "term-dot-yellow", "term-dot-green"]:
+            dot = Gtk.Box()
+            dot.add_css_class("term-dot")
+            dot.add_css_class(c)
+            t_dots.append(dot)
+        t_head.append(t_dots)
+
+        t_path = Gtk.Label(label="thunar — /home/rylai/Documents/projects", xalign=0)
+        t_path.add_css_class("term-title-text")
+        t_path.set_hexpand(True)
+        t_head.append(t_path)
+
+        t_ctrls = Gtk.Label(label="󰍉  󰕰", xalign=1)
+        t_ctrls.add_css_class("term-title-text")
+        t_head.append(t_ctrls)
+
+        vbox.append(t_head)
+
+        # Main Shell Area (Split: Sidebar + File Grid)
+        split_body = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        split_body.set_vexpand(True)
 
         # Sidebar
         sidebar = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
-        sidebar.add_css_class("mock-thunar-sidebar")
+        sidebar.add_css_class("thunar-sidebar")
         sidebar.set_size_request(160, -1)
-        sidebar.set_margin_top(8)
-        sidebar.set_margin_start(8)
-        sidebar.set_margin_end(8)
 
-        places = ["󰋜  Home", "󰉍  Descargas", "󱂬  Documentos", "󰉏  Imágenes", "󰎈  Música"]
-        for i, place in enumerate(places):
-            item = Gtk.Label(label=place, xalign=0)
-            item.add_css_class("mock-sidebar-item")
-            if i == 0:
-                item.add_css_class("selected")
+        side_title = Gtk.Label(label="LUGARES", xalign=0)
+        side_title.add_css_class("section-header-title")
+        sidebar.append(side_title)
+
+        places = [
+            ("󰋜 Home", True),
+            ("󰉍 Descargas", False),
+            ("󱂬 Documentos", False),
+            ("󰉏 Imágenes", False),
+            ("󰎈 Música", False),
+            ("󰉋 Projects", False)
+        ]
+        for name, is_active in places:
+            item = Gtk.Label(label=name, xalign=0)
+            item.add_css_class("thunar-place-item")
+            if is_active:
+                item.add_css_class("active")
             sidebar.append(item)
-        root_box.append(sidebar)
 
-        sep = Gtk.Separator(orientation=Gtk.Orientation.VERTICAL)
-        sep.add_css_class("mock-thunar-sep")
-        root_box.append(sep)
+        split_body.append(sidebar)
 
-        # File view
-        file_view = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
-        file_view.set_hexpand(True)
-        file_view.set_margin_start(16)
-        file_view.set_margin_end(16)
-        file_view.set_margin_top(12)
+        # Files Right Canvas
+        file_canvas = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
+        file_canvas.set_margin_start(16)
+        file_canvas.set_margin_end(16)
+        file_canvas.set_margin_top(14)
+        file_canvas.set_margin_bottom(14)
+        file_canvas.set_hexpand(True)
 
-        # Barra de ruta
-        path_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        path_bar.add_css_class("mock-pathbar")
-        path_lbl = Gtk.Label(label="  󰉋  /home/rylai  ", xalign=0)
-        path_lbl.add_css_class("mock-pathbar-text")
-        path_bar.append(path_lbl)
-        file_view.append(path_bar)
+        # Directory Grid (4 folders + 4 files)
+        file_grid = Gtk.Grid(column_spacing=14, row_spacing=14)
+        file_grid.set_hexpand(True)
 
-        # Carpetas con glifos Nerd Fonts vectoriales (se colorean dinámicamente con CSS)
-        folder_grid = Gtk.Grid(column_spacing=16, row_spacing=16, margin_top=8)
-        items = [
-            ("󰉋", "nixos-config", "Carpeta"),
-            ("󰉋", "Documents", "Carpeta"),
-            ("󰉋", "Pictures", "Carpeta"),
-            ("󰉋", ".config", "Carpeta oculta"),
-            ("󰈔", "wallpaper.sh", "Script Bash"),
-            ("󰈔", "flake.nix", "Nix Flake"),
+        grid_items = [
+            ("󰉋", "dotfiles", "Carpeta", True),
+            ("󰉋", "nixos-config", "Carpeta", True),
+            ("󰉋", "wallpapers", "Carpeta", True),
+            ("󰉋", "scripts", "Carpeta", True),
+            ("󰈔", "flake.nix", "Nix Flake", False),
+            ("󰈔", "configuration.nix", "Nix Config", False),
+            ("󰈔", "colors.css", "Hoja de Estilos", False),
+            ("󰈔", "README.md", "Markdown", False),
         ]
 
-        for idx, (icon, fname, ftype) in enumerate(items):
+        for i, (glyph, name, subtitle, is_folder) in enumerate(grid_items):
             card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
-            card.add_css_class("mock-file-card")
-            card.set_size_request(115, 75)
-            
-            icon_lbl = Gtk.Label(label=icon, xalign=0.5)
-            if icon == "󰉋":
-                icon_lbl.add_css_class("mock-folder-icon")
-            else:
-                icon_lbl.add_css_class("mock-file-icon")
-            
-            name_lbl = Gtk.Label(label=fname, xalign=0.5)
-            name_lbl.add_css_class("mock-file-name")
-            
-            type_lbl = Gtk.Label(label=ftype, xalign=0.5)
-            type_lbl.add_css_class("mock-file-subtext")
-            
+            card.add_css_class("thunar-folder-card")
+            card.set_hexpand(True)
+            card.set_size_request(110, 85)
+
+            icon_lbl = Gtk.Label(label=glyph)
+            icon_lbl.add_css_class("thunar-folder-icon" if is_folder else "thunar-file-icon")
+
+            name_lbl = Gtk.Label(label=name)
+            name_lbl.add_css_class("thunar-item-title")
+
+            sub_lbl = Gtk.Label(label=subtitle)
+            sub_lbl.add_css_class("thunar-item-subtitle")
+
             card.append(icon_lbl)
             card.append(name_lbl)
-            card.append(type_lbl)
-            folder_grid.attach(card, idx % 3, idx // 3, 1, 1)
+            card.append(sub_lbl)
 
-        file_view.append(folder_grid)
-        root_box.append(file_view)
+            file_grid.attach(card, i % 4, i // 4, 1, 1)
 
-        thunar_frame.set_child(root_box)
-        self.stack.add_titled(thunar_frame, "thunar", "Thunar / GTK")
+        file_canvas.append(file_grid)
 
+        # Thunar Footer
+        footer_pill = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        footer_pill.add_css_class("bottom-status-pill")
+        footer_pill.set_valign(Gtk.Align.END)
+        foot_text = Gtk.Label(label="8 elementos • Espacio libre: 142.8 GB • Papirus Accent: Cyan-Blue (#7aa2f7)", xalign=0)
+        foot_text.set_hexpand(True)
+        footer_pill.append(foot_text)
+        file_canvas.append(footer_pill)
+
+        split_body.append(file_canvas)
+        vbox.append(split_body)
+
+        thunar_frame.set_child(vbox)
+        self.stack.add_named(thunar_frame, "thunar")

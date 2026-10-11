@@ -12,12 +12,12 @@ class WallustStudioWindow(Adw.ApplicationWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.set_title("Wallust Studio")
-        self.set_default_size(960, 580)
+        self.set_default_size(1080, 680)
 
-        # Main Layout
+        # Main Split Layout
         self.split_view = Adw.NavigationSplitView()
-        self.split_view.set_max_sidebar_width(380)
-        self.split_view.set_min_sidebar_width(340)
+        self.split_view.set_max_sidebar_width(400)
+        self.split_view.set_min_sidebar_width(360)
         
         # CSS Manager
         self.css_manager = CSSManager()
@@ -35,7 +35,6 @@ class WallustStudioWindow(Adw.ApplicationWindow):
         self.split_view.set_content(content_page)
 
         self.set_content(self.split_view)
-
         self.setup_shortcuts()
 
     def setup_shortcuts(self):
@@ -57,10 +56,10 @@ class WallustStudioWindow(Adw.ApplicationWindow):
         self.add_action(action_restore)
         self.get_application().set_accels_for_action("win.restore", ["<Ctrl>r"])
 
-        # Tabs (1, 2, 3)
-        for i in range(1, 4):
+        # Tabs Switcher (1: Terminal, 2: Waybar, 3: Thunar)
+        for i, name in enumerate(["terminal", "waybar", "thunar"], 1):
             action_tab = Gio.SimpleAction.new(f"tab{i}", None)
-            action_tab.connect("activate", lambda action, param, idx=i: self.on_tab(idx))
+            action_tab.connect("activate", lambda a, p, n=name: self.preview_panel.switch_tab(n))
             self.add_action(action_tab)
             self.get_application().set_accels_for_action(f"win.tab{i}", [str(i)])
 
@@ -72,9 +71,3 @@ class WallustStudioWindow(Adw.ApplicationWindow):
 
     def on_restore(self, action, param):
         self.controls_panel.restore_defaults()
-
-    def on_tab(self, idx):
-        pages = self.controls_panel.tab_view.get_n_pages()
-        if 1 <= idx <= pages:
-            page = self.controls_panel.tab_view.get_nth_page(idx - 1)
-            self.controls_panel.tab_view.set_selected_page(page)

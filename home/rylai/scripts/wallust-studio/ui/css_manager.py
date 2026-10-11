@@ -22,7 +22,7 @@ class CSSManager:
                 )
                 self._display_attached = True
 
-    def update_palette_css(self, palette_dict: Dict[str, str], waybar_opacity: float = 0.9, kitty_opacity: float = 0.9, hypr_border_width: int = 2):
+    def update_palette_css(self, palette_dict: Dict[str, str], waybar_opacity: float = 0.85, kitty_opacity: float = 0.85, hypr_border_width: int = 2):
         self._ensure_display()
         if self._debounce_id:
             GLib.source_remove(self._debounce_id)
@@ -31,189 +31,369 @@ class CSSManager:
 
     def _apply_palette_css(self, p: Dict[str, str], waybar_op: float, kitty_op: float, hypr_border: int):
         self._ensure_display()
-        bg = p.get("background", "#1e1e2e")
-        fg = p.get("foreground", "#cdd6f4")
-        c0 = p.get("color0", "#45475a")
-        c1 = p.get("color1", "#f38ba8")
-        c2 = p.get("color2", "#a6e3a1")
-        c3 = p.get("color3", "#f9e2af")
-        c4 = p.get("color4", "#89b4fa")
-        c5 = p.get("color5", "#f5c2e7")
-        c6 = p.get("color6", "#94e2d5")
-        c7 = p.get("color7", "#bac2de")
-        c8 = p.get("color8", "#585b70")
-        c9 = p.get("color9", "#f38ba8")
-        c10 = p.get("color10", "#a6e3a1")
-        c11 = p.get("color11", "#f9e2af")
-        c12 = p.get("color12", "#89b4fa")
-        c13 = p.get("color13", "#f5c2e7")
-        c14 = p.get("color14", "#94e2d5")
-        c15 = p.get("color15", "#a6adc8")
+        bg = p.get("background", "#0f1016")
+        fg = p.get("foreground", "#e4e1ef")
+        c0 = p.get("color0", "#15161e")
+        c1 = p.get("color1", "#f7768e")
+        c2 = p.get("color2", "#9ece6a")
+        c3 = p.get("color3", "#e0af68")
+        c4 = p.get("color4", "#7aa2f7")
+        c5 = p.get("color5", "#bb9af7")
+        c6 = p.get("color6", "#7dcfff")
+        c7 = p.get("color7", "#a9b1d6")
+        c8 = p.get("color8", "#414868")
+        c9 = p.get("color9", "#f7768e")
+        c10 = p.get("color10", "#73daca")
+        c11 = p.get("color11", "#e0af68")
+        c12 = p.get("color12", "#7aa2f7")
+        c13 = p.get("color13", "#bb9af7")
+        c14 = p.get("color14", "#b4f9f8")
+        c15 = p.get("color15", "#c0caf5")
 
         css_str = f"""
-        /* Base Wallust Studio Theme */
-        .preview-term-window {{
-            background-color: {bg};
-            border-radius: 12px;
-            border: 1px solid {c8};
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        /* Host Canvas & Chrome Base - Nordic Minimalist Theme */
+        window.background, .app-window {{
+            background-color: #0a0a0f;
+            color: #e4e1ef;
         }}
-        .term-title-btn {{ border-radius: 9999px; }}
-        .term-btn-close {{ background-color: {c1}; }}
-        .term-btn-min {{ background-color: {c3}; }}
-        .term-btn-max {{ background-color: {c2}; }}
-        .term-window-title {{ color: {fg}; font-size: 11px; font-weight: bold; }}
-        .term-separator {{ background-color: {c8}; }}
-        .term-prompt-text {{ color: {c4}; font-family: monospace; font-size: 13px; font-weight: bold; }}
-        .term-cursor {{ background-color: {c4}; }}
 
-        /* ANSI Grid Styles (Inspirado en la captura del usuario) */
-        .ansi-grid-header {{ color: {fg}; font-family: monospace; font-size: 11px; font-weight: bold; padding: 2px 4px; }}
-        .ansi-grid-row-lbl {{ color: {c8}; font-family: monospace; font-size: 11px; padding-right: 6px; }}
-        .ansi-cell {{ font-family: monospace; font-size: 11px; border-radius: 4px; }}
+        /* Unified Control Panel Elements */
+        .controls-sidebar {{
+            background-color: #14141e;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #1f2330;
+        }}
 
-        .cell-bg-0 {{ background-color: transparent; }}
-        .cell-bg-1 {{ background-color: {c0}; }}
-        .cell-bg-2 {{ background-color: {c1}; }}
-        .cell-bg-3 {{ background-color: {c2}; }}
-        .cell-bg-4 {{ background-color: {c3}; }}
-        .cell-bg-5 {{ background-color: {c4}; }}
-        .cell-bg-6 {{ background-color: {c5}; }}
-        .cell-bg-7 {{ background-color: {c6}; }}
-        .cell-bg-8 {{ background-color: {c7}; }}
+        .section-header-title {{
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            color: #c3c6d3;
+            letter-spacing: 0.08em;
+        }}
 
-        .cell-fg-0 {{ color: {c0}; }}
-        .cell-fg-1 {{ color: {c1}; }}
-        .cell-fg-2 {{ color: {c2}; }}
-        .cell-fg-3 {{ color: {c3}; }}
-        .cell-fg-4 {{ color: {c4}; }}
-        .cell-fg-5 {{ color: {c5}; }}
-        .cell-fg-6 {{ color: {c6}; }}
-        .cell-fg-7 {{ color: {c7}; }}
+        .section-badge {{
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            color: {c4};
+        }}
 
-        /* Mockup Waybar */
-        .mock-waybar {{
-            background-color: {bg};
+        .slider-section-card {{
+            background-color: #1b1b25;
             border-radius: 10px;
-            padding: 4px 10px;
-            border: 1px solid {c8};
-            opacity: {waybar_op};
+            padding: 10px 12px;
+            border: 1px solid #1f2330;
         }}
-        .mock-module {{
-            background-color: {c0};
-            border-radius: 8px;
-            padding: 4px 10px;
-            color: {fg};
-            font-size: 12px;
-            font-family: 'JetBrainsMono Nerd Font', monospace;
-        }}
-        .mock-workspaces .mock-ws-btn {{
-            padding: 2px 8px;
-            border-radius: 6px;
-            color: {fg};
-        }}
-        .mock-workspaces .mock-ws-btn.active {{
-            background-color: {c4};
-            color: {bg};
-            font-weight: bold;
-        }}
-        .mock-clock {{
-            background-color: transparent;
-            font-weight: bold;
-            color: {c12};
-        }}
-        .mock-mod-cpu {{ color: {c1}; }}
-        .mock-mod-ram {{ color: {c3}; }}
-        .mock-mod-audio {{ color: {c2}; }}
-        .mock-mod-bat {{ color: {c6}; }}
 
-        /* Mockup Hyprland Window */
-        .mock-hyprland-active-window {{
-            background-color: {bg};
+        .slider-label {{
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            color: #e4e1ef;
+        }}
+
+        .slider-val-tag {{
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            color: {c4};
+        }}
+
+        .micro-reset-btn {{
+            border-radius: 9999px;
+            background-color: #292934;
+            color: #c3c6d3;
+            padding: 2px 4px;
+            min-width: 20px;
+            min-height: 20px;
+            border: none;
+        }}
+        .micro-reset-btn:hover {{
+            background-color: #34343f;
+            color: #e4e1ef;
+        }}
+
+        /* ANSI Swatches */
+        .swatch-grid-card {{
+            background-color: #1b1b25;
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid #1f2330;
+        }}
+
+        .ansi-swatch-btn {{
+            border-radius: 8px;
+            min-height: 36px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+        }}
+        .ansi-swatch-btn.selected-swatch {{
+            border: 2px solid {c4};
+            box-shadow: 0 0 10px {c4}60;
+        }}
+
+        .hsl-adjuster-card {{
+            background-color: #1b1b25;
+            border-radius: 8px;
+            padding: 8px 12px;
+            border: 1px solid #1f2330;
+        }}
+
+        /* Action Buttons */
+        .btn-pill-secondary {{
+            background-color: #292934;
+            color: #e4e1ef;
+            border-radius: 9999px;
+            padding: 6px 14px;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            border: 1px solid #1f2330;
+        }}
+        .btn-pill-secondary:hover {{
+            background-color: #34343f;
+        }}
+
+        .btn-pill-primary {{
+            background-color: {c4};
+            color: #0a0a0f;
+            border-radius: 9999px;
+            padding: 10px 18px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            box-shadow: 0 4px 16px {c4}40;
+            border: none;
+        }}
+        .btn-pill-primary:hover {{
+            filter: brightness(1.1);
+        }}
+
+        /* Right Canvas & Segmented Switcher */
+        .preview-canvas-card {{
+            background-color: #14141e;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #1f2330;
+        }}
+
+        .tab-pill-box {{
+            background-color: #0d0d17;
+            border-radius: 9999px;
+            padding: 4px;
+        }}
+
+        .tab-pill-btn {{
+            border-radius: 9999px;
+            padding: 6px 18px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            color: #c3c6d3;
+            border: none;
+            background: transparent;
+        }}
+        .tab-pill-btn.active {{
+            background-color: #1e1e2e;
+            color: #e4e1ef;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }}
+
+        /* ================= VISTA 1: TERMINAL (KITTY) ================= */
+        .term-window-card {{
+            background-color: #0d0d17;
+            border-radius: 12px;
+            border: 1px solid #1f2330;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+        }}
+
+        .term-titlebar {{
+            background-color: #1b1b25;
+            padding: 8px 14px;
+            border-bottom: 1px solid #1f2330;
+        }}
+        .term-dot {{ border-radius: 9999px; min-width: 10px; min-height: 10px; }}
+        .term-dot-red {{ background-color: {c1}; }}
+        .term-dot-yellow {{ background-color: {c3}; }}
+        .term-dot-green {{ background-color: {c2}; }}
+        .term-title-text {{
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #c3c6d3;
+        }}
+
+        .term-body {{
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: {fg};
+            line-height: 1.6;
+        }}
+        .term-user-host {{ color: {c4}; font-weight: bold; }}
+        .term-dir {{ color: {c3}; }}
+        .term-symbol {{ color: {c5}; font-weight: bold; }}
+        .term-success {{ color: {c2}; font-weight: 600; }}
+        .term-error {{ color: {c1}; font-weight: 600; }}
+
+        .code-syntax-box {{
+            background-color: rgba(18, 18, 28, 0.7);
+            border-radius: 8px;
+            padding: 10px 14px;
+            border: 1px solid #1f2330;
+        }}
+        .syntax-kw {{ color: {c5}; font-weight: bold; }}
+        .syntax-fn {{ color: {c4}; }}
+        .syntax-str {{ color: {c2}; }}
+        .syntax-type {{ color: {c3}; }}
+        .syntax-var {{ color: {c6}; }}
+
+        .ansi-block-cell {{
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 4px;
+            border-radius: 4px;
+            text-align: center;
+        }}
+
+        /* ================= VISTA 2: DESKTOP / WAYBAR ================= */
+        .waybar-bar-card {{
+            background-color: rgba(13, 13, 23, {waybar_op});
+            border-radius: 10px;
+            padding: 6px 14px;
+            border: 1px solid #1f2330;
+        }}
+        .ws-capsule {{
+            min-width: 24px;
+            min-height: 24px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+        }}
+        .ws-capsule.active {{
+            background-color: {c4};
+            color: #0a0a0f;
+            box-shadow: 0 0 10px {c4}80;
+        }}
+        .ws-capsule.inactive {{
+            background-color: #292934;
+            color: #c3c6d3;
+        }}
+        .waybar-clock {{
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: #e4e1ef;
+        }}
+        .telemetry-pill {{
+            border-radius: 9999px;
+            padding: 3px 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid #1f2330;
+        }}
+        .pill-cpu {{ background-color: rgba(247, 118, 142, 0.15); color: {c1}; }}
+        .pill-ram {{ background-color: rgba(187, 154, 247, 0.15); color: {c5}; }}
+        .pill-audio {{ background-color: rgba(125, 207, 255, 0.15); color: {c6}; }}
+        .pill-battery {{ background-color: rgba(158, 206, 106, 0.15); color: {c2}; }}
+
+        .hypr-active-window {{
+            background-color: rgba(18, 18, 28, 0.95);
             border-radius: 12px;
             border: {hypr_border}px solid {c4};
-            box-shadow: 0 4px 20px {c4}40;
+            box-shadow: 0 8px 30px {c4}40;
         }}
-        .mock-hypr-title {{
-            color: {c4};
-            font-weight: bold;
-            font-size: 14px;
-            font-family: 'JetBrainsMono Nerd Font', monospace;
-        }}
-        .mock-sample-card {{
-            background-color: {c0};
-            border-radius: 8px;
-            padding: 14px;
-            border-left: 3px solid {c4};
-        }}
-        .mock-card-badge {{
-            color: {c2};
-            font-weight: bold;
-            font-size: 10px;
-            font-family: 'JetBrainsMono Nerd Font', monospace;
-        }}
-        .mock-card-heading {{ color: {c12}; font-weight: bold; font-size: 13px; }}
-        .mock-card-body {{ color: {fg}; font-size: 11px; }}
-
-        /* Mockup Thunar */
-        .mock-thunar-window {{
-            background-color: {bg};
-            border-radius: 12px;
-            border: 1px solid {c8};
-        }}
-        .mock-thunar-sidebar {{
-            background-color: {bg};
-        }}
-        .mock-sidebar-item {{
-            padding: 6px 10px;
+        .contrast-badge {{
+            background-color: #292934;
+            color: #e4e1ef;
+            padding: 4px 12px;
             border-radius: 6px;
-            color: {fg};
-            font-size: 13px;
-            font-family: 'JetBrainsMono Nerd Font', monospace;
-        }}
-        .mock-sidebar-item.selected {{
-            background-color: {c4}26;
-            color: {c4};
-            font-weight: bold;
-        }}
-        .mock-pathbar {{
-            background-color: {c0};
-            border-radius: 6px;
-            padding: 4px 8px;
-            color: {fg};
-            font-size: 12px;
-            font-family: 'JetBrainsMono Nerd Font', monospace;
-        }}
-        .mock-pathbar-text {{ color: {c4}; font-weight: bold; }}
-        .mock-file-card {{
-            background-color: {c0};
-            border-radius: 8px;
-            padding: 8px;
-            border: 1px solid transparent;
-        }}
-        .mock-file-card:hover {{
-            border-color: {c4};
-            background-color: {c8}33;
-        }}
-        .mock-folder-icon {{
-            color: {c4};
-            font-weight: bold;
-            font-size: 22px;
-            font-family: 'JetBrainsMono Nerd Font', monospace;
-        }}
-        .mock-file-icon {{
-            color: {fg};
-            font-size: 22px;
-            font-family: 'JetBrainsMono Nerd Font', monospace;
-        }}
-        .mock-file-name {{
-            color: {fg};
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
-            font-weight: bold;
+            font-weight: 600;
         }}
-        .mock-file-subtext {{
-            color: {c8};
+        .preview-content-card {{
+            background-color: #1e1e2e;
+            border-radius: 10px;
+            padding: 14px;
+            border: 1px solid #1f2330;
+        }}
+
+        /* ================= VISTA 3: THUNAR FILES ================= */
+        .thunar-shell-card {{
+            background-color: #12121c;
+            border-radius: 12px;
+            border: 1px solid #1f2330;
+        }}
+        .thunar-sidebar {{
+            background-color: #0d0d17;
+            padding: 12px;
+            border-right: 1px solid #1f2330;
+        }}
+        .thunar-place-item {{
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            color: #c3c6d3;
+        }}
+        .thunar-place-item.active {{
+            background-color: {c4};
+            color: #0a0a0f;
+            font-weight: 700;
+        }}
+        .thunar-place-item:hover:not(.active) {{
+            background-color: #1b1b25;
+            color: #e4e1ef;
+        }}
+
+        .thunar-folder-card {{
+            background-color: #1e1e2e;
+            border-radius: 12px;
+            padding: 14px;
+            border: 1px solid #1f2330;
+            text-align: center;
+        }}
+        .thunar-folder-card:hover {{
+            background-color: #292934;
+            border-color: {c4};
+        }}
+        .thunar-folder-icon {{
+            color: {c4};
+            font-size: 34px;
+            font-family: 'JetBrainsMono Nerd Font', monospace;
+        }}
+        .thunar-file-icon {{
+            color: #c3c6d3;
+            font-size: 34px;
+            font-family: 'JetBrainsMono Nerd Font', monospace;
+        }}
+        .thunar-item-title {{
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: #e4e1ef;
+        }}
+        .thunar-item-subtitle {{
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
+            color: #c3c6d3;
+        }}
+
+        /* Bottom Status Pill */
+        .bottom-status-pill {{
+            background-color: #0d0d17;
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: #c3c6d3;
+            border: 1px solid #1f2330;
         }}
         """
         try:
@@ -222,4 +402,3 @@ class CSSManager:
             self.provider.load_from_data(css_str.encode('utf-8'))
         self._debounce_id = None
         return False
-
