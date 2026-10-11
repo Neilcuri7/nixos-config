@@ -1,6 +1,8 @@
 import subprocess
 import os
-from typing import Optional
+import json
+import tempfile
+from typing import Optional, Union, Dict, Any
 
 try:
     from .wallust_bridge import apply_wallust_theme
@@ -101,12 +103,37 @@ def reload_gtk():
     except Exception:
         pass
 
-def apply_and_reload(palette_json_path: str, accent_hex: Optional[str] = None):
+def apply_and_reload(palette_data: Union[str, Dict[str, Any]], accent_hex: Optional[str] = None):
     """
     Applies the theme using wallust, then orchestrates a synchronized reload
     of various system components.
     """
-    apply_wallust_theme(palette_json_path)
+    temp_file = None
+    try:
+        if isinstance(palette_data, dict):
+            fd, temp_file = tempfile.mkstemp(prefix="wallust_palette_", suffix=".json")
+            with os.fdopen(fd, 'w') as f:
+                json.dump(palette_data, f, indent=2)
+            theme_path = temp_file
+        elif isinstance(palette_data, str):
+            if os.path.exists(palette_data):
+                theme_path = palette_data
+            else:
+                # Tratar como contenido JSON directamente
+                fd, temp_file = tempfile.mkstemp(prefix="wallust_palette_", suffix=".json")
+                with os.fdopen(fd, 'w') as f:
+                    f.write(palette_data)
+                theme_path = temp_file
+        else:
+            raise ValueError(f"Formato no compatible para la paleta: {type(palette_data)}")
+
+        apply_wallust_theme(theme_path)
+    finally:
+        if temp_file and os.path.exists(temp_file):
+            try:
+                os.remove(temp_file)
+            except OSError:
+                pass
     
     if accent_hex:
         apply_papirus_folders(accent_hex)

@@ -256,7 +256,6 @@ class CSSManager:
             font-weight: bold;
             padding: 4px;
             border-radius: 4px;
-            text-align: center;
         }}
 
         /* ================= VISTA 2: DESKTOP / WAYBAR ================= */
@@ -357,7 +356,6 @@ class CSSManager:
             border-radius: 12px;
             padding: 14px;
             border: 1px solid #1f2330;
-            text-align: center;
         }}
         .thunar-folder-card:hover {{
             background-color: #292934;

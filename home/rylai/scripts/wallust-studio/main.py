@@ -33,6 +33,7 @@ class WallustStudioApplication(Adw.Application):
                          flags=Gio.ApplicationFlags.NON_UNIQUE)
 
     def do_activate(self):
+        Adw.StyleManager.get_default().set_color_scheme(Adw.ColorScheme.FORCE_DARK)
         win = self.props.active_window
         if not win:
             win = WallustStudioWindow(application=self)

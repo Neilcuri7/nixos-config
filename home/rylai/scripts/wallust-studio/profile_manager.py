@@ -5,6 +5,11 @@ import tempfile
 from pathlib import Path
 from typing import Dict, Any, Optional
 
+try:
+    from .wallust_bridge import get_current_wallpaper
+except (ImportError, ValueError):
+    from wallust_bridge import get_current_wallpaper
+
 STATE_DIR = Path.home() / ".local" / "state" / "wallust-studio"
 PROFILES_DIR = STATE_DIR / "profiles"
 REGISTRY_FILE = STATE_DIR / "registry.json"
