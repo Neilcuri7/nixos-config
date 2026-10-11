@@ -107,9 +107,18 @@ class PreviewPanel(Gtk.Box):
 
         # Prompt 1: Successful command
         cmd1_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
-        p1 = Gtk.Label(label="rylai@nixos ~ ❯ git status -s", xalign=0)
-        p1.set_use_markup(True)
-        p1.set_markup("<span class='term-user-host'>rylai@nixos</span> <span class='term-dir'>~</span> <span class='term-symbol'>❯</span> git status -s")
+        p1 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        lbl_usr = Gtk.Label(label="rylai@nixos")
+        lbl_usr.add_css_class("term-user-host")
+        lbl_dir = Gtk.Label(label="~")
+        lbl_dir.add_css_class("term-dir")
+        lbl_sym = Gtk.Label(label="❯")
+        lbl_sym.add_css_class("term-symbol")
+        lbl_cmd = Gtk.Label(label="git status -s")
+        p1.append(lbl_usr)
+        p1.append(lbl_dir)
+        p1.append(lbl_sym)
+        p1.append(lbl_cmd)
         cmd1_box.append(p1)
 
         out1 = Gtk.Label(label="  ✓ working tree clean (main)", xalign=0)
@@ -119,9 +128,18 @@ class PreviewPanel(Gtk.Box):
 
         # Prompt 2: Failed command
         cmd2_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
-        p2 = Gtk.Label(label="rylai@nixos ~ ❯ curl -I https://api.local/v1", xalign=0)
-        p2.set_use_markup(True)
-        p2.set_markup("<span class='term-user-host'>rylai@nixos</span> <span class='term-dir'>~</span> <span class='term-symbol'>❯</span> curl -I https://api.local/v1")
+        p2 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        lbl_usr2 = Gtk.Label(label="rylai@nixos")
+        lbl_usr2.add_css_class("term-user-host")
+        lbl_dir2 = Gtk.Label(label="~")
+        lbl_dir2.add_css_class("term-dir")
+        lbl_sym2 = Gtk.Label(label="❯")
+        lbl_sym2.add_css_class("term-symbol")
+        lbl_cmd2 = Gtk.Label(label="curl -I https://api.local/v1")
+        p2.append(lbl_usr2)
+        p2.append(lbl_dir2)
+        p2.append(lbl_sym2)
+        p2.append(lbl_cmd2)
         cmd2_box.append(p2)
 
         out2 = Gtk.Label(label="  ✖ Error 404: Endpoint Not Found", xalign=0)
@@ -137,15 +155,14 @@ class PreviewPanel(Gtk.Box):
         s_title.add_css_class("section-header-title")
         syntax_box.append(s_title)
 
-        code_lines = [
-            "<span class='syntax-kw'>pub fn</span> <span class='syntax-fn'>sync_wallust_palette</span>(colors: &amp;<span class='syntax-type'>Palette</span>) -&gt; <span class='syntax-type'>Result</span>&lt;(), <span class='syntax-type'>Error</span>&gt; {",
-            "    <span class='syntax-kw'>let</span> accent = colors.ansi[<span class='syntax-var'>4</span>].<span class='syntax-fn'>to_hex</span>();",
-            "    compositor::<span class='syntax-fn'>set_active_border</span>(&amp;accent)?;",
-            "}"
-        ]
         code_lbl = Gtk.Label(xalign=0)
         code_lbl.set_use_markup(True)
-        code_lbl.set_markup("\n".join(code_lines))
+        code_lbl.set_markup(
+            "<b>pub fn</b> sync_wallust_palette(colors: &amp;Palette) -&gt; Result&lt;(), Error&gt; {\n"
+            "    <b>let</b> accent = colors.ansi[4].to_hex();\n"
+            "    compositor::set_active_border(&amp;accent)?;\n"
+            "}"
+        )
         syntax_box.append(code_lbl)
         body.append(syntax_box)
 
@@ -170,14 +187,19 @@ class PreviewPanel(Gtk.Box):
         ansi_box.append(grid)
 
         # Active cursor line
-        cursor_line = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
-        c_p = Gtk.Label(label="rylai@nixos ~ ❯", xalign=0)
-        c_p.set_use_markup(True)
-        c_p.set_markup("<span class='term-user-host'>rylai@nixos</span> <span class='term-dir'>~</span> <span class='term-symbol'>❯</span>")
+        cursor_line = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        c_u = Gtk.Label(label="rylai@nixos")
+        c_u.add_css_class("term-user-host")
+        c_d = Gtk.Label(label="~")
+        c_d.add_css_class("term-dir")
+        c_s = Gtk.Label(label="❯")
+        c_s.add_css_class("term-symbol")
         cursor_block = Gtk.Box()
         cursor_block.set_size_request(8, 15)
         cursor_block.add_css_class("term-cursor")
-        cursor_line.append(c_p)
+        cursor_line.append(c_u)
+        cursor_line.append(c_d)
+        cursor_line.append(c_s)
         cursor_line.append(cursor_block)
         ansi_box.append(cursor_line)
 
@@ -341,9 +363,9 @@ class PreviewPanel(Gtk.Box):
         c2_code = Gtk.Label(xalign=0)
         c2_code.set_use_markup(True)
         c2_code.set_markup(
-            "<span class='syntax-kw'>const</span> <span class='syntax-fn'>theme</span> = {\n"
-            "  <span class='syntax-var'>accent</span>: <span class='syntax-str'>\"#7aa2f7\"</span>,\n"
-            "  <span class='syntax-var'>engine</span>: <span class='syntax-str'>\"wallust_v2\"</span>\n"
+            "<b>const</b> theme = {\n"
+            "  accent: \"#7aa2f7\",\n"
+            "  engine: \"wallust_v2\"\n"
             "};"
         )
         c2_foot = Gtk.Label(label="UTF-8 // Wayland          SYNCED", xalign=0)
@@ -374,17 +396,6 @@ class PreviewPanel(Gtk.Box):
         win_frame.set_child(win_vbox)
 
         container.append(win_frame)
-
-        # Bottom Decorators Pill
-        status_pill = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        status_pill.add_css_class("bottom-status-pill")
-        sp_l = Gtk.Label(label="Hyprland Decorators Ready: Gaps: 6px • Rounding: 12px • Active Border: 2px Solid Accent", xalign=0)
-        sp_r = Gtk.Label(label="● LIVE REFRESH 60FPS", xalign=1)
-        sp_r.add_css_class("term-success")
-        sp_l.set_hexpand(True)
-        status_pill.append(sp_l)
-        status_pill.append(sp_r)
-        container.append(status_pill)
 
         self.stack.add_named(container, "waybar")
 
@@ -495,16 +506,6 @@ class PreviewPanel(Gtk.Box):
             file_grid.attach(card, i % 4, i // 4, 1, 1)
 
         file_canvas.append(file_grid)
-
-        # Thunar Footer
-        footer_pill = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        footer_pill.add_css_class("bottom-status-pill")
-        footer_pill.set_valign(Gtk.Align.END)
-        foot_text = Gtk.Label(label="8 elementos • Espacio libre: 142.8 GB • Papirus Accent: Cyan-Blue (#7aa2f7)", xalign=0)
-        foot_text.set_hexpand(True)
-        footer_pill.append(foot_text)
-        file_canvas.append(footer_pill)
-
         split_body.append(file_canvas)
         vbox.append(split_body)
 

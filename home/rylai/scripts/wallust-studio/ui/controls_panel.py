@@ -62,11 +62,8 @@ class ControlsPanel(Gtk.Box):
         head = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         lbl_title = Gtk.Label(label="CALIBRACIÓN CROMÁTICA", xalign=0)
         lbl_title.add_css_class("section-header-title")
-        lbl_badge = Gtk.Label(label="ALG: K-MEANS++", xalign=1)
-        lbl_badge.add_css_class("section-badge")
         lbl_title.set_hexpand(True)
         head.append(lbl_title)
-        head.append(lbl_badge)
         section.append(head)
 
         card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
@@ -113,7 +110,7 @@ class ControlsPanel(Gtk.Box):
         val_tag.add_css_class("slider-val-tag")
         top_row.append(val_tag)
 
-        reset_btn = Gtk.Button(label="↺")
+        reset_btn = Gtk.Button(icon_name="view-refresh-symbolic")
         reset_btn.add_css_class("micro-reset-btn")
         reset_btn.set_tooltip_text("Restaurar valor neutral")
         reset_btn.set_margin_start(6)
@@ -401,7 +398,7 @@ class ControlsPanel(Gtk.Box):
         self._update_color_swatches_ui()
 
     def _update_preview(self):
-        palette_dict = self.current_palette.to_css_vars()
+        palette_dict = self.current_palette.to_dict()
         waybar_op = self.waybar_op.get_value() / 100.0
         hypr_border = int(self.hypr_border.get_value())
         self.css_manager.update_palette_css(
