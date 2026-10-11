@@ -19,7 +19,8 @@ class ControlsPanel(Gtk.Box):
         self.preview_panel = preview_panel
         self.css_manager = css_manager
 
-        self.base_palette = load_current_palette()
+        self.initial_palette = load_current_palette()
+        self.base_palette = self.initial_palette.create_adjusted_copy()
         self.current_palette = self.base_palette.create_adjusted_copy()
         self.color_buttons = []
         self.selected_color_idx = 4  # Default to accent color4 (Blue)
@@ -165,19 +166,19 @@ class ControlsPanel(Gtk.Box):
         self._sync_single_color_sliders()
 
     def _reset_single_color_hue(self, scale):
-        hex_val = getattr(self.base_palette, f"color{self.selected_color_idx}", "#888888")
+        hex_val = getattr(self.initial_palette, f"color{self.selected_color_idx}", "#888888")
         r, g, b = hex_to_rgb(hex_val)
         h, l, s = colorsys.rgb_to_hls(r, g, b)
         scale.set_value(int(h * 360))
 
     def _reset_single_color_sat(self, scale):
-        hex_val = getattr(self.base_palette, f"color{self.selected_color_idx}", "#888888")
+        hex_val = getattr(self.initial_palette, f"color{self.selected_color_idx}", "#888888")
         r, g, b = hex_to_rgb(hex_val)
         h, l, s = colorsys.rgb_to_hls(r, g, b)
         scale.set_value(int(s * 100))
 
     def _reset_single_color_lum(self, scale):
-        hex_val = getattr(self.base_palette, f"color{self.selected_color_idx}", "#888888")
+        hex_val = getattr(self.initial_palette, f"color{self.selected_color_idx}", "#888888")
         r, g, b = hex_to_rgb(hex_val)
         h, l, s = colorsys.rgb_to_hls(r, g, b)
         scale.set_value(int(l * 100))
@@ -270,16 +271,22 @@ class ControlsPanel(Gtk.Box):
         
         # Color description tag
         role_map = {
-            0: "Fondo oscuro / Superficie",
+            0: "Fondo oscuro / Superficie (Color 0 & Background)",
             1: "Rojo / Error / CPU",
             2: "Verde / Éxito / Audio",
             3: "Amarillo / Alerta / RAM",
-            4: "Azul / Acento Principal",
+            4: "Azul / Acento Principal (Color 4 & Cursor)",
             5: "Magenta / Acento Secundario",
             6: "Cian / Batería / Info",
-            7: "Texto / Foreground",
+            7: "Texto / Tipografía (Color 7 & Foreground)",
             8: "Gris / Bordes sutiles",
-            12: "Azul Claro / Reloj / Resaltado"
+            9: "Rojo Brillante",
+            10: "Verde Brillante",
+            11: "Amarillo Brillante",
+            12: "Azul Claro / Reloj / Resaltado",
+            13: "Magenta Brillante",
+            14: "Cian Brillante",
+            15: "Texto Brillante / Tipografía"
         }
         role_text = f" — {role_map[self.selected_color_idx]}" if self.selected_color_idx in role_map else ""
         self.color_name_row.set_subtitle(f"Color {self.selected_color_idx} ({hex_val}){role_text}")
@@ -297,18 +304,35 @@ class ControlsPanel(Gtk.Box):
         
         setattr(self.current_palette, f"color{self.selected_color_idx}", hex_val)
         setattr(self.base_palette, f"color{self.selected_color_idx}", hex_val)
+
+        # Sincronizar roles especiales de sistema (tipografía, fondo y cursor)
+        if self.selected_color_idx in (7, 15):
+            self.current_palette.foreground = hex_val
+            self.base_palette.foreground = hex_val
+        elif self.selected_color_idx == 0:
+            self.current_palette.background = hex_val
+            self.base_palette.background = hex_val
+        elif self.selected_color_idx in (4, 12):
+            self.current_palette.cursor = hex_val
+            self.base_palette.cursor = hex_val
         
         role_map = {
-            0: "Fondo oscuro / Superficie",
+            0: "Fondo oscuro / Superficie (Color 0 & Background)",
             1: "Rojo / Error / CPU",
             2: "Verde / Éxito / Audio",
             3: "Amarillo / Alerta / RAM",
-            4: "Azul / Acento Principal",
+            4: "Azul / Acento Principal (Color 4 & Cursor)",
             5: "Magenta / Acento Secundario",
             6: "Cian / Batería / Info",
-            7: "Texto / Foreground",
+            7: "Texto / Tipografía (Color 7 & Foreground)",
             8: "Gris / Bordes sutiles",
-            12: "Azul Claro / Reloj / Resaltado"
+            9: "Rojo Brillante",
+            10: "Verde Brillante",
+            11: "Amarillo Brillante",
+            12: "Azul Claro / Reloj / Resaltado",
+            13: "Magenta Brillante",
+            14: "Cian Brillante",
+            15: "Texto Brillante / Tipografía"
         }
         role_text = f" — {role_map[self.selected_color_idx]}" if self.selected_color_idx in role_map else ""
         self.color_name_row.set_subtitle(f"Color {self.selected_color_idx} ({hex_val}){role_text}")
@@ -388,7 +412,7 @@ class ControlsPanel(Gtk.Box):
         self.contrast_scale.set_value(0)
         self.hue_scale.set_value(0)
         self.temp_scale.set_value(0)
-        self.base_palette = load_current_palette()
+        self.base_palette = self.initial_palette.create_adjusted_copy()
         self.current_palette = self.base_palette.create_adjusted_copy()
         
         self._update_color_swatches_ui()

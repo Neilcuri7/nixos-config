@@ -62,13 +62,13 @@ class CSSManager:
         .term-btn-close {{ background-color: {c1}; }}
         .term-btn-min {{ background-color: {c3}; }}
         .term-btn-max {{ background-color: {c2}; }}
-        .term-window-title {{ color: {c7}; font-size: 11px; font-weight: bold; }}
+        .term-window-title {{ color: {fg}; font-size: 11px; font-weight: bold; }}
         .term-separator {{ background-color: {c8}; }}
         .term-prompt-text {{ color: {c4}; font-family: monospace; font-size: 13px; font-weight: bold; }}
-        .term-cursor {{ background-color: {fg}; }}
+        .term-cursor {{ background-color: {c4}; }}
 
         /* ANSI Grid Styles (Inspirado en la captura del usuario) */
-        .ansi-grid-header {{ color: {c7}; font-family: monospace; font-size: 11px; font-weight: bold; padding: 2px 4px; }}
+        .ansi-grid-header {{ color: {fg}; font-family: monospace; font-size: 11px; font-weight: bold; padding: 2px 4px; }}
         .ansi-grid-row-lbl {{ color: {c8}; font-family: monospace; font-size: 11px; padding-right: 6px; }}
         .ansi-cell {{ font-family: monospace; font-size: 11px; border-radius: 4px; }}
 
@@ -110,7 +110,7 @@ class CSSManager:
         .mock-workspaces .mock-ws-btn {{
             padding: 2px 8px;
             border-radius: 6px;
-            color: {c7};
+            color: {fg};
         }}
         .mock-workspaces .mock-ws-btn.active {{
             background-color: {c4};
@@ -153,7 +153,7 @@ class CSSManager:
             font-family: 'JetBrainsMono Nerd Font', monospace;
         }}
         .mock-card-heading {{ color: {c12}; font-weight: bold; font-size: 13px; }}
-        .mock-card-body {{ color: {c7}; font-size: 11px; }}
+        .mock-card-body {{ color: {fg}; font-size: 11px; }}
 
         /* Mockup Thunar */
         .mock-thunar-window {{
@@ -180,7 +180,7 @@ class CSSManager:
             background-color: {c0};
             border-radius: 6px;
             padding: 4px 8px;
-            color: {c7};
+            color: {fg};
             font-size: 12px;
             font-family: 'JetBrainsMono Nerd Font', monospace;
         }}
@@ -202,7 +202,7 @@ class CSSManager:
             font-family: 'JetBrainsMono Nerd Font', monospace;
         }}
         .mock-file-icon {{
-            color: {c7};
+            color: {fg};
             font-size: 22px;
             font-family: 'JetBrainsMono Nerd Font', monospace;
         }}

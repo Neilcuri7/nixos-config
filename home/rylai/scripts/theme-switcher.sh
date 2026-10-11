@@ -107,11 +107,18 @@ reload_environment() {
         hyprctl reload &>/dev/null || true
     fi
 
-    pkill -USR1 -x kitty 2>/dev/null || true
-    pkill -USR2 -x waybar 2>/dev/null || true
+    pkill -SIGUSR1 -f '(\.kitty-wrapped|bin/kitty)' 2>/dev/null || pkill -SIGUSR1 -f kitty 2>/dev/null || true
+    systemctl --user restart waybar 2>/dev/null || pkill -SIGUSR2 -f waybar 2>/dev/null || true
 
     if command -v swaync-client &>/dev/null; then
         swaync-client --reload-css &>/dev/null || true
+    fi
+
+    if command -v gsettings &>/dev/null; then
+        local curr_theme
+        curr_theme=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null | tr -d "'" || echo "adw-gtk3-dark")
+        gsettings set org.gnome.desktop.interface gtk-theme "Adwaita" 2>/dev/null || true
+        gsettings set org.gnome.desktop.interface gtk-theme "$curr_theme" 2>/dev/null || true
     fi
 }
 

@@ -95,11 +95,18 @@ reload_environment() {
         hyprctl reload &>/dev/null || true
     fi
 
-    pkill -USR1 -x kitty 2>/dev/null || true
-    pkill -USR2 -x waybar 2>/dev/null || true
+    pkill -SIGUSR1 -f '(\.kitty-wrapped|bin/kitty)' 2>/dev/null || pkill -SIGUSR1 -f kitty 2>/dev/null || true
+    systemctl --user restart waybar 2>/dev/null || pkill -SIGUSR2 -f waybar 2>/dev/null || true
 
     if command -v swaync-client &>/dev/null; then
         swaync-client --reload-css &>/dev/null || true
+    fi
+
+    if command -v gsettings &>/dev/null; then
+        local curr_theme
+        curr_theme=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null | tr -d "'" || echo "adw-gtk3-dark")
+        gsettings set org.gnome.desktop.interface gtk-theme "Adwaita" 2>/dev/null || true
+        gsettings set org.gnome.desktop.interface gtk-theme "$curr_theme" 2>/dev/null || true
     fi
 }
 
@@ -145,7 +152,7 @@ set_wallpaper() {
             wall_hash=$(sha256sum "$full_path" | awk '{print $1}')
             local saved_profile="$studio_profiles_dir/${wall_hash}.json"
             if [ -f "$saved_profile" ] && command -v wallust &>/dev/null && [ -f "$WALLUST_CONFIG" ]; then
-                wallust cs "$saved_profile" -C "$WALLUST_CONFIG" || true
+                wallust cs -f pywal "$saved_profile" -C "$WALLUST_CONFIG" || wallust cs "$saved_profile" -C "$WALLUST_CONFIG" || true
                 profile_applied=true
             fi
         fi
