@@ -121,15 +121,28 @@ class ColorPalette:
 
     def create_adjusted_copy(
         self,
+        brightness: Optional[float] = None,
+        saturation: Optional[float] = None,
+        contrast: Optional[float] = None,
+        hue_shift: Optional[float] = None,
+        temperature: Optional[float] = None,
+        temp_shift: Optional[float] = None,
         brightness_val: float = 0,
         saturation_val: float = 0,
         contrast_val: float = 0,
         hue_shift_val: float = 0,
         temperature_val: float = 0,
+        **kwargs
     ) -> "ColorPalette":
-        l_fac = max(0.0, 1.0 + (brightness_val / 100.0))
-        c_fac = max(0.0, 1.0 + (saturation_val / 100.0))
-        cont_fac = max(0.1, 1.0 + (contrast_val / 50.0))
+        b_val = brightness if brightness is not None else (kwargs.get("brightness_val", brightness_val))
+        s_val = saturation if saturation is not None else (kwargs.get("saturation_val", saturation_val))
+        c_val = contrast if contrast is not None else (kwargs.get("contrast_val", contrast_val))
+        h_val = hue_shift if hue_shift is not None else (kwargs.get("hue_shift_val", hue_shift_val))
+        t_val = temperature if temperature is not None else (temp_shift if temp_shift is not None else (kwargs.get("temperature_val", temperature_val)))
+
+        l_fac = max(0.0, 1.0 + (b_val / 100.0))
+        c_fac = max(0.0, 1.0 + (s_val / 100.0))
+        cont_fac = max(0.1, 1.0 + (c_val / 50.0))
 
         d = self.to_dict()
         new_dict = {}
@@ -138,12 +151,12 @@ class ColorPalette:
             h, l, s = colorsys.rgb_to_hls(r, g, b)
 
             # Hue shift (smooth rotation)
-            if hue_shift_val != 0:
-                h = (h + (hue_shift_val / 360.0)) % 1.0
+            if h_val != 0:
+                h = (h + (h_val / 360.0)) % 1.0
 
             # Color temperature (warm adds red/yellow, cool adds blue/cyan)
-            if temperature_val != 0:
-                temp_fac = temperature_val / 200.0
+            if t_val != 0:
+                temp_fac = t_val / 200.0
                 r = min(1.0, max(0.0, r + temp_fac))
                 b = min(1.0, max(0.0, b - temp_fac))
                 h, l, s = colorsys.rgb_to_hls(r, g, b)
