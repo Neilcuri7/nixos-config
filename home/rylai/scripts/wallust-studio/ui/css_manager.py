@@ -307,11 +307,10 @@ class CSSManager:
             font-weight: bold;
             font-size: 14px;
         }}
-        .mod-stats-icon {{
+        .mod-stats {{
             color: {c12};
-            padding-right: 4px;
         }}
-        .mod-vol-icon {{
+        .mod-controls {{
             color: {c10};
         }}
         .mod-network {{

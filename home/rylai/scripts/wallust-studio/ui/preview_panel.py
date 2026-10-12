@@ -219,15 +219,14 @@ class PreviewPanel(Gtk.Box):
         waybar_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         waybar_bar.add_css_class("waybar-window")
 
-        # 1. Modules Left: Workspaces + Group/Stats
-        modules_left = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        # 1. Modules Left: Workspaces + Group/Stats (drawer completo)
+        modules_left = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
         modules_left.add_css_class("modules-left")
 
         # Workspaces
         ws_container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
         ws_container.add_css_class("waybar-workspaces")
         
-        # Format: {icon} {windows} como en config.jsonc ("一 󰞷", "● 󰞷 󰈔", "三 󰙯", "四 󰉋 󰞷", "五 󰞷")
         ws_items = [
             ("一 󰞷", False),
             ("● 󰞷 󰈔", True),
@@ -243,12 +242,32 @@ class PreviewPanel(Gtk.Box):
             ws_container.append(btn)
         modules_left.append(ws_container)
 
-        # Stats Group (custom-stats-icon)
+        # Stats Subgroup Drawer: custom/stats-icon, cpu, memory, temperature (todos respetan @primary)
+        stats_group = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
+        stats_group.add_css_class("waybar-subgroup")
+        stats_group.add_css_class("subgroup-stats")
+
         stats_icon = Gtk.Label(label="󰰄")
         stats_icon.add_css_class("waybar-mod")
-        stats_icon.add_css_class("mod-stats-icon")
-        modules_left.append(stats_icon)
+        stats_icon.add_css_class("mod-stats")
+        stats_group.append(stats_icon)
 
+        cpu_lbl = Gtk.Label(label=" 24%")
+        cpu_lbl.add_css_class("waybar-mod")
+        cpu_lbl.add_css_class("mod-stats")
+        stats_group.append(cpu_lbl)
+
+        mem_lbl = Gtk.Label(label=" 4.2GiB")
+        mem_lbl.add_css_class("waybar-mod")
+        mem_lbl.add_css_class("mod-stats")
+        stats_group.append(mem_lbl)
+
+        temp_lbl = Gtk.Label(label=" 45°C")
+        temp_lbl.add_css_class("waybar-mod")
+        temp_lbl.add_css_class("mod-stats")
+        stats_group.append(temp_lbl)
+
+        modules_left.append(stats_group)
         waybar_bar.append(modules_left)
 
         # Center Spacer
@@ -259,7 +278,7 @@ class PreviewPanel(Gtk.Box):
         # 2. Modules Center: Clock
         modules_center = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         modules_center.add_css_class("modules-center")
-        clock_lbl = Gtk.Label(label="11:08")
+        clock_lbl = Gtk.Label(label="11:48")
         clock_lbl.add_css_class("waybar-mod")
         clock_lbl.add_css_class("mod-clock")
         modules_center.append(clock_lbl)
@@ -270,15 +289,31 @@ class PreviewPanel(Gtk.Box):
         spacer2.set_hexpand(True)
         waybar_bar.append(spacer2)
 
-        # 3. Modules Right: volume-icon, audio, network, battery, tray
+        # 3. Modules Right: Controls Subgroup (volumen, audio, mic) + network + battery + tray
         modules_right = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
         modules_right.add_css_class("modules-right")
 
-        # Volume control icon
+        # Controls Subgroup Drawer: custom/volume-icon, pulseaudio, microphone (todos respetan @secondary)
+        controls_group = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
+        controls_group.add_css_class("waybar-subgroup")
+        controls_group.add_css_class("subgroup-controls")
+
         vol_icon = Gtk.Label(label="󱕃")
         vol_icon.add_css_class("waybar-mod")
-        vol_icon.add_css_class("mod-vol-icon")
-        modules_right.append(vol_icon)
+        vol_icon.add_css_class("mod-controls")
+        controls_group.append(vol_icon)
+
+        vol_lbl = Gtk.Label(label="󰕾 80%")
+        vol_lbl.add_css_class("waybar-mod")
+        vol_lbl.add_css_class("mod-controls")
+        controls_group.append(vol_lbl)
+
+        mic_lbl = Gtk.Label(label="󰍬 100%")
+        mic_lbl.add_css_class("waybar-mod")
+        mic_lbl.add_css_class("mod-controls")
+        controls_group.append(mic_lbl)
+
+        modules_right.append(controls_group)
 
         # Network icon
         net_lbl = Gtk.Label(label="󰤨")
@@ -287,7 +322,7 @@ class PreviewPanel(Gtk.Box):
         modules_right.append(net_lbl)
 
         # Battery icon / capacity
-        bat_lbl = Gtk.Label(label="󰂀")
+        bat_lbl = Gtk.Label(label="󰂀 95%")
         bat_lbl.add_css_class("waybar-mod")
         bat_lbl.add_css_class("mod-battery")
         modules_right.append(bat_lbl)

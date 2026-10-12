@@ -86,35 +86,26 @@ window#waybar {
     color: @secondary;
 }
 
-#custom-stats-icon {
-    color: @primary;
-    padding-right: 4px;
-}
-
-#cpu {
-    color: @secondary;
-}
-
-#memory {
-    color: @tertiary;
-}
-
+#custom-stats-icon,
+#cpu,
+#memory,
 #temperature {
     color: @primary;
+}
+
+#custom-stats-icon {
+    padding-right: 4px;
 }
 
 #temperature.critical {
     color: @error;
 }
 
+#custom-volume-icon,
 #pulseaudio,
 #pulseaudio.icon,
-#custom-volume-icon {
-    color: @secondary;
-}
-
 #pulseaudio.microphone {
-    color: @tertiary;
+    color: @secondary;
 }
 
 #pulseaudio.muted,
