@@ -258,48 +258,72 @@ class CSSManager:
             border-radius: 4px;
         }}
 
-        /* ================= VISTA 2: DESKTOP / WAYBAR ================= */
-        .waybar-bar-card {{
-            background-color: rgba(13, 13, 23, {waybar_op});
-            border-radius: 10px;
-            padding: 6px 14px;
-            border: 1px solid #1f2330;
+        /* ================= VISTA 2: DESKTOP / WAYBAR REAL MOCKUP ================= */
+        .waybar-window {{
+            background-color: transparent;
+            padding: 4px 8px;
         }}
-        .ws-capsule {{
-            min-width: 24px;
-            min-height: 24px;
-            border-radius: 6px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            font-weight: 600;
-        }}
-        .ws-capsule.active {{
-            background-color: {c4};
-            color: #0a0a0f;
-            box-shadow: 0 0 10px {c4}80;
-        }}
-        .ws-capsule.inactive {{
-            background-color: #292934;
-            color: #c3c6d3;
-        }}
-        .waybar-clock {{
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            font-weight: 600;
-            color: #e4e1ef;
-        }}
-        .telemetry-pill {{
-            border-radius: 9999px;
+        .modules-left,
+        .modules-center,
+        .modules-right {{
+            background-color: rgba(21, 22, 30, {waybar_op});
+            border: 1px solid rgba(122, 162, 247, 0.30);
+            border-color: {c12}4d;
+            border-radius: 18px;
             padding: 3px 10px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            font-weight: 600;
-            border: 1px solid #1f2330;
+            margin: 0 4px;
         }}
-        .pill-cpu {{ background-color: rgba(247, 118, 142, 0.15); color: {c1}; }}
-        .pill-ram {{ background-color: rgba(187, 154, 247, 0.15); color: {c5}; }}
-        .pill-audio {{ background-color: rgba(125, 207, 255, 0.15); color: {c6}; }}
-        .pill-battery {{ background-color: rgba(158, 206, 106, 0.15); color: {c2}; }}
+        .waybar-workspaces {{
+            padding: 0;
+            margin: 0 2px;
+        }}
+        .ws-btn {{
+            font-family: 'JetBrainsMono Nerd Font', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 0 6px;
+            margin: 0 2px;
+            border-radius: 12px;
+            color: {fg};
+            background-color: transparent;
+        }}
+        .ws-btn.active {{
+            color: {c12};
+            background-color: {c12}33;
+            border-radius: 12px;
+            min-width: 24px;
+        }}
+        .waybar-mod {{
+            font-family: 'JetBrainsMono Nerd Font', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 2px 8px;
+            margin: 0 2px;
+            border-radius: 12px;
+            color: {fg};
+        }}
+        .mod-clock {{
+            color: {c12};
+            font-weight: bold;
+            font-size: 14px;
+        }}
+        .mod-stats-icon {{
+            color: {c12};
+            padding-right: 4px;
+        }}
+        .mod-vol-icon {{
+            color: {c10};
+        }}
+        .mod-network {{
+            color: {c12};
+        }}
+        .mod-battery {{
+            color: {c10};
+        }}
+        .mod-tray {{
+            color: {fg};
+            margin-left: 4px;
+        }}
 
         .hypr-active-window {{
             background-color: rgba(18, 18, 28, 0.95);

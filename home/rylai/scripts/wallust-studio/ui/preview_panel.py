@@ -215,59 +215,94 @@ class PreviewPanel(Gtk.Box):
         container.set_hexpand(True)
         container.set_vexpand(True)
 
-        # Top Floating Waybar
-        waybar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        waybar.add_css_class("waybar-bar-card")
+        # Top Floating Waybar: Three Islands (.modules-left, .modules-center, .modules-right)
+        waybar_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        waybar_bar.add_css_class("waybar-window")
 
-        # Workspaces Left
-        ws_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
-        for i, num in enumerate(["1", "2", "3", "4"]):
-            btn = Gtk.Label(label=num)
-            btn.add_css_class("ws-capsule")
-            btn.add_css_class("active" if i == 0 else "inactive")
-            ws_box.append(btn)
-        waybar.append(ws_box)
+        # 1. Modules Left: Workspaces + Group/Stats
+        modules_left = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        modules_left.add_css_class("modules-left")
 
-        # Center Clock
+        # Workspaces
+        ws_container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=2)
+        ws_container.add_css_class("waybar-workspaces")
+        
+        # Format: {icon} {windows} como en config.jsonc ("一 󰞷", "● 󰞷 󰈔", "三 󰙯", "四 󰉋 󰞷", "五 󰞷")
+        ws_items = [
+            ("一 󰞷", False),
+            ("● 󰞷 󰈔", True),
+            ("三 󰙯", False),
+            ("四 󰉋 󰞷", False),
+            ("五 󰞷", False)
+        ]
+        for text, is_active in ws_items:
+            btn = Gtk.Label(label=text)
+            btn.add_css_class("ws-btn")
+            if is_active:
+                btn.add_css_class("active")
+            ws_container.append(btn)
+        modules_left.append(ws_container)
+
+        # Stats Group (custom-stats-icon)
+        stats_icon = Gtk.Label(label="󰰄")
+        stats_icon.add_css_class("waybar-mod")
+        stats_icon.add_css_class("mod-stats-icon")
+        modules_left.append(stats_icon)
+
+        waybar_bar.append(modules_left)
+
+        # Center Spacer
         spacer1 = Gtk.Box()
         spacer1.set_hexpand(True)
-        waybar.append(spacer1)
+        waybar_bar.append(spacer1)
 
-        clock_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        clock_lbl = Gtk.Label(label="󰥔 Dom 10 Oct 12:45")
-        clock_lbl.add_css_class("waybar-clock")
-        clock_box.append(clock_lbl)
-        waybar.append(clock_box)
+        # 2. Modules Center: Clock
+        modules_center = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        modules_center.add_css_class("modules-center")
+        clock_lbl = Gtk.Label(label="11:08")
+        clock_lbl.add_css_class("waybar-mod")
+        clock_lbl.add_css_class("mod-clock")
+        modules_center.append(clock_lbl)
+        waybar_bar.append(modules_center)
 
+        # Right Spacer
         spacer2 = Gtk.Box()
         spacer2.set_hexpand(True)
-        waybar.append(spacer2)
+        waybar_bar.append(spacer2)
 
-        # Right Telemetry Pills
-        telem_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        
-        cpu = Gtk.Label(label="󰍛 24%")
-        cpu.add_css_class("telemetry-pill")
-        cpu.add_css_class("pill-cpu")
-        telem_box.append(cpu)
+        # 3. Modules Right: volume-icon, audio, network, battery, tray
+        modules_right = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+        modules_right.add_css_class("modules-right")
 
-        ram = Gtk.Label(label="󰘚 48%")
-        ram.add_css_class("telemetry-pill")
-        ram.add_css_class("pill-ram")
-        telem_box.append(ram)
+        # Volume control icon
+        vol_icon = Gtk.Label(label="󱕃")
+        vol_icon.add_css_class("waybar-mod")
+        vol_icon.add_css_class("mod-vol-icon")
+        modules_right.append(vol_icon)
 
-        vol = Gtk.Label(label="󰕾 80%")
-        vol.add_css_class("telemetry-pill")
-        vol.add_css_class("pill-audio")
-        telem_box.append(vol)
+        # Network icon
+        net_lbl = Gtk.Label(label="󰤨")
+        net_lbl.add_css_class("waybar-mod")
+        net_lbl.add_css_class("mod-network")
+        modules_right.append(net_lbl)
 
-        bat = Gtk.Label(label="󰁹 95%")
-        bat.add_css_class("telemetry-pill")
-        bat.add_css_class("pill-battery")
-        telem_box.append(bat)
+        # Battery icon / capacity
+        bat_lbl = Gtk.Label(label="󰂀")
+        bat_lbl.add_css_class("waybar-mod")
+        bat_lbl.add_css_class("mod-battery")
+        modules_right.append(bat_lbl)
 
-        waybar.append(telem_box)
-        container.append(waybar)
+        # Tray icons
+        tray_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        tray_box.add_css_class("waybar-mod")
+        tray_box.add_css_class("mod-tray")
+        for t_icon in ["󰘑", "󰙯"]:
+            t_lbl = Gtk.Label(label=t_icon)
+            tray_box.append(t_lbl)
+        modules_right.append(tray_box)
+
+        waybar_bar.append(modules_right)
+        container.append(waybar_bar)
 
         # Floating Hyprland Window
         win_frame = Gtk.Frame()
