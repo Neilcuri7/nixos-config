@@ -426,10 +426,27 @@ class ControlsPanel(Gtk.Box):
         self._sync_single_color_sliders()
         self._update_preview()
 
+    def _get_active_wallpaper(self):
+        wp = None
+        if hasattr(profile_manager, "get_current_wallpaper"):
+            try:
+                wp = profile_manager.get_current_wallpaper()
+            except Exception:
+                pass
+        if not wp and hasattr(wallust_bridge, "get_current_wallpaper"):
+            try:
+                wp = wallust_bridge.get_current_wallpaper()
+            except Exception:
+                pass
+        return wp
+
     def save_preset(self):
-        wallpaper_path = profile_manager.get_current_wallpaper()
+        wallpaper_path = self._get_active_wallpaper()
         if wallpaper_path:
-            profile_manager.save_profile(wallpaper_path, self.current_palette.to_wallust_json())
+            try:
+                profile_manager.save_profile(wallpaper_path, self.current_palette.to_wallust_json())
+            except Exception as e:
+                print(f"[wallust-studio] Error al guardar perfil: {e}")
 
     def cancel(self):
         root = self.get_root()
@@ -437,9 +454,12 @@ class ControlsPanel(Gtk.Box):
             root.close()
 
     def apply_to_system(self):
-        wallpaper_path = profile_manager.get_current_wallpaper()
+        wallpaper_path = self._get_active_wallpaper()
         if wallpaper_path:
-            profile_manager.save_profile(wallpaper_path, self.current_palette.to_wallust_json())
+            try:
+                profile_manager.save_profile(wallpaper_path, self.current_palette.to_wallust_json())
+            except Exception as e:
+                print(f"[wallust-studio] Advertencia al persistir perfil de wallpaper: {e}")
         accent_hex = getattr(self.current_palette, "color4", None)
         system_sync.apply_and_reload(self.current_palette.to_wallust_json(), accent_hex=accent_hex)
         self.cancel()

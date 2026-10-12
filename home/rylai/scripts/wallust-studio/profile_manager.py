@@ -3,7 +3,7 @@ import json
 import hashlib
 import tempfile
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Union
 
 try:
     from .wallust_bridge import get_current_wallpaper
@@ -24,11 +24,15 @@ def calculate_sha256(filepath: str | Path, block_size: int = 65536) -> str:
 def ensure_dirs():
     PROFILES_DIR.mkdir(parents=True, exist_ok=True)
 
-def atomic_write_json(filepath: Path, data: Dict[str, Any]):
+def atomic_write_json(filepath: Path, data: Union[Dict[str, Any], str]):
     ensure_dirs()
     fd, temp_path = tempfile.mkstemp(dir=filepath.parent, prefix=filepath.name + ".")
     with os.fdopen(fd, 'w') as f:
-        json.dump(data, f, indent=2)
+        if isinstance(data, str):
+            # Si es string, verificar si es JSON parseable o escribirlo directamente
+            f.write(data)
+        else:
+            json.dump(data, f, indent=2)
     os.replace(temp_path, filepath)
 
 def get_registry() -> Dict[str, Any]:
@@ -43,7 +47,7 @@ def get_registry() -> Dict[str, Any]:
 def save_registry(data: Dict[str, Any]):
     atomic_write_json(REGISTRY_FILE, data)
 
-def save_profile(image_path: str, palette_data: Dict[str, Any]) -> str:
+def save_profile(image_path: str, palette_data: Union[Dict[str, Any], str]) -> str:
     image_file = Path(image_path)
     if not image_file.exists():
         raise FileNotFoundError(f"Image not found: {image_path}")
