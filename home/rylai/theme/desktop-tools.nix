@@ -1,5 +1,23 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
+let
+  wallustStudio = pkgs.writeShellScriptBin "wallust-studio" ''
+    export GI_TYPELIB_PATH="${lib.makeSearchPath "lib/girepository-1.0" (with pkgs; [
+      gtk4
+      libadwaita
+      graphene
+      pango.out
+      harfbuzz
+      gdk-pixbuf
+      librsvg
+      glib.out
+      gobject-introspection
+      at-spi2-core
+    ])}''${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}"
+    export GSETTINGS_SCHEMA_DIR="${pkgs.gtk4}/share/gsettings-schemas/${pkgs.gtk4.name}/glib-2.0/schemas:${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}/glib-2.0/schemas''${GSETTINGS_SCHEMA_DIR:+:$GSETTINGS_SCHEMA_DIR}"
+    exec ${pkgs.python3.withPackages (ps: [ ps.pygobject3 ps.coloraide ])}/bin/python3 "${config.home.homeDirectory}/scripts/wallust-studio/main.py" "$@"
+  '';
+in
 {
   programs.kitty = {
     enable = true;
@@ -288,5 +306,6 @@
   home.packages = with pkgs; [
     papirus-folders
     gtk3
+    wallustStudio
   ];
 }

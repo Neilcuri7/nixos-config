@@ -55,7 +55,10 @@
     };
 
     windowrule = [
-      "opacity 0.90 0.90, match:class (?i)thunar"
+      "match:class ^(?i)(thunar)$, opacity 0.90 0.90"
+      "match:class ^(?i)(.*walluststudio.*)$, float on"
+      "match:class ^(?i)(.*walluststudio.*)$, center on"
+      "match:class ^(?i)(.*walluststudio.*)$, size 960 580"
     ];
   };
 }

@@ -28,6 +28,7 @@ in
       "$mainMod, equal, exec, grim - | swappy -f -"
       "$mainMod, H, exec, ${config.home.homeDirectory}/scripts/hypr-cheatsheet.sh"
       "$mainMod SHIFT, W, exec, ${config.home.homeDirectory}/scripts/wallpaper.sh --select"
+      "$mainMod SHIFT, C, exec, ${config.home.homeDirectory}/scripts/wallust-studio.sh"
       "$mainMod SHIFT, Return, exec, $menu"
       "$mainMod SHIFT, F, togglefloating,"
       "$mainMod SHIFT, L, exec, swaylock"

@@ -11,6 +11,7 @@ KEYBINDINGS="󰌌 ─── [ APLICACIONES Y LANZADORES ] ───
 󰈔 Super + T                 : Gestor de archivos Yazi (en Kitty)
 󰅍 Super + V                 : Historial de portapapeles (Cliphist + Rofi)
 󰸉 Super + Shift + W         : Selector de fondo de pantalla (Rofi)
+󰏘 Super + Shift + C         : Wallust Studio (Ajustes de color en vivo)
 
 󰊓 ─── [ GESTIÓN DE VENTANAS ] ───
 󰅖 Super + Q                 : Cerrar ventana activa
