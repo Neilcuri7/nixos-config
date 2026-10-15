@@ -28,11 +28,6 @@
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    airi = {
-      url = "github:09641061/airi";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = { self, nixpkgs, home-manager, sops-nix, spicetify-nix, stylix, ... }@inputs:

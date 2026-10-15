@@ -6,7 +6,6 @@
     ./waybar
     ./programs
     ./theme/desktop-tools.nix
-    inputs.airi.homeModules.ai
   ];
 
   home.username = "rylai";
