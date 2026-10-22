@@ -1,4 +1,13 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? (
+    let
+      # Fallback seguro si no hay canal de nixpkgs disponible
+      lock = builtins.fromJSON (builtins.readFile ../../flake.lock);
+      nixpkgsSrc = fetchTarball {
+        url = "https://github.com/nixos/nixpkgs/archive/${lock.nodes.nixpkgs.locked.rev}.tar.gz";
+        sha256 = lock.nodes.nixpkgs.locked.narHash;
+      };
+    in import nixpkgsSrc {}
+  ) }:
 
 pkgs.buildFHSEnv {
   name = "docling-fhs-env";

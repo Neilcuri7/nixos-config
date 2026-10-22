@@ -6,6 +6,7 @@
     ./appearance.nix
     ./keybinds.nix
     ./swappy.nix
+    ./services.nix
   ];
 
   wayland.windowManager.hyprland = {

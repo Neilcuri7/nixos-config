@@ -38,46 +38,31 @@
         config.allowUnfree = true;
       };
       specialArgs = { inherit inputs; };
+
+      mkHost = hostName: nixpkgs.lib.nixosSystem {
+        inherit system specialArgs;
+        modules = [
+          ./hosts/${hostName}
+          ./modules/shared/core.nix
+          sops-nix.nixosModules.sops
+          spicetify-nix.nixosModules.default
+          stylix.nixosModules.stylix
+          home-manager.nixosModules.home-manager
+          {
+            nixpkgs.pkgs = pkgs;
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
+            home-manager.extraSpecialArgs = specialArgs;
+            home-manager.users.rylai = import ./home/rylai;
+          }
+        ];
+      };
     in
     {
       nixosConfigurations = {
-        haimiya = nixpkgs.lib.nixosSystem {
-          inherit system specialArgs;
-          modules = [
-            ./hosts/haimiya
-            sops-nix.nixosModules.sops
-            spicetify-nix.nixosModules.default
-            stylix.nixosModules.stylix
-            home-manager.nixosModules.home-manager
-            {
-              nixpkgs.pkgs = pkgs;
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.backupFileExtension = "backup";
-              home-manager.extraSpecialArgs = specialArgs;
-              home-manager.users.rylai = import ./home/rylai;
-            }
-          ];
-        };
-
-        chinatsu = nixpkgs.lib.nixosSystem {
-          inherit system specialArgs;
-          modules = [
-            ./hosts/chinatsu
-            sops-nix.nixosModules.sops
-            spicetify-nix.nixosModules.default
-            stylix.nixosModules.stylix
-            home-manager.nixosModules.home-manager
-            {
-              nixpkgs.pkgs = pkgs;
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.backupFileExtension = "backup";
-              home-manager.extraSpecialArgs = specialArgs;
-              home-manager.users.rylai = import ./home/rylai;
-            }
-          ];
-        };
+        haimiya = mkHost "haimiya";
+        chinatsu = mkHost "chinatsu";
       };
     };
 }

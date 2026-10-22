@@ -1,11 +1,11 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, lib, ... }:
 
 {
   imports = [
     ./hyprland
     ./waybar
     ./programs
-    ./theme/desktop-tools.nix
+    ./theme
   ];
 
   home.username = "rylai";
@@ -29,10 +29,6 @@
     "org/gnome/desktop/default-applications/terminal" = {
       exec = "kitty";
       exec-arg = "-e";
-    };
-    "org/gnome/desktop/interface" = {
-      color-scheme = "prefer-dark";
-      gtk-theme = "adw-gtk3-dark";
     };
   };
 
@@ -95,84 +91,22 @@
     ];
   };
 
-  home.pointerCursor = {
-    enable = true;
-    gtk.enable = true;
-    x11.enable = true;
-    name = "Natsuki";
-    package = pkgs.stdenv.mkDerivation {
-      name = "natsuki-cursor";
-      src = ../../modules/shared/assets/cursors/Natsuki;
-      installPhase = ''
-        mkdir -p $out/share/icons/Natsuki
-        cp -r * $out/share/icons/Natsuki/
-      '';
-    };
-    size = 24;
-  };
-
-  gtk = {
-    enable = true;
-    theme = {
-      name = "adw-gtk3-dark";
-      package = pkgs.adw-gtk3;
-    };
-    iconTheme = {
-      name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme;
-    };
-    gtk3.extraConfig = {
-      gtk-application-prefer-dark-theme = 1;
-    };
-    gtk4 = {
-      theme = null;
-      extraConfig = {
-        gtk-application-prefer-dark-theme = 1;
-      };
-    };
-  };
-
-
-
-  home.file.".config/themes.json" = {
-    source = ./theme/themes.json;
-    force = true;
-  };
-
   home.file."Pictures/wallpapers" = {
     source = ../../modules/shared/assets/wallpapers;
     recursive = true;
   };
 
-  home.file.".config/rofi/config.rasi" = {
-    source = ./theme/rofi.rasi;
-  };
-
+  # Copiar scripts filtrando archivos de cache bytecode de python
   home.file."scripts" = {
-    source = ./scripts;
+    source = lib.cleanSourceWith {
+      src = ./scripts;
+      filter = name: type:
+        let baseName = baseNameOf (toString name); in
+        !(type == "directory" && baseName == "__pycache__") &&
+        !(lib.hasSuffix ".pyc" baseName);
+    };
     recursive = true;
     executable = true;
-  };
-
-  home.file.".config/matugen" = {
-    source = ./theme/matugen;
-    recursive = true;
-  };
-
-  home.file.".config/wallust" = {
-    source = ./theme/wallust;
-    recursive = true;
-  };
-
-  stylix.targets = {
-    hyprland.enable = false;
-    waybar.enable = false;
-    kitty.enable = false;
-    rofi.enable = false;
-    micro.enable = false;
-    gtk.enable = false;
-    gnome.enable = false;
-    yazi.enable = false;
   };
 
   home.stateVersion = "24.11";

@@ -8,105 +8,17 @@ CURRENT_WALLPAPER="$WALLPAPER_STATE_DIR/current"
 
 THEME_STATE_DIR="$HOME/.local/state/theme"
 ACTIVE_THEME_FILE="$THEME_STATE_DIR/active_theme.txt"
-MATUGEN_CONFIG="$HOME/.config/matugen/config.toml"
 WALLUST_CONFIG="$HOME/.config/wallust/wallust.toml"
+SYNC_SCRIPT="$HOME/scripts/theme-sync.sh"
 
 mkdir -p "$WALLPAPER_STATE_DIR" "$WALLPAPER_DIR" "$THEME_STATE_DIR"
 
-update_folder_color() {
-    local hex="${1:-}"
-    if ! command -v papirus-folders &>/dev/null; then
-        return 0
-    fi
-
-    if [ -z "$hex" ]; then
-        local gtk_css="$HOME/.config/gtk-3.0/gtk.css"
-        if [ -f "$gtk_css" ]; then
-            hex=$(grep -E '@define-color (accent_color|theme_selected_bg_color)' "$gtk_css" | head -n 1 | grep -oE '#[0-9a-fA-F]{6}' || true)
-        fi
-    fi
-
-    local color="blue"
-    if [ -n "$hex" ]; then
-        hex="${hex#\#}"
-        if [ ${#hex} -eq 6 ]; then
-            local r_val=$((16#${hex:0:2}))
-            local g_val=$((16#${hex:2:2}))
-            local b_val=$((16#${hex:4:2}))
-
-            color=$(awk -v r="$r_val" -v g="$g_val" -v b="$b_val" 'BEGIN {
-                r_n = r / 255.0; g_n = g / 255.0; b_n = b / 255.0;
-                max = (r_n > g_n ? (r_n > b_n ? r_n : b_n) : (g_n > b_n ? g_n : b_n));
-                min = (r_n < g_n ? (r_n < b_n ? r_n : b_n) : (g_n < b_n ? g_n : b_n));
-                delta = max - min;
-                sat = (max == 0 ? 0 : delta / max);
-
-                if (delta == 0) {
-                    hue = 0;
-                } else if (max == r_n) {
-                    hue = 60 * (((g_n - b_n) / delta) % 6);
-                } else if (max == g_n) {
-                    hue = 60 * (((b_n - r_n) / delta) + 2);
-                } else {
-                    hue = 60 * (((r_n - g_n) / delta) + 4);
-                }
-                if (hue < 0) hue += 360;
-
-                if (sat < 0.12) {
-                    print "nordic";
-                } else if (hue >= 345 || hue < 15) {
-                    print "red";
-                } else if (hue >= 15 && hue < 42) {
-                    print "orange";
-                } else if (hue >= 42 && hue < 70) {
-                    print "yellow";
-                } else if (hue >= 70 && hue < 160) {
-                    print "green";
-                } else if (hue >= 160 && hue < 190) {
-                    print "teal";
-                } else if (hue >= 190 && hue < 215) {
-                    print "cyan";
-                } else if (hue >= 215 && hue < 255) {
-                    print "blue";
-                } else if (hue >= 255 && hue < 290) {
-                    print "violet";
-                } else if (hue >= 290 && hue < 325) {
-                    print "magenta";
-                } else {
-                    print "pink";
-                }
-            }')
-        fi
-    fi
-
-    [ -z "$color" ] && color="blue"
-    papirus-folders -C "$color" --theme Papirus-Dark &>/dev/null || true
-
-    if command -v gsettings &>/dev/null; then
-        gsettings set org.gnome.desktop.interface icon-theme "Papirus" &>/dev/null || true
-        gsettings set org.gnome.desktop.interface icon-theme "Papirus-Dark" &>/dev/null || true
-    fi
-}
-
-reload_environment() {
-    update_folder_color
-
-    if command -v hyprctl &>/dev/null && [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
-        hyprctl reload &>/dev/null || true
-    fi
-
-    pkill -SIGUSR1 -f '(\.kitty-wrapped|bin/kitty)' 2>/dev/null || pkill -SIGUSR1 -f kitty 2>/dev/null || true
-    systemctl --user restart waybar 2>/dev/null || pkill -SIGUSR2 -f waybar 2>/dev/null || true
-
-    if command -v swaync-client &>/dev/null; then
-        swaync-client --reload-css &>/dev/null || true
-    fi
-
-    if command -v gsettings &>/dev/null; then
-        local curr_theme
-        curr_theme=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null | tr -d "'" || echo "adw-gtk3-dark")
-        gsettings set org.gnome.desktop.interface gtk-theme "Adwaita" 2>/dev/null || true
-        gsettings set org.gnome.desktop.interface gtk-theme "$curr_theme" 2>/dev/null || true
+sync_env() {
+    local accent_hex="${1:-}"
+    if [ -x "$SYNC_SCRIPT" ]; then
+        "$SYNC_SCRIPT" "$accent_hex"
+    elif [ -x "$(dirname "$0")/theme-sync.sh" ]; then
+        "$(dirname "$0")/theme-sync.sh" "$accent_hex"
     fi
 }
 
@@ -160,13 +72,11 @@ set_wallpaper() {
         if [ "$profile_applied" = false ]; then
             if command -v wallust &>/dev/null && [ -f "$WALLUST_CONFIG" ]; then
                 wallust run "$full_path" -C "$WALLUST_CONFIG" || true
-            elif command -v matugen &>/dev/null && [ -f "$MATUGEN_CONFIG" ]; then
-                matugen image "$full_path" -c "$MATUGEN_CONFIG" --mode dark --type scheme-fidelity --contrast 0.0 --source-color-index 0 || true
             fi
         fi
 
         printf "%s" "wallust-wallpaper" > "$ACTIVE_THEME_FILE"
-        reload_environment
+        sync_env
     fi
 }
 

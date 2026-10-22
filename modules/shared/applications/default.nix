@@ -63,24 +63,16 @@
       environment.systemPackages = [
         pkgs.alacritty
         pkgs.foot
-        pkgs.kitty
-        pkgs.xdg-terminal-exec
-        pkgs.git
         pkgs.ripgrep
         pkgs.fd
         pkgs.htop
         pkgs.btop
-        pkgs.fastfetch
         pkgs.unzip
         pkgs.p7zip
         pkgs.unrar
         pkgs.curl
-        pkgs.jq
         pkgs.tree
-        pkgs.yazi
-        pkgs.imagemagick
         pkgs.tinty
-        pkgs.micro
         pkgs.lazysql
         pkgs.pandoc
         inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-cli

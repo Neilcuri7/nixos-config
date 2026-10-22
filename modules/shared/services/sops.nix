@@ -14,8 +14,10 @@
     sops = {
       defaultSopsFile = ../../../secrets/secrets.yaml;
       defaultSopsFormat = "yaml";
-      age.keyFile = config.myPlatform.services.sops.ageKeyFile;
-      gnupg.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+      age = {
+        keyFile = config.myPlatform.services.sops.ageKeyFile;
+        sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+      };
     };
 
     environment.systemPackages = [ pkgs.sops pkgs.age ];
