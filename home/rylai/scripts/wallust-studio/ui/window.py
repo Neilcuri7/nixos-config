@@ -12,12 +12,12 @@ class WallustStudioWindow(Adw.ApplicationWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.set_title("Wallust Studio")
-        self.set_default_size(1080, 680)
+        self.set_default_size(880, 500)
 
         # Main Split Layout
         self.split_view = Adw.NavigationSplitView()
-        self.split_view.set_max_sidebar_width(400)
-        self.split_view.set_min_sidebar_width(360)
+        self.split_view.set_min_sidebar_width(330)
+        self.split_view.set_max_sidebar_width(360)
         
         # CSS Manager
         self.css_manager = CSSManager()
@@ -30,7 +30,7 @@ class WallustStudioWindow(Adw.ApplicationWindow):
         sidebar_page = Adw.NavigationPage.new(self.controls_panel, "Controls")
         self.split_view.set_sidebar(sidebar_page)
         
-        # Setup Content (Preview)
+        # Setup Content (Preview All-in-One)
         content_page = Adw.NavigationPage.new(self.preview_panel, "Preview")
         self.split_view.set_content(content_page)
 
@@ -55,13 +55,6 @@ class WallustStudioWindow(Adw.ApplicationWindow):
         action_restore.connect("activate", self.on_restore)
         self.add_action(action_restore)
         self.get_application().set_accels_for_action("win.restore", ["<Ctrl>r"])
-
-        # Tabs Switcher (1: Terminal, 2: Waybar, 3: Thunar)
-        for i, name in enumerate(["terminal", "waybar", "thunar"], 1):
-            action_tab = Gio.SimpleAction.new(f"tab{i}", None)
-            action_tab.connect("activate", lambda a, p, n=name: self.preview_panel.switch_tab(n))
-            self.add_action(action_tab)
-            self.get_application().set_accels_for_action(f"win.tab{i}", [str(i)])
 
     def on_apply(self, action, param):
         self.controls_panel.apply_to_system()
