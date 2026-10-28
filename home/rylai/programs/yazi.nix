@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   programs.yazi = {
@@ -6,12 +6,31 @@
     enableBashIntegration = true;
     enableZshIntegration = true;
     shellWrapperName = "y";
+
+    plugins = {
+      inherit (pkgs.yaziPlugins) smart-enter git;
+    };
+
+    initLua = ''
+      require("git"):setup()
+    '';
+
     keymap = {
       manager.prepend_keymap = [
         {
           on = [ "<C-h>" ];
           run = "hidden toggle";
           desc = "Alternar archivos ocultos";
+        }
+        {
+          on = [ "l" ];
+          run = "plugin smart-enter";
+          desc = "Entrar al directorio o abrir archivo (smart-enter)";
+        }
+        {
+          on = [ "<Enter>" ];
+          run = "plugin smart-enter";
+          desc = "Entrar al directorio o abrir archivo (smart-enter)";
         }
       ];
     };
@@ -30,6 +49,20 @@
           { mime = "application/typescript"; use = [ "edit" "reveal" ]; }
           { url = "*.*"; use = [ "edit" "reveal" ]; }
           { url = "*"; use = [ "edit" "reveal" ]; }
+        ];
+      };
+      plugin = {
+        prepend_fetchers = [
+          {
+            id = "git";
+            name = "*";
+            run = "git";
+          }
+          {
+            id = "git";
+            name = "*/";
+            run = "git";
+          }
         ];
       };
       opener = {
