@@ -1,98 +1,98 @@
-# Reglas y Guía de Arquitectura para Agentes de IA
+# Architecture Guide and Rules for AI Agents
 
-Este documento establece los estándares, la arquitectura del sistema y las reglas obligatorias que cualquier agente de IA (Antigravity, Claude Code, Cursor, OpenCode, etc.) **debe cumplir** al realizar modificaciones en este repositorio.
+This document establishes the standards, system architecture, and mandatory rules that any AI agent (Antigravity, Claude Code, Cursor, OpenCode, etc.) **must follow** when making modifications to this repository.
 
 ---
 
-## 1. Estructura y Responsabilidad del Repositorio
+## 1. Repository Structure and Responsibilities
 
-El proyecto utiliza **NixOS Flakes** combinado con **Home Manager** de forma modular:
+This project uses **NixOS Flakes** combined with **Home Manager** in a modular structure:
 
 ```
 .
-├── flake.nix                  # Punto de entrada. Define inputs, hosts mediante mkHost y outputs.
-├── flake.lock                 # Versiones bloqueadas de dependencias de Nix.
-├── .sops.yaml                 # Configuración declarativa de cifrado de secretos.
-├── AGENTS.md                  # Este documento (Normas para Agentes de IA).
-├── hosts/                     # Configuraciones específicas por máquina
-│   ├── haimiya/               # Desktop principal (AMD GPU, almacenamiento /mnt/storage)
-│   └── chinatsu/              # Laptop / máquina secundaria
-├── modules/shared/            # Módulos del sistema NixOS compartidos
-│   ├── core.nix               # Base común de todos los hosts (locale, firewall, docker, nix.gc, stylix base)
-│   ├── applications/          # Toggles modulares para suites de software (myPlatform.applications.*)
-│   ├── environment/           # Hyprland, display manager y sesión gráfica
-│   ├── hardware/              # Pipewire, bluetooth y gestión de energía
+├── flake.nix                  # Entry point. Defines inputs, hosts via mkHost, and outputs.
+├── flake.lock                 # Locked versions of Nix dependencies.
+├── .sops.yaml                 # Declarative configuration for secrets encryption.
+├── AGENTS.md                  # This document (Rules for AI Agents).
+├── hosts/                     # Machine-specific configurations
+│   ├── haimiya/               # Primary desktop (AMD GPU, /mnt/storage mount)
+│   └── chinatsu/              # Laptop / secondary machine
+├── modules/shared/            # Shared NixOS system modules
+│   ├── core.nix               # Common base across all hosts (locale, firewall, docker, nix.gc, base stylix)
+│   ├── applications/          # Modular toggles for software suites (myPlatform.applications.*)
+│   ├── environment/           # Hyprland, display manager, and graphical session
+│   ├── hardware/              # Pipewire, bluetooth, and power management
 │   └── services/              # sops-nix, input-remapper
-├── home/rylai/                # Configuración de usuario (Home Manager)
-│   ├── default.nix            # Definición principal del usuario, variables de sesión y MIME
-│   ├── hyprland/              # Configuración de Hyprland (keybinds, autostart, apariencia, servicios)
-│   ├── programs/              # Aplicaciones de usuario (kitty, yazi, micro, rofi, shell, starship, etc.)
-│   ├── scripts/               # Scripts utilitarios (theme-switcher, wallpaper, theme-sync, etc.)
-│   ├── theme/                 # ÚNICA FUENTE DE VERDAD de temas (Wallust, themes.json, plantillas)
-│   └── waybar/                # Configuración y estilos CSS de Waybar
-└── secrets/                   # Secretos cifrados con sops-nix
+├── home/rylai/                # User configuration (Home Manager)
+│   ├── default.nix            # Main user definition, session variables, and MIME associations
+│   ├── hyprland/              # Hyprland configuration (keybinds, autostart, appearance, services)
+│   ├── programs/              # User applications (kitty, yazi, micro, rofi, shell, starship, etc.)
+│   ├── scripts/               # Utility scripts (theme-switcher, wallpaper, theme-sync, converter, etc.)
+│   ├── theme/                 # SINGLE SOURCE OF TRUTH for themes (Wallust, themes.json, templates)
+│   └── waybar/                # Waybar configuration and CSS styles
+└── secrets/                   # Secrets encrypted with sops-nix
 ```
 
 ---
 
-## 2. Reglas de Oro del Sistema de Temas
+## 2. Golden Rules of the Theme System
 
 > [!IMPORTANT]
-> **Single Source of Truth para Estilos y Colores:**
-> El motor oficial y único de generación de temas es **Wallust**. No añadir motores adicionales (como Matugen) ni duplicar plantillas de colores en scripts.
+> **Single Source of Truth for Styles and Colors:**
+> The official and sole theme generation engine is **Wallust**. Do not add additional engines (such as Matugen) or duplicate color templates across scripts.
 
-1. **Plantillas de Color Únicas**:
-   - Todas las plantillas de colores de aplicaciones residen en [`home/rylai/theme/wallust/templates/`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/theme/wallust/templates/).
-   - Si se añade soporte de color para una nueva aplicación (ej. una nueva terminal o lector), debe agregarse como plantilla en ese directorio y mapearse en [`wallust.toml`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/theme/wallust/wallust.toml).
-2. **Temas Fijos / Paletas Estáticas**:
-   - Se declaran exclusivamente en [`home/rylai/theme/themes.json`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/theme/themes.json) usando la especificación Base16/Base24.
-   - `theme-switcher.sh` transforma automáticamente las paletas de `themes.json` al formato de `wallust cs` para renderizar **exactamente las mismas plantillas**.
-3. **Recarga de Componentes Visuales**:
-   - Cualquier script o herramienta que aplique un tema o wallpaper debe delegar la recarga y la actualización de iconos de carpetas a [`home/rylai/scripts/theme-sync.sh`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/scripts/theme-sync.sh).
-
----
-
-## 3. Reglas de Gestión de Paquetes y Módulos (NixOS vs Home Manager)
-
-1. **No Duplicar Paquetes**:
-   - Si un paquete se configura mediante Home Manager en `home/rylai/programs/<prog>.nix` (ej. `kitty`, `yazi`, `micro`, `rofi`, `waybar`, `git`), **está prohibido** agregarlo a `environment.systemPackages` en `modules/shared/`.
-2. **Pureza de Flakes**:
-   - Nunca utilizar canales impuros `import <nixpkgs> {}` ni `NIX_PATH`. Usar siempre los `inputs` declarados en `flake.nix` o derivaciones puras.
-3. **Aislamiento de Entornos**:
-   - Scripts con librerías complejas (como `wallust-studio` con PyGObject/GTK4) deben empaquetarse con wrappers aislados (`makeSearchPath`, `python3.withPackages`) en lugar de instalar librerías de desarrollo en el sistema global.
-4. **Limpieza de Archivos Temporales y Caché**:
-   - Los scripts copiados a Home Manager mediante `home.file` deben filtrarse con `lib.cleanSourceWith` para evitar que `__pycache__`, `.pyc` o temporales ingresen al Nix Store.
+1. **Single Color Templates**:
+   - All application color templates reside in [`home/rylai/theme/wallust/templates/`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/theme/wallust/templates/).
+   - If color support is added for a new application (e.g., a new terminal or document reader), it must be added as a template in that directory and mapped in [`wallust.toml`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/theme/wallust/wallust.toml).
+2. **Fixed Themes / Static Palettes**:
+   - Declared exclusively in [`home/rylai/theme/themes.json`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/theme/themes.json) following the Base16/Base24 specification.
+   - `theme-switcher.sh` automatically transforms palettes from `themes.json` into the `wallust cs` format to render **the exact same templates**.
+3. **Reloading Visual Components**:
+   - Any script or tool that applies a theme or wallpaper must delegate component reloading and folder icon updates to [`home/rylai/scripts/theme-sync.sh`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/scripts/theme-sync.sh).
 
 ---
 
-## 4. Estándares de Seguridad y Secretos
+## 3. Package and Module Management Rules (NixOS vs Home Manager)
 
-1. **Gestión de Secretos**:
-   - Nunca incluir contraseñas, tokens de API o claves privadas en archivos `.nix` o `.sh`.
-   - Utilizar siempre `sops-nix`. La clave pública Age para cifrar se encuentra en `.sops.yaml`.
-2. **Red y Firewall**:
-   - Mantener siempre `networking.firewall.enable = true;`. Las excepciones de puertos deben limitarse estrictamente a lo necesario o asignarse a interfaces de confianza como `tailscale0`.
-3. **Decisiones de Diseño Conscientes (Riesgos Aceptados por el Usuario)**:
-   - *Autologin*: SDDM está configurado con autologin para el usuario `rylai` por comodidad del usuario.
-   - *Grupo Docker y Dispositivos*: El usuario pertenece a los grupos `docker`, `input`, `uinput` y `ydotool` para flujos de automatización de entrada y contenedores.
-   - *Brave Dev*: El launcher `brave-dev` abre el puerto de depuración local 9222.
-   *No modificar estos comportamientos a menos que el usuario lo solicite expresamente.*
+1. **No Package Duplication**:
+   - If a package is configured via Home Manager in `home/rylai/programs/<prog>.nix` (e.g., `kitty`, `yazi`, `micro`, `rofi`, `waybar`, `git`), it is **strictly forbidden** to also add it to `environment.systemPackages` in `modules/shared/`.
+2. **Flake Purity**:
+   - Never use impure channels like `import <nixpkgs> {}`, `nix-shell -p`, or `NIX_PATH`. Always use the `inputs` declared in `flake.nix` or pure derivations.
+3. **Environment Isolation**:
+   - Scripts requiring complex libraries or FHS environments (such as `wallust-studio` with PyGObject/GTK4 or `converter` with `buildFHSEnv` for Docling) must be packaged with isolated declarative wrappers (`makeSearchPath`, `makeBinPath`, `python3.withPackages`, `buildFHSEnv`) instead of installing development libraries globally or calling `nix-build`/`nix-shell` at runtime.
+4. **Temporary and Cache File Cleanup**:
+   - Scripts copied into Home Manager via `home.file` must be filtered with `lib.cleanSourceWith` to prevent `__pycache__`, `.pyc`, or temporary files from entering the Nix Store.
 
 ---
 
-## 5. Protocolo de Verificación Obligatorio para Agentes
+## 4. Security and Secrets Standards
 
-Antes de finalizar cualquier tarea o entregar cambios al usuario, el agente debe ejecutar las siguientes comprobaciones:
+1. **Secrets Management**:
+   - Never include passwords, API tokens, or private keys in `.nix` or `.sh` files.
+   - Always use `sops-nix`. The public Age key used for encryption is located in `.sops.yaml`.
+2. **Network and Firewall**:
+   - Always keep `networking.firewall.enable = true;`. Port exceptions must be strictly limited to what is necessary or bound to trusted interfaces such as `tailscale0`.
+3. **Conscious Design Decisions (User-Accepted Risks)**:
+   - *Autologin*: SDDM is configured with autologin for user `rylai` for user convenience.
+   - *Docker and Device Groups*: The user belongs to the `docker`, `input`, `uinput`, and `ydotool` groups for container workflows and input automation.
+   - *Brave Dev*: The `brave-dev` launcher opens local debugging port 9222.
+   *Do not modify these behaviors unless explicitly requested by the user.*
 
-1. **Chequeo de Sintaxis de Shell**:
+---
+
+## 5. Mandatory Verification Protocol for Agents
+
+Before completing any task or delivering changes to the user, the agent must run the following checks:
+
+1. **Shell Syntax Check**:
    ```bash
-   bash -n home/rylai/scripts/*.sh
+   bash -n home/rylai/scripts/*.sh home/rylai/scripts/converter
    ```
-2. **Evaluación Declarativa de NixOS**:
+2. **Declarative NixOS Evaluation**:
    ```bash
    nix flake check
-   # o comprobar la evaluación completa de la máquina:
+   # or verify the full machine evaluation:
    nixos-rebuild dry-build --flake .#haimiya
    ```
-3. **Verificación de Formato y Linter**:
-   - Asegurarse de que no queden referencias a archivos o rutas borradas (como `matugen` o `desktop-tools.nix`).
+3. **Formatting and Reference Verification**:
+   - Ensure no references remain to deleted files or paths (such as `matugen`, `desktop-tools.nix`, or `converter-shell.nix`).

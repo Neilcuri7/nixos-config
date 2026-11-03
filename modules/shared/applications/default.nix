@@ -74,7 +74,6 @@
         pkgs.tree
         pkgs.tinty
         pkgs.lazysql
-        pkgs.pandoc
         inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-cli
       ];
     })

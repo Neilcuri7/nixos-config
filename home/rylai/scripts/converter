@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Delegar al wrapper declarativo de Home Manager si no estamos ya dentro de él
+if [ -z "${DOCLING_FHS_BIN:-}" ] && command -v converter &>/dev/null && [ "$(command -v converter)" != "$0" ]; then
+  exec converter "$@"
+fi
 
 show_help() {
   cat << 'HELP_EOF'
@@ -10,67 +13,114 @@ show_help() {
 ======================================================================
 
 USO:
-    converter <archivo> [directorio_salida]
-    converter -h | --help
+    converter [opciones] <archivo> [directorio_salida]
 
 DESCRIPCIÓN:
     Convierte archivos de documentos a formato Markdown (.md).
-    - Para archivos Word (.docx): Utiliza Pandoc y extrae imágenes asociadas.
-    - Para archivos Word (.doc) : Utiliza Antiword + Pandoc para formato heredado.
-    - Para archivos PDF (.pdf)  : Utiliza Docling dentro de un entorno FHS en
-                                  NixOS para extraer texto, OCR, tablas y layout.
+    - Word (.docx): Utiliza Pandoc y extrae imágenes asociadas.
+    - Word (.doc) : Utiliza Antiword + Pandoc para formato heredado.
+    - PDF  (.pdf) : Utiliza Docling dentro de un entorno FHS declarativo
+                    para extraer texto, OCR, tablas y layout. Si falla,
+                    aplica un fallback automático con pdftotext.
 
 ARGUMENTOS:
-    <archivo>              Ruta al archivo .docx, .doc o .pdf que deseas convertir.
+    <archivo>              Ruta al archivo .docx, .doc o .pdf a convertir.
     [directorio_salida]    (Opcional) Carpeta donde se guardará el resultado.
-                           Si no se indica, se guarda en el mismo directorio del archivo.
+                           Por defecto se guarda junto al archivo original.
 
 OPCIONES:
     -h, --help             Muestra este mensaje de ayuda.
+    --reinstall-venv       Reinstala desde cero el entorno virtual de Docling.
 
 EJEMPLOS:
     converter documento.docx
     converter archivo_antiguo.doc
     converter /ruta/hacia/informe.pdf
     converter tesis.docx ./salida_markdown/
+    converter --reinstall-venv informe.pdf
 ======================================================================
 HELP_EOF
 }
 
-if [ -z "$1" ]; then
-  show_help
-  exit 1
-fi
+REINSTALL_VENV=0
+POSITIONAL=()
 
-if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$1" = "help" ]; then
-  show_help
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -h|--help|help)
+      show_help
+      exit 0
+      ;;
+    --reinstall-venv)
+      REINSTALL_VENV=1
+      shift
+      ;;
+    --)
+      shift
+      POSITIONAL+=("$@")
+      break
+      ;;
+    -*)
+      echo "Error: Opción desconocida '$1'." >&2
+      show_help
+      exit 1
+      ;;
+    *)
+      POSITIONAL+=("$1")
+      shift
+      ;;
+  esac
+done
+
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}"
+VENV_DIR="$CACHE_DIR/converter-venv"
+
+if [ "$REINSTALL_VENV" -eq 1 ] && [ "${#POSITIONAL[@]}" -eq 0 ]; then
+  echo "-> Eliminando entorno virtual de Docling en '$VENV_DIR'..."
+  rm -rf "$VENV_DIR"
+  echo "-> Entorno eliminado. Se recreará en la próxima conversión de PDF."
   exit 0
 fi
 
-INPUT_FILE="$(realpath "$1")"
-OUTPUT_DIR="${2:-$(dirname "$INPUT_FILE")}"
-
-if [ ! -f "$INPUT_FILE" ]; then
-  echo "Error: El archivo '$INPUT_FILE' no existe."
+if [ "${#POSITIONAL[@]}" -lt 1 ]; then
+  show_help
   exit 1
 fi
 
-FILENAME=$(basename -- "$INPUT_FILE")
+RAW_INPUT="${POSITIONAL[0]}"
+if [ ! -e "$RAW_INPUT" ]; then
+  echo "Error: El archivo '$RAW_INPUT' no existe." >&2
+  exit 1
+fi
+
+INPUT_FILE="$(realpath "$RAW_INPUT")"
+if [ ! -f "$INPUT_FILE" ] || [ ! -r "$INPUT_FILE" ]; then
+  echo "Error: '$INPUT_FILE' no es un archivo regular legible." >&2
+  exit 1
+fi
+
+if [ "${#POSITIONAL[@]}" -ge 2 ]; then
+  OUTPUT_DIR="$(realpath -m "${POSITIONAL[1]}")"
+else
+  OUTPUT_DIR="$(dirname "$INPUT_FILE")"
+fi
+
+FILENAME="$(basename -- "$INPUT_FILE")"
 BASENAME="${FILENAME%.*}"
 EXTENSION="${FILENAME##*.}"
-EXTENSION_LOWER=$(echo "$EXTENSION" | tr '[:upper:]' '[:lower:]')
+EXTENSION_LOWER="${EXTENSION,,}"
 
 mkdir -p "$OUTPUT_DIR"
 
 if [ "$EXTENSION_LOWER" = "docx" ]; then
   echo "-> Detectado archivo Word (.docx)."
   echo "-> Convirtiendo con Pandoc..."
-  
+
   MEDIA_DIR="$OUTPUT_DIR/${BASENAME}_media"
   OUTPUT_MD="$OUTPUT_DIR/${BASENAME}.md"
-  
-  nix-shell -p pandoc --run "pandoc \"$INPUT_FILE\" -t gfm --extract-media=\"$MEDIA_DIR\" -o \"$OUTPUT_MD\""
-  
+
+  pandoc "$INPUT_FILE" -t gfm --extract-media="$MEDIA_DIR" -o "$OUTPUT_MD"
+
   echo "-> ¡Completado!"
   echo "   Markdown: $OUTPUT_MD"
   if [ -d "$MEDIA_DIR" ]; then
@@ -80,11 +130,14 @@ if [ "$EXTENSION_LOWER" = "docx" ]; then
 elif [ "$EXTENSION_LOWER" = "doc" ]; then
   echo "-> Detectado archivo Word clásico (.doc)."
   echo "-> Convirtiendo con Antiword y Pandoc..."
-  
+
   OUTPUT_MD="$OUTPUT_DIR/${BASENAME}.md"
-  
-  nix-shell -p antiword pandoc --run "antiword -x db \"$INPUT_FILE\" | pandoc -f docbook -t gfm -o \"$OUTPUT_MD\" || antiword -m UTF-8 \"$INPUT_FILE\" > \"$OUTPUT_MD\""
-  
+
+  if ! antiword -x db "$INPUT_FILE" | pandoc -f docbook -t gfm -o "$OUTPUT_MD"; then
+    echo "-> Aviso: Conversión DocBook falló, extrayendo texto UTF-8 directo con Antiword..."
+    antiword -m UTF-8 "$INPUT_FILE" > "$OUTPUT_MD"
+  fi
+
   echo "-> ¡Completado!"
   echo "   Markdown: $OUTPUT_MD"
 
@@ -92,33 +145,59 @@ elif [ "$EXTENSION_LOWER" = "pdf" ]; then
   echo "-> Detectado archivo PDF (.pdf)."
   echo "-> Preparando entorno Docling en NixOS..."
 
-  # Entorno virtual persistente en cache para no reinstalar cada vez
-  CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}"
-  VENV_DIR="$CACHE_DIR/converter-venv"
-  SHELL_NIX="$SCRIPT_DIR/converter-shell.nix"
+  FHS_BIN="${DOCLING_FHS_BIN:-}"
+  if [ -z "$FHS_BIN" ] || [ ! -x "$FHS_BIN" ]; then
+    if command -v docling-fhs-env &>/dev/null; then
+      FHS_BIN="$(command -v docling-fhs-env)"
+    else
+      echo "Error: No se encontró 'docling-fhs-env' en el sistema." >&2
+      echo "Ejecuta 'sudo nixos-rebuild switch --flake .#haimiya' para instalar el entorno declarativo." >&2
+      exit 1
+    fi
+  fi
 
-  ENV_BIN="$(nix-build --no-out-link "$SHELL_NIX")/bin/docling-fhs-env"
+  if [ "$REINSTALL_VENV" -eq 1 ] && [ -d "$VENV_DIR" ]; then
+    echo "-> Reiniciando entorno virtual en '$VENV_DIR'..."
+    rm -rf "$VENV_DIR"
+  fi
 
-  "$ENV_BIN" -c "
-    if [ ! -d '$VENV_DIR' ]; then
-      echo '-> Creando entorno virtual local en $VENV_DIR...'
-      python -m venv '$VENV_DIR'
-      source '$VENV_DIR/bin/activate'
-      echo '-> Instalando Docling (primera ejecución, puede tardar unos minutos)...'
+  export CONVERTER_VENV_DIR="$VENV_DIR"
+  export CONVERTER_INPUT_FILE="$INPUT_FILE"
+  export CONVERTER_OUTPUT_DIR="$OUTPUT_DIR"
+
+  if "$FHS_BIN" -c '
+    set -euo pipefail
+    if [ ! -x "$CONVERTER_VENV_DIR/bin/docling" ]; then
+      echo "-> Creando/reparando entorno virtual local en $CONVERTER_VENV_DIR..."
+      rm -rf "$CONVERTER_VENV_DIR"
+      python -m venv "$CONVERTER_VENV_DIR"
+      source "$CONVERTER_VENV_DIR/bin/activate"
+      echo "-> Instalando Docling (primera ejecución, puede tardar unos minutos)..."
       pip install --upgrade pip
       pip install docling
     else
-      source '$VENV_DIR/bin/activate'
+      source "$CONVERTER_VENV_DIR/bin/activate"
     fi
 
-    echo '-> Ejecutando Docling...'
-    docling '$INPUT_FILE' --output '$OUTPUT_DIR'
-  "
-
-  echo "-> ¡Completado!"
-  echo "   Salida guardada en: $OUTPUT_DIR"
+    echo "-> Ejecutando Docling..."
+    docling "$CONVERTER_INPUT_FILE" --output "$CONVERTER_OUTPUT_DIR"
+  '; then
+    echo "-> ¡Completado con Docling!"
+    echo "   Salida guardada en: $OUTPUT_DIR/${BASENAME}.md"
+  else
+    echo "-> Aviso: Docling encontró un error procesando el PDF." >&2
+    if command -v pdftotext &>/dev/null; then
+      FALLBACK_MD="$OUTPUT_DIR/${BASENAME}.md"
+      echo "-> Ejecutando fallback automático con pdftotext..."
+      pdftotext -layout "$INPUT_FILE" "$FALLBACK_MD"
+      echo "-> ¡Completado mediante fallback (pdftotext)!"
+      echo "   Salida guardada en: $FALLBACK_MD"
+    else
+      exit 1
+    fi
+  fi
 
 else
-  echo "Error: Extensión '.$EXTENSION' no soportada. Usa .docx, .doc o .pdf"
+  echo "Error: Extensión '.$EXTENSION' no soportada. Usa .docx, .doc o .pdf" >&2
   exit 1
 fi

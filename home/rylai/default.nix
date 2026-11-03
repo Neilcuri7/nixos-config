@@ -1,11 +1,54 @@
 { config, pkgs, inputs, lib, ... }:
 
+let
+  doclingFhsEnv = pkgs.buildFHSEnv {
+    name = "docling-fhs-env";
+    targetPkgs = pkgs: (with pkgs; [
+      python311
+      python311Packages.pip
+      python311Packages.virtualenv
+
+      # C/C++ system libraries required by PyTorch, OpenCV, OCR and layout rendering
+      stdenv.cc.cc.lib
+      zlib
+      glib
+      libGL
+      libGLU
+      fontconfig
+      freetype
+      libjpeg
+      openjpeg
+      libpng
+      poppler-utils
+      tesseract
+      pandoc
+    ]);
+    runScript = "bash";
+  };
+
+  converterWrapper = pkgs.writeShellScriptBin "converter" ''
+    export PATH="${lib.makeBinPath (with pkgs; [
+      pandoc
+      antiword
+      poppler-utils
+      doclingFhsEnv
+    ])}''${PATH:+:$PATH}"
+    export DOCLING_FHS_BIN="${doclingFhsEnv}/bin/docling-fhs-env"
+    exec "${config.home.homeDirectory}/scripts/converter" "$@"
+  '';
+in
 {
   imports = [
     ./hyprland
     ./waybar
     ./programs
     ./theme
+  ];
+
+  home.packages = [
+    pkgs.pandoc
+    doclingFhsEnv
+    converterWrapper
   ];
 
   home.username = "rylai";
