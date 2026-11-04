@@ -11,14 +11,8 @@
   ];
 
   networking.hostName = "haimiya";
-  time.timeZone = "America/Bogota";
-  time.hardwareClockInLocalTime = true;
-  i18n.defaultLocale = "es_CO.UTF-8";
 
-  services.tailscale.enable = true;
-
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  # Parámetros del Kernel y Gráficos AMD
   boot.kernelParams = [ "radeon.cik_support=0" "amdgpu.cik_support=1" ];
 
   swapDevices = [
@@ -38,19 +32,16 @@
   };
   hardware.enableRedistributableFirmware = true;
 
-  networking.networkmanager.enable = true;
-  services.udisks2.enable = true;
-  services.gvfs.enable = true;
+  # Gestión de Energía
   services.power-profiles-daemon.enable = true;
   services.upower.enable = true;
 
+  # Permisos de almacenamiento local
   systemd.tmpfiles.rules = [
-    "d /mnt/storage 0775 rylai users -"
-    "z /mnt/storage 0775 rylai users -"
+    "d /mnt/storage 0755 rylai users -"
   ];
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
+  # Módulos Funcionales
   myPlatform = {
     applications = {
       desktop.enable = true;
@@ -71,35 +62,11 @@
     };
   };
 
-  virtualisation.docker.enable = true;
-
-  programs.zsh.enable = true;
+  # Dispositivos de entrada / Macros
   programs.ydotool.enable = true;
   hardware.uinput.enable = true;
 
-  users.users.rylai = {
-    isNormalUser = true;
-    shell = pkgs.zsh;
-    extraGroups = [ "wheel" "networkmanager" "video" "audio" "docker" "input" "uinput" "ydotool" ];
-  };
-
-  # Configuración de Stylix (Tema Nord unificado)
-  stylix = {
-    enable = true;
-    image = ../../modules/shared/assets/wallpapers/angel.jpg;
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/nord.yaml";
-    polarity = "dark";
-    opacity = {
-      terminal = 0.80;
-      popups = 0.85;
-    };
-    fonts = {
-      monospace = {
-        package = pkgs.nerd-fonts.jetbrains-mono;
-        name = "JetBrainsMono Nerd Font";
-      };
-    };
-  };
+  users.users.rylai.extraGroups = [ "input" "uinput" "ydotool" ];
 
   system.stateVersion = "24.11";
 }

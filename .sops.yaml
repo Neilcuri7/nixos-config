@@ -1,0 +1,8 @@
+keys:
+  - &rylai_age age1h2hu26kkqshc7yg42mvhxk75ysep2kt4jskvz2v06j9ucsz8mersdang3g
+
+creation_rules:
+  - path_regex: secrets/.*\.ya?ml$
+    key_groups:
+      - age:
+          - *rylai_age

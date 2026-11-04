@@ -14,7 +14,10 @@ def hex_to_rgb(hex_color: str) -> Tuple[float, float, float]:
     return tuple(int(hex_color[i:i+2], 16)/255.0 for i in (0, 2, 4)) # type: ignore
 
 def rgb_to_hex(r: float, g: float, b: float) -> str:
-    return '#{:02x}{:02x}{:02x}'.format(int(r*255), int(g*255), int(b*255))
+    r_i = round(max(0.0, min(1.0, r)) * 255)
+    g_i = round(max(0.0, min(1.0, g)) * 255)
+    b_i = round(max(0.0, min(1.0, b)) * 255)
+    return f"#{r_i:02x}{g_i:02x}{b_i:02x}"
 
 @dataclass
 class ColorPalette:
@@ -102,7 +105,6 @@ class ColorPalette:
             setattr(self, key, self.adjust_color(val, c_factor=factor))
 
     def adjust_contrast(self, factor: float):
-        # Simplistic contrast: adjust lightness from center (0.5)
         for key, val in self.to_dict().items():
             r, g, b = hex_to_rgb(val)
             h, l, s = colorsys.rgb_to_hls(r, g, b)
@@ -140,6 +142,10 @@ class ColorPalette:
         h_val = hue_shift if hue_shift is not None else (kwargs.get("hue_shift_val", hue_shift_val))
         t_val = temperature if temperature is not None else (temp_shift if temp_shift is not None else (kwargs.get("temperature_val", temperature_val)))
 
+        # Si todos los ajustes son neutrales (0), devolver copia exacta sin pérdidas por redondeo
+        if b_val == 0 and s_val == 0 and c_val == 0 and h_val == 0 and t_val == 0:
+            return ColorPalette(**self.to_dict())
+
         l_fac = max(0.0, 1.0 + (b_val / 100.0))
         c_fac = max(0.0, 1.0 + (s_val / 100.0))
         cont_fac = max(0.1, 1.0 + (c_val / 50.0))
@@ -154,7 +160,7 @@ class ColorPalette:
             if h_val != 0:
                 h = (h + (h_val / 360.0)) % 1.0
 
-            # Color temperature (warm adds red/yellow, cool adds blue/cyan)
+            # Color temperature
             if t_val != 0:
                 temp_fac = t_val / 200.0
                 r = min(1.0, max(0.0, r + temp_fac))
@@ -179,7 +185,7 @@ def load_current_palette() -> ColorPalette:
     defaults = {
         "background": "#1e1e2e",
         "foreground": "#cdd6f4",
-        "cursor": "#f5e0dc",
+        "cursor": "#89b4fa",
         "color0": "#45475a",
         "color1": "#f38ba8",
         "color2": "#a6e3a1",
@@ -203,7 +209,7 @@ def load_current_palette() -> ColorPalette:
                 for line in f:
                     parts = line.strip().split()
                     if len(parts) >= 2:
-                        key, val = parts[0], parts[1]
+                        key, val = parts[0], parts[1].lower()
                         if key in defaults:
                             defaults[key] = val if val.startswith('#') else f"#{val}"
         except Exception:
