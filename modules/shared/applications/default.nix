@@ -104,6 +104,7 @@
       programs.gamemode.enable = true;
 
       environment.systemPackages = with pkgs; [
+        heroic
         protonup-qt
         lunar-client
       ];
