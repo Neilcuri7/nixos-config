@@ -10,12 +10,7 @@ if [ ! -f "$STATE_FILE" ]; then
     fi
 
     if command -v hyprctl &>/dev/null && [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
-        hyprctl --batch "\
-            keyword animations:enabled 0;\
-            keyword general:gaps_in 0;\
-            keyword general:gaps_out 0;\
-            keyword general:border_size 1;\
-            keyword decoration:shadow:enabled 0" &>/dev/null
+        hyprctl eval 'hl.config({ animations = { enabled = false }, general = { gaps_in = 0, gaps_out = 0, border_size = 1 }, decoration = { shadow = { enabled = false } } })' &>/dev/null || true
     fi
 
     touch "$STATE_FILE"

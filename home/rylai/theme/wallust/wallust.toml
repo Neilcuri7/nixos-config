@@ -7,7 +7,7 @@ fallback_generator = "interpolate"
 [templates]
 waybar = { template = "waybar-colors.css", target = "~/.config/waybar/colors.css" }
 kitty = { template = "kitty-colors.conf", target = "~/.config/kitty/current-theme.conf" }
-hyprland = { template = "hyprland-colors.conf", target = "~/.config/hypr/colors.conf" }
+hyprland = { template = "hyprland-colors.conf", target = "~/.config/hypr/colors.lua" }
 swaync = { template = "swaync-colors.css", target = "~/.config/swaync/colors.css" }
 rofi = { template = "rofi-colors.rasi", target = "~/.config/rofi/colors.rasi" }
 wlogout = { template = "waybar-colors.css", target = "~/.config/wlogout/colors.css" }

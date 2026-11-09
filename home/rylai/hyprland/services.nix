@@ -46,7 +46,7 @@
       }
       {
         label = "logout";
-        action = "sleep 1; hyprctl dispatch exit";
+        action = "sleep 1; hyprctl dispatch 'hl.dsp.exit()'";
         text = "Exit";
         keybind = "e";
       }
