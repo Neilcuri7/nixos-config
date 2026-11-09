@@ -86,6 +86,8 @@ in
 
       (mkBindOpts "${modifier} + mouse:272" "hl.dsp.window.drag()" { mouse = true; })
       (mkBindOpts "${modifier} + mouse:273" "hl.dsp.window.resize()" { mouse = true; })
+      (mkBind "${modifier} + mouse_down" "hl.dsp.focus({ workspace = \"e+1\" })")
+      (mkBind "${modifier} + mouse_up" "hl.dsp.focus({ workspace = \"e-1\" })")
 
       (mkBindOpts "XF86AudioRaiseVolume" "hl.dsp.exec_cmd(\"wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+\")" { repeating = true; })
       (mkBindOpts "XF86AudioLowerVolume" "hl.dsp.exec_cmd(\"wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-\")" { repeating = true; })

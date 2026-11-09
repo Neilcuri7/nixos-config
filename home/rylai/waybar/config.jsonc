@@ -59,8 +59,7 @@
             "10": "十",
             "active": "●",
             "default": "○"
-        },
-        "on-click": "activate"
+        }
     },
 
     "mpris": {
