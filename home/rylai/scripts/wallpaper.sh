@@ -129,73 +129,11 @@ select_wallpaper() {
 
     local ROFI_CONFIG="$HOME/.config/rofi/config.rasi"
     local rofi_theme_str='
-        window {
-            width: 70%;
-            height: 62%;
-            background-color: @background;
-            border: 2px;
-            border-color: @accent;
-            border-radius: 20px;
-            padding: 18px;
-        }
-        mainbox {
-            spacing: 14px;
-            children: [ inputbar, listview ];
-        }
-        inputbar {
-            background-color: @input-bg;
-            border: 1px;
-            border-color: @border-col;
-            border-radius: 12px;
-            padding: 8px 14px;
-            children: [ prompt, entry ];
-        }
-        prompt {
-            text-color: @accent;
-            font: "JetBrainsMono Nerd Font Bold 12";
-            margin: 0 8px 0 0;
-        }
-        entry {
-            placeholder: "Filtrar wallpaper...";
-            placeholder-color: @placeholder;
-            text-color: @text;
-        }
-        listview {
-            columns: 4;
-            lines: 2;
-            spacing: 16px;
-            padding: 10px 4px;
-            cycle: true;
-        }
-        element {
-            orientation: vertical;
-            padding: 12px;
-            border-radius: 14px;
-            background-color: rgba(255, 255, 255, 0.03);
-            border: 1px;
-            border-color: transparent;
-        }
-        element selected {
-            background-color: @selected-accent;
-            border: 2px;
-            border-color: @accent;
-        }
-        element-icon {
-            size: 140px;
-            horizontal-align: 0.5;
-            border-radius: 10px;
-        }
-        element-text {
-            horizontal-align: 0.5;
-            vertical-align: 0.5;
-            margin: 8px 0 0 0;
-            text-color: @text;
-            font: "JetBrainsMono Nerd Font 10.5";
-        }
-        element selected element-text {
-            text-color: @accent;
-            font: "JetBrainsMono Nerd Font Bold 10.5";
-        }
+        window { width: 64%; height: 70%; }
+        listview { columns: 4; lines: 2; spacing: 8px; }
+        element { orientation: vertical; padding: 8px; }
+        element-icon { size: 140px; horizontal-align: 0.5; }
+        element-text { horizontal-align: 0.5; }
     '
 
     local choice

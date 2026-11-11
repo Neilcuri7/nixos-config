@@ -152,14 +152,14 @@ scale highlight,
 progressbar.horizontal progress,
 levelbar block.filled {
     background-color: @accent_bg_color;
-    border-radius: 4px;
+    border-radius: 0;
 }
 
 scale trough,
 progressbar.horizontal trough,
 levelbar trough {
     background-color: @card_bg_color;
-    border-radius: 4px;
+    border-radius: 0;
 }
 
 /* System Dialogs, File Chooser (Open/Save File) & Yad */

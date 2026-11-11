@@ -48,6 +48,20 @@ This project uses **NixOS Flakes** combined with **Home Manager** in a modular s
    - The palette always comes from the current wallpaper through Wallust, or from a saved Wallust Studio profile for that image (`~/.local/state/wallust-studio/profiles/<sha256 of the image file>.json`).
 3. **Reloading Visual Components**:
    - Any script or tool that applies a theme or wallpaper must delegate component reloading and folder icon updates to [`home/rylai/scripts/theme-sync.sh`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/scripts/theme-sync.sh).
+4. **Style tokens**:
+   - Every surface uses these tokens; the guard is [`tests/shell/style-standard.bats`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/tests/shell/style-standard.bats).
+
+   | Token | Valor | Dónde |
+   |---|---|---|
+   | Radio | `0` | todo `border-radius` en RASI/CSS/Nix; Hyprland `rounding = 0` |
+   | Borde | ventanas Hyprland `2px`; superficies superpuestas `1px` | `appearance.nix`; Rofi, SwayNC, wlogout, Wallust Studio |
+   | Opacidad de superficie | `0.90` (en RASI `e6`) | fondo de Rofi, `kitty background_opacity`, `@surface` de Waybar, `cc-bg`/`noti-bg` de SwayNC, fondo de ventana de Wallust Studio |
+   | Tinte de entrada | `color4` a `0.12` | `input-bg` de Rofi |
+   | Tinte de selección | `color4` a `0.20` | `selected-accent` de Rofi |
+   | Tinte de borde | `color4` a `0.35` | `border-col` de Rofi |
+   | Acento | `color12` | texto y borde del elemento activo |
+
+   - Nested SwayNC cards (`alpha(@noti-bg, 0.6/0.8)`) keep their extra transparency on purpose.
 
 ---
 

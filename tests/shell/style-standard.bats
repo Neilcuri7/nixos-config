@@ -1,0 +1,36 @@
+setup() { load helpers; cd "$REPO"; }
+SH=(home/rylai/scripts/wallpaper.sh home/rylai/scripts/hypr-cheatsheet.sh home/rylai/scripts/rofi-clipboard.sh)
+STYLE=(home/rylai/programs/rofi.rasi home/rylai/waybar/style.css home/rylai/hyprland/services.nix
+       home/rylai/theme/wallust/templates/gtk-colors.css "${SH[@]}")
+@test "no non-zero border-radius" {
+  run grep -nP 'border-radius:\s*+(?!0(px)?\s*;)' "${STYLE[@]}"
+  [ "$status" -eq 1 ]
+}
+@test "regression guard: hyprland rounding stays 0" {
+  grep -q 'rounding = 0;' home/rylai/hyprland/appearance.nix
+}
+@test "rofi template uses tokens" {
+  f=home/rylai/theme/wallust/templates/rofi-colors.rasi
+  grep -qE '^\s*background:\s*\{\{background\}\}e6;' "$f"
+  grep -qE '^\s*input-bg:.*0\.12\);' "$f"
+  grep -qE '^\s*selected-accent:.*0\.20\);' "$f"
+  grep -qE '^\s*border-col:.*0\.35\);' "$f"
+  ! grep -qE '^\s*selected:' "$f"
+}
+@test "kitty opacity is 0.90" {
+  grep -qF 'background_opacity = "0.90"' home/rylai/programs/kitty.nix
+}
+@test "swaync surfaces are 0.90 and not re-alpha'd" {
+  f=home/rylai/theme/wallust/templates/swaync-colors.css
+  grep -qE '^@define-color cc-bg .*0\.90\);' "$f"
+  grep -qE '^@define-color noti-bg .*0\.90\);' "$f"
+  ! grep -qF 'alpha(@cc-bg' home/rylai/hyprland/services.nix
+}
+@test "waybar surface is 0.90 only" {
+  grep -qF 'alpha(@surface, 0.90)' home/rylai/waybar/style.css
+  ! grep -qP 'alpha\(@surface, (?!0\.90\))' home/rylai/waybar/style.css
+}
+@test "rofi scripts never override color, border or radius" {
+  run grep -nE '(background-color|text-color|border(-color|-radius)?)\s*:' "${SH[@]}"
+  [ "$status" -eq 1 ]
+}

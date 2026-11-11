@@ -1,8 +1,7 @@
 * {
-    background:      {{background}}ee;
-    input-bg:        rgba({{color4 | red}}, {{color4 | green}}, {{color4 | blue}}, 0.14);
-    selected:        rgba({{color4 | red}}, {{color4 | green}}, {{color4 | blue}}, 0.20);
-    selected-accent: rgba({{color4 | red}}, {{color4 | green}}, {{color4 | blue}}, 0.30);
+    background:      {{background}}e6;
+    input-bg:        rgba({{color4 | red}}, {{color4 | green}}, {{color4 | blue}}, 0.12);
+    selected-accent: rgba({{color4 | red}}, {{color4 | green}}, {{color4 | blue}}, 0.20);
     accent:          {{color12}};
     border-col:      rgba({{color4 | red}}, {{color4 | green}}, {{color4 | blue}}, 0.35);
     text:            {{foreground}};
