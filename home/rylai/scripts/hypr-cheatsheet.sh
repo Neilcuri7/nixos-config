@@ -50,7 +50,7 @@ if command -v rofi >/dev/null 2>&1; then
     echo "$KEYBINDINGS" | rofi -dmenu \
         -p "󰌽 Atajos de Teclado" \
         -theme "$ROFI_CONFIG" \
-        -theme-str 'window { width: 950px; } listview { lines: 17; } element-text { font: "JetBrainsMono Nerd Font 10"; } prompt { font: "JetBrainsMono Nerd Font 10.5"; } entry { font: "JetBrainsMono Nerd Font 10.5"; }'
+        -theme-str 'window { width: 56%; height: 82%; } listview { scrollbar: true; } element { padding: 3px 10px; } element-text { font: "JetBrainsMono Nerd Font 10"; } prompt { font: "JetBrainsMono Nerd Font 10.5"; } entry { font: "JetBrainsMono Nerd Font 10.5"; }'
 else
     echo "$KEYBINDINGS"
 fi
