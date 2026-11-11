@@ -22,7 +22,7 @@ ensure_daemon() {
     if awww query &>/dev/null; then
         return 0
     fi
-    setsid -f awww-daemon >/dev/null 2>&1
+    setsid -f awww-daemon >/dev/null 2>&1 9>&-
     local i
     for i in $(seq 1 20); do
         sleep 0.1
@@ -32,6 +32,14 @@ ensure_daemon() {
     done
     notify-send "Wallpapers" "awww-daemon no responde"
     return 1
+}
+
+acquire_lock() {
+    exec 9>"${XDG_RUNTIME_DIR:-/tmp}/wallpaper.lock"
+    if ! flock -w 15 9; then
+        notify-send "Wallpapers" "Otro cambio de fondo sigue en curso"
+        return 1
+    fi
 }
 
 set_wallpaper() {
@@ -44,11 +52,7 @@ set_wallpaper() {
         return 1
     fi
 
-    exec 9>"${XDG_RUNTIME_DIR:-/tmp}/wallpaper.lock"
-    if ! flock -w 15 9; then
-        notify-send "Wallpapers" "Otro cambio de fondo sigue en curso"
-        return 1
-    fi
+    acquire_lock || return 1
 
     ensure_daemon || return 1
 
@@ -86,6 +90,7 @@ set_wallpaper() {
 restore_wallpaper() {
     local wall_to_set=""
 
+    acquire_lock || return 1
     ensure_daemon || return 1
 
     if [ -f "$CURRENT_PATH_FILE" ]; then

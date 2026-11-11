@@ -90,3 +90,26 @@ daemon_down_until_started() {
 @test "wallust_bridge has no stale current fallback" {
   ! grep -q '"current"' "$REPO/home/rylai/scripts/wallust-studio/wallust_bridge.py"
 }
+teardown() {
+  [ -f "$BATS_TEST_TMPDIR/sleep.pid" ] && kill "$(cat "$BATS_TEST_TMPDIR/sleep.pid")" 2>/dev/null || true
+}
+@test "long-lived daemon does not inherit the lock" {
+  stub_script awww "echo \"awww \$*\" >> '$STUB_LOG'; [ \"\$1\" = query ] && [ ! -e '$BATS_TEST_TMPDIR/up' ] && exit 1; exit 0"
+  stub_script awww-daemon "echo awww-daemon >> '$STUB_LOG'; : > '$BATS_TEST_TMPDIR/up'; sleep 30 & echo \$! > '$BATS_TEST_TMPDIR/sleep.pid'"
+  run "$S" --set "$W/a b.jpg"
+  [ "$status" -eq 0 ]
+  start=$SECONDS
+  run "$S" --set "$W/fondo ñandú.jpg"
+  [ "$status" -eq 0 ]
+  [ $((SECONDS - start)) -lt 5 ]
+  [ "$(grep -c '^awww img' "$STUB_LOG")" -eq 2 ]
+}
+@test "restore waits for a concurrent set" {
+  printf '%s' "$W/a b.jpg" > "$HOME/.local/state/wallpaper/current_path.txt"
+  stub_script wallust "echo START >> '$STUB_LOG'; sleep 1; echo END >> '$STUB_LOG'"
+  "$S" --set "$W/fondo ñandú.jpg" & sleep 0.3
+  "$S" --restore; wait
+  end=$(grep -n '^END$' "$STUB_LOG" | cut -d: -f1)
+  rest=$(grep -n 'transition-type none' "$STUB_LOG" | cut -d: -f1)
+  [ "$rest" -gt "$end" ]
+}
