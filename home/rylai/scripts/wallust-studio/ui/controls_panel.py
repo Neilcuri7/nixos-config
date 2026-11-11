@@ -1,6 +1,7 @@
 import os
 import json
 import colorsys
+import threading
 import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
@@ -137,6 +138,10 @@ class ControlsPanel(Gtk.Box):
             btn.add_css_class(f"ansi-color-{i}")
             btn.connect("clicked", self._on_select_color_to_edit, i)
 
+            focus_ctrl = Gtk.EventControllerFocus()
+            focus_ctrl.connect("enter", lambda c, idx=i: self._on_select_color_to_edit(self.color_buttons[idx], idx))
+            btn.add_controller(focus_ctrl)
+
             lbl = Gtk.Label(label=f"{i:02d}")
             btn.set_child(lbl)
 
@@ -203,22 +208,29 @@ class ControlsPanel(Gtk.Box):
         bottom_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         bottom_box.set_margin_top(4)
 
-        row_pair = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        row_pair.set_homogeneous(True)
+        row_actions = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        row_actions.set_homogeneous(True)
 
         btn_restore = Gtk.Button(label="Restaurar")
         btn_restore.add_css_class("btn-pill-secondary")
+        btn_restore.set_tooltip_text("Volver a los últimos colores aplicados")
         btn_restore.connect("clicked", lambda b: self.restore_defaults())
+
+        self.btn_original = Gtk.Button(label="Original")
+        self.btn_original.add_css_class("btn-pill-secondary")
+        self.btn_original.set_tooltip_text("Colores que Wallust genera del wallpaper, sin perfil guardado")
+        self.btn_original.connect("clicked", lambda b: self.load_wallpaper_original())
 
         btn_cancel = Gtk.Button(label="Cancelar")
         btn_cancel.add_css_class("btn-pill-secondary")
         btn_cancel.connect("clicked", lambda b: self.cancel())
 
-        row_pair.append(btn_restore)
-        row_pair.append(btn_cancel)
-        bottom_box.append(row_pair)
+        row_actions.append(btn_restore)
+        row_actions.append(self.btn_original)
+        row_actions.append(btn_cancel)
+        bottom_box.append(row_actions)
 
-        btn_apply = Gtk.Button(label="🔄  APLICAR AL SISTEMA")
+        btn_apply = Gtk.Button(label="Aplicar al sistema")
         btn_apply.add_css_class("btn-pill-primary")
         btn_apply.connect("clicked", lambda b: self.apply_to_system())
         bottom_box.append(btn_apply)
@@ -306,9 +318,7 @@ class ControlsPanel(Gtk.Box):
         self.preview_panel.update_palette(self.current_palette)
         return False
 
-    def restore_defaults(self):
-        self.base_palette = self.initial_palette.create_adjusted_copy()
-        self.current_palette = self.base_palette.create_adjusted_copy()
+    def _reset_global_sliders(self):
         self._updating_palette = True
         try:
             self.brightness_scale.set_value(0)
@@ -316,6 +326,16 @@ class ControlsPanel(Gtk.Box):
             self.contrast_scale.set_value(0)
         finally:
             self._updating_palette = False
+
+    def _show_toast(self, text):
+        root = self.get_root()
+        if root and hasattr(root, "show_toast"):
+            root.show_toast(text)
+
+    def restore_defaults(self):
+        self.base_palette = self.initial_palette.create_adjusted_copy()
+        self.current_palette = self.base_palette.create_adjusted_copy()
+        self._reset_global_sliders()
         self._update_color_swatches_ui()
         self._sync_single_color_sliders()
         self._update_preview(immediate=True)
@@ -339,13 +359,64 @@ class ControlsPanel(Gtk.Box):
         if root and hasattr(root, "close"):
             root.close()
 
+    def load_wallpaper_original(self):
+        wallpaper_path = self._get_active_wallpaper()
+        if not wallpaper_path:
+            self._show_toast("No hay wallpaper activo")
+            return
+        if not self.btn_original.get_sensitive():
+            return
+        self.btn_original.set_sensitive(False)
+        self.btn_original.set_label("Generando…")
+
+        def worker():
+            try:
+                result = wallust_bridge.generate_base_palette(wallpaper_path)
+            except Exception as e:
+                print(f"[wallust-studio] Error al generar la paleta original: {e}")
+                result = None
+            GLib.idle_add(self._on_original_ready, result)
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _on_original_ready(self, result):
+        try:
+            if result is None:
+                self._show_toast("No se pudieron generar los colores originales")
+                return False
+            try:
+                palette = ColorPalette(**result)
+            except Exception as e:
+                print(f"[wallust-studio] Paleta original inválida: {e}")
+                self._show_toast("No se pudieron generar los colores originales")
+                return False
+            self.base_palette = palette
+            self.current_palette = palette.create_adjusted_copy()
+            self._reset_global_sliders()
+            self._update_color_swatches_ui()
+            self._sync_single_color_sliders()
+            self._update_preview(immediate=True)
+            self._show_toast("Colores originales cargados: pulsa Aplicar para guardarlos")
+            return False
+        finally:
+            self.btn_original.set_label("Original")
+            self.btn_original.set_sensitive(True)
+
     def apply_to_system(self):
         wallpaper_path = self._get_active_wallpaper()
-        if wallpaper_path:
-            try:
-                profile_manager.save_profile(wallpaper_path, self.current_palette.to_wallust_json())
-            except Exception as e:
-                print(f"[wallust-studio] Advertencia al persistir perfil de wallpaper: {e}")
-        accent_hex = getattr(self.current_palette, "color4", None)
-        system_sync.apply_and_reload(self.current_palette.to_wallust_json(), accent_hex=accent_hex)
-        self.cancel()
+        try:
+            if wallpaper_path:
+                try:
+                    profile_manager.save_profile(wallpaper_path, self.current_palette.to_wallust_json())
+                except Exception as e:
+                    print(f"[wallust-studio] Advertencia al persistir perfil de wallpaper: {e}")
+            accent_hex = getattr(self.current_palette, "color4", None)
+            system_sync.apply_and_reload(self.current_palette.to_wallust_json(), accent_hex=accent_hex)
+        except Exception as e:
+            print(f"[wallust-studio] Error al aplicar: {e}")
+            self._show_toast("Error al aplicar: wallust falló")
+            return
+        self.initial_palette = self.current_palette.create_adjusted_copy()
+        self.base_palette = self.current_palette.create_adjusted_copy()
+        self._reset_global_sliders()
+        self._show_toast("Colores aplicados")

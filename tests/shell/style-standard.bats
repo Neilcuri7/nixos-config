@@ -34,3 +34,10 @@ STYLE=(home/rylai/programs/rofi.rasi home/rylai/waybar/style.css home/rylai/hypr
   run grep -nE '(background-color|text-color|border(-color|-radius)?)\s*:' "${SH[@]}"
   [ "$status" -eq 1 ]
 }
+@test "studio css: no radius, no shadow, window at 0.90" {
+  f=home/rylai/scripts/wallust-studio/ui/css_manager.py
+  run grep -nP 'border-radius:\s*+(?!0(px)?\s*;)' "$f"
+  [ "$status" -eq 1 ]
+  ! grep -q 'box-shadow' "$f"
+  grep -A8 'window.background, .app-window' "$f" | grep -qF '_hex_to_rgba_css(c0, 0.90)'
+}
