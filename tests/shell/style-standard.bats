@@ -39,5 +39,5 @@ STYLE=(home/rylai/programs/rofi.rasi home/rylai/waybar/style.css home/rylai/hypr
   run grep -nP 'border-radius:\s*+(?!0(px)?\s*;)' "$f"
   [ "$status" -eq 1 ]
   ! grep -q 'box-shadow' "$f"
-  grep -A8 'window.background, .app-window' "$f" | grep -qF '_hex_to_rgba_css(c0, 0.90)'
+  sed -n '/window.background, .app-window/,/}}/p' "$f" | grep -qF '_hex_to_rgba_css(bg, 0.90)'
 }

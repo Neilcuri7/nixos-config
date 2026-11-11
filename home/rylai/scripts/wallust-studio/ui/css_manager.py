@@ -85,13 +85,13 @@ class CSSManager:
         css_str = f"""
         /* Ventana Principal y Marco Base */
         window.background, .app-window {{
-            background-color: {bg};
+            background-color: {_hex_to_rgba_css(bg, 0.90)};
             color: {fg};
         }}
 
         /* Panel Lateral de Controles (Izquierdo) */
         .controls-sidebar {{
-            background-color: {_hex_to_rgba_css(c0, 0.90)};
+            background-color: {_hex_to_rgba_css(c0, 0.85)};
             border-radius: 0px;
             padding: 12px;
             border: 1px solid {_hex_to_rgba_css(c8, 0.40)};
