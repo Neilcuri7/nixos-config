@@ -40,7 +40,6 @@
       };
 
       environment.systemPackages = [
-        pkgs.firefox
         pkgs.brave
         pkgs.google-chrome
         pkgs.mpv
@@ -83,6 +82,7 @@
         neovim
         helix
         opencode
+        claude-code
         direnv
         gcc
         gnumake
