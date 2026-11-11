@@ -4,14 +4,10 @@ set -euo pipefail
 WALLPAPER_DIR="$HOME/Pictures/wallpapers"
 WALLPAPER_STATE_DIR="$HOME/.local/state/wallpaper"
 CURRENT_PATH_FILE="$WALLPAPER_STATE_DIR/current_path.txt"
-CURRENT_WALLPAPER="$WALLPAPER_STATE_DIR/current"
-
-THEME_STATE_DIR="$HOME/.local/state/theme"
-ACTIVE_THEME_FILE="$THEME_STATE_DIR/active_theme.txt"
 WALLUST_CONFIG="$HOME/.config/wallust/wallust.toml"
 SYNC_SCRIPT="$HOME/scripts/theme-sync.sh"
 
-mkdir -p "$WALLPAPER_STATE_DIR" "$WALLPAPER_DIR" "$THEME_STATE_DIR"
+mkdir -p "$WALLPAPER_STATE_DIR" "$WALLPAPER_DIR"
 
 sync_env() {
     local accent_hex="${1:-}"
@@ -20,6 +16,22 @@ sync_env() {
     elif [ -x "$(dirname "$0")/theme-sync.sh" ]; then
         "$(dirname "$0")/theme-sync.sh" "$accent_hex"
     fi
+}
+
+ensure_daemon() {
+    if awww query &>/dev/null; then
+        return 0
+    fi
+    setsid -f awww-daemon >/dev/null 2>&1
+    local i
+    for i in $(seq 1 20); do
+        sleep 0.1
+        if awww query &>/dev/null; then
+            return 0
+        fi
+    done
+    notify-send "Wallpapers" "awww-daemon no responde"
+    return 1
 }
 
 set_wallpaper() {
@@ -32,56 +44,49 @@ set_wallpaper() {
         return 1
     fi
 
+    exec 9>"${XDG_RUNTIME_DIR:-/tmp}/wallpaper.lock"
+    if ! flock -w 15 9; then
+        notify-send "Wallpapers" "Otro cambio de fondo sigue en curso"
+        return 1
+    fi
+
+    ensure_daemon || return 1
+
     local full_path
     full_path=$(readlink -f "$target_wall")
 
     printf "%s" "$full_path" > "$CURRENT_PATH_FILE.tmp" && mv "$CURRENT_PATH_FILE.tmp" "$CURRENT_PATH_FILE"
-    cp -L "$full_path" "$CURRENT_WALLPAPER.tmp" 2>/dev/null && mv "$CURRENT_WALLPAPER.tmp" "$CURRENT_WALLPAPER"
 
-    local old_pids
-    old_pids=$(pgrep swaybg || true)
-    swaybg -i "$full_path" -m fill &
-    local new_pid=$!
+    awww img "$full_path" --transition-type fade --transition-duration 0.6 --transition-fps 30
 
-    if [ -n "$old_pids" ]; then
-        (sleep 0.15 && for pid in $old_pids; do [ "$pid" != "$new_pid" ] && kill "$pid" 2>/dev/null || true; done) &
-    fi
+    mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes" "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0" "$HOME/.config/yazi"
 
-    # Comprobar el tema activo
-    local active_theme="wallust-wallpaper"
-    if [ -f "$ACTIVE_THEME_FILE" ]; then
-        active_theme=$(tr -d '\r\n' < "$ACTIVE_THEME_FILE" || echo "wallust-wallpaper")
-    fi
+    local studio_profiles_dir="$HOME/.local/state/wallust-studio/profiles"
+    local profile_applied=false
 
-    if [ "$active_theme" = "wallust-wallpaper" ] || [ "$active_theme" = "matugen-wallpaper" ] || [ -z "$active_theme" ]; then
-        mkdir -p "$HOME/.config/waybar" "$HOME/.config/kitty" "$HOME/.config/hypr" "$HOME/.config/swaync" "$HOME/.config/rofi" "$HOME/.config/wlogout" "$HOME/.config/micro/colorschemes" "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0" "$HOME/.config/yazi"
-
-        local studio_profiles_dir="$HOME/.local/state/wallust-studio/profiles"
-        local profile_applied=false
-
-        if [ -d "$studio_profiles_dir" ] && command -v sha256sum &>/dev/null; then
-            local wall_hash
-            wall_hash=$(sha256sum "$full_path" | awk '{print $1}')
-            local saved_profile="$studio_profiles_dir/${wall_hash}.json"
-            if [ -f "$saved_profile" ] && command -v wallust &>/dev/null && [ -f "$WALLUST_CONFIG" ]; then
-                wallust cs -f pywal "$saved_profile" -C "$WALLUST_CONFIG" || wallust cs "$saved_profile" -C "$WALLUST_CONFIG" || true
-                profile_applied=true
-            fi
+    if [ -d "$studio_profiles_dir" ] && command -v sha256sum &>/dev/null; then
+        local wall_hash
+        wall_hash=$(sha256sum "$full_path" | awk '{print $1}')
+        local saved_profile="$studio_profiles_dir/${wall_hash}.json"
+        if [ -f "$saved_profile" ] && command -v wallust &>/dev/null && [ -f "$WALLUST_CONFIG" ]; then
+            wallust cs -f pywal "$saved_profile" -C "$WALLUST_CONFIG" || wallust cs "$saved_profile" -C "$WALLUST_CONFIG" || true
+            profile_applied=true
         fi
-
-        if [ "$profile_applied" = false ]; then
-            if command -v wallust &>/dev/null && [ -f "$WALLUST_CONFIG" ]; then
-                wallust run "$full_path" -C "$WALLUST_CONFIG" || true
-            fi
-        fi
-
-        printf "%s" "wallust-wallpaper" > "$ACTIVE_THEME_FILE"
-        sync_env
     fi
+
+    if [ "$profile_applied" = false ]; then
+        if command -v wallust &>/dev/null && [ -f "$WALLUST_CONFIG" ]; then
+            wallust run "$full_path" -C "$WALLUST_CONFIG" || true
+        fi
+    fi
+
+    sync_env
 }
 
 restore_wallpaper() {
     local wall_to_set=""
+
+    ensure_daemon || return 1
 
     if [ -f "$CURRENT_PATH_FILE" ]; then
         local saved
@@ -91,27 +96,12 @@ restore_wallpaper() {
         fi
     fi
 
-    if [ -z "$wall_to_set" ] && [ -f "$CURRENT_WALLPAPER" ] && [ -s "$CURRENT_WALLPAPER" ]; then
-        wall_to_set="$CURRENT_WALLPAPER"
-    fi
-
     if [ -z "$wall_to_set" ]; then
-        local first_found
-        first_found=$(find -L "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) 2>/dev/null | head -n 1 || true)
-        if [ -n "$first_found" ]; then
-            wall_to_set="$first_found"
-        fi
+        wall_to_set=$(find -L "$WALLPAPER_DIR" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) 2>/dev/null | head -n 1 || true)
     fi
 
     if [ -n "$wall_to_set" ] && [ -f "$wall_to_set" ]; then
-        local old_pids
-        old_pids=$(pgrep swaybg || true)
-        swaybg -i "$wall_to_set" -m fill &
-        local new_pid=$!
-
-        if [ -n "$old_pids" ]; then
-            (sleep 0.15 && for pid in $old_pids; do [ "$pid" != "$new_pid" ] && kill "$pid" 2>/dev/null || true; done) &
-        fi
+        awww img "$wall_to_set" --transition-type none
     fi
 }
 

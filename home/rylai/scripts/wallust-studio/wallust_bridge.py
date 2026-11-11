@@ -9,11 +9,6 @@ def get_current_wallpaper() -> Optional[str]:
     if path_txt.exists():
         with open(path_txt, 'r') as f:
             return f.read().strip()
-            
-    current_symlink = state_dir / "current"
-    if current_symlink.exists():
-        return str(current_symlink.resolve())
-        
     return None
 
 def apply_wallust_theme(palette_json_path: str, config_path: Optional[str] = None):
