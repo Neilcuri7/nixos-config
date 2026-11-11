@@ -230,10 +230,10 @@ class ControlsPanel(Gtk.Box):
         row_actions.append(btn_cancel)
         bottom_box.append(row_actions)
 
-        btn_apply = Gtk.Button(label="Aplicar al sistema")
-        btn_apply.add_css_class("btn-pill-primary")
-        btn_apply.connect("clicked", lambda b: self.apply_to_system())
-        bottom_box.append(btn_apply)
+        self.btn_apply = Gtk.Button(label="Aplicar al sistema")
+        self.btn_apply.add_css_class("btn-pill-primary")
+        self.btn_apply.connect("clicked", lambda b: self.apply_to_system())
+        bottom_box.append(self.btn_apply)
 
         self.append(bottom_box)
 
@@ -403,20 +403,40 @@ class ControlsPanel(Gtk.Box):
             self.btn_original.set_sensitive(True)
 
     def apply_to_system(self):
+        if not self.btn_apply.get_sensitive():
+            return
+        self.btn_apply.set_sensitive(False)
+        self.btn_apply.set_label("Aplicando…")
         wallpaper_path = self._get_active_wallpaper()
-        try:
+        palette = self.current_palette.create_adjusted_copy()
+
+        def worker():
+            data = palette.to_wallust_json()
+            try:
+                system_sync.apply_and_reload(data, accent_hex=getattr(palette, "color4", None))
+            except Exception as e:
+                print(f"[wallust-studio] Error al aplicar: {e}")
+                GLib.idle_add(self._on_apply_done, None)
+                return
             if wallpaper_path:
                 try:
-                    profile_manager.save_profile(wallpaper_path, self.current_palette.to_wallust_json())
+                    profile_manager.save_profile(wallpaper_path, data)
                 except Exception as e:
                     print(f"[wallust-studio] Advertencia al persistir perfil de wallpaper: {e}")
-            accent_hex = getattr(self.current_palette, "color4", None)
-            system_sync.apply_and_reload(self.current_palette.to_wallust_json(), accent_hex=accent_hex)
-        except Exception as e:
-            print(f"[wallust-studio] Error al aplicar: {e}")
-            self._show_toast("Error al aplicar: wallust falló")
-            return
-        self.initial_palette = self.current_palette.create_adjusted_copy()
-        self.base_palette = self.current_palette.create_adjusted_copy()
-        self._reset_global_sliders()
-        self._show_toast("Colores aplicados")
+            GLib.idle_add(self._on_apply_done, palette)
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _on_apply_done(self, palette):
+        try:
+            if palette is None:
+                self._show_toast("Error al aplicar: wallust falló")
+                return False
+            self.initial_palette = palette.create_adjusted_copy()
+            self.base_palette = palette.create_adjusted_copy()
+            self._reset_global_sliders()
+            self._show_toast("Colores aplicados")
+            return False
+        finally:
+            self.btn_apply.set_label("Aplicar al sistema")
+            self.btn_apply.set_sensitive(True)
