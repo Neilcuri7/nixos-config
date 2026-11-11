@@ -417,7 +417,7 @@ STYLE=(home/rylai/programs/rofi.rasi home/rylai/waybar/style.css home/rylai/hypr
 **Interfaces:**
 - Consumes: `setup_sandbox`, `stub_script`; resultado de `lines` y alto de Waybar de la Tarea 0.
 
-Causa estimada: el `-theme-str` actual fija `width: 950px` y `lines: 17`. Con filas de ~39 px (padding 8 + 8, spacing 6 de `rofi.rasi`), 17 filas más la entrada y el padding suman ~750 px, más que los 768 px del monitor menos la Waybar (alto medido en la Tarea 0).
+Causa estimada: el `-theme-str` actual fija `width: 950px` y `lines: 17`. Con filas de ~39 px (padding 8 + 8, spacing 6 de `rofi.rasi`), 17 filas más la entrada y el padding suman ~750 px, más que los 768 px del monitor menos los 38 px que ocupa la Waybar (32 px de alto a 6 px del borde, medido con `hyprctl layers` en la Tarea 0).
 
 - [ ] **Step 1: Test que falla**
 
@@ -430,14 +430,14 @@ setup() {
   run "$REPO/home/rylai/scripts/hypr-cheatsheet.sh"
   [ "$status" -eq 0 ]
   grep -qF 'window { width: 56%; height: 82%; }' "$STUB_LOG"
-  grep -qF 'listview { fixed-height: true; scrollbar: true; }' "$STUB_LOG"
+  grep -qF 'listview { scrollbar: true; }' "$STUB_LOG"
   grep -qF 'element { padding: 3px 10px; }' "$STUB_LOG"
   ! grep -qE 'width: 950px|lines: 17' "$STUB_LOG"
 }
 ```
 
 - [ ] **Step 2:** `bash tests/run.sh` → FAIL.
-- [ ] **Step 3:** Sustituir el `-theme-str` por `window { width: 56%; height: 82%; } listview { fixed-height: true; scrollbar: true; } element { padding: 3px 10px; } element-text { font: "JetBrainsMono Nerd Font 10"; } prompt { font: "JetBrainsMono Nerd Font 10.5"; } entry { font: "JetBrainsMono Nerd Font 10.5"; }`, más `lines: N` en `listview` si la Tarea 0 lo exige. Ancho: 56 % de 1366 = 765 px; la fila más larga ("Anclar ventana flotante (Pin en todos los escritorios)" con su atajo, ~84 caracteres × ~8 px a 10 pt ≈ 680 px) cabe.
+- [ ] **Step 3:** Sustituir el `-theme-str` por `window { width: 56%; height: 82%; } listview { scrollbar: true; } element { padding: 3px 10px; } element-text { font: "JetBrainsMono Nerd Font 10"; } prompt { font: "JetBrainsMono Nerd Font 10.5"; } entry { font: "JetBrainsMono Nerd Font 10.5"; }` (sin `lines` ni `fixed-height`: según la Tarea 0, con el alto de ventana forzado la lista ocupa el espacio disponible y muestra la barra de desplazamiento cuando no cabe). Ancho: 56 % de 1366 = 765 px; la fila más larga ("Anclar ventana flotante (Pin en todos los escritorios)" con su atajo, ~84 caracteres × ~8 px a 10 pt ≈ 680 px) cabe.
 - [ ] **Step 4:** `bash tests/run.sh` → PASS; `bash -n …`; `nix flake check`.
 - [ ] **Step 5 (tester, máquina real):** `Super + H` y captura con `grim`: la ventana no toca los bordes, se ven el prompt y la barra de desplazamiento, y escribir "capt" no cambia el tamaño.
 - [ ] **Step 6:** Commit `fix(cheatsheet): size help window relative to the monitor`.
@@ -451,7 +451,7 @@ setup() {
 **Interfaces:**
 - Consumes (ya existen): `ColorPalette(**dict)` y `create_adjusted_copy()` (`color_engine.py`); `ControlsPanel._get_active_wallpaper()`, `_on_select_color_to_edit(btn, idx)`, `self.color_buttons`, `self.initial_palette`/`self.base_palette`/`self.current_palette`, `restore_defaults()`; `profile_manager.save_profile(path, data)`; `system_sync.apply_and_reload(data, accent_hex)`; acciones `win.apply`/`win.cancel`/`win.restore` de `window.py`.
 - Produces:
-  - `wallust_bridge.generate_base_palette(image_path: str, user_config: Path | None = None) -> dict[str, str]`: claves `background`, `foreground`, `cursor`, `color0`…`color15`, valores `#rrggbb`. `user_config` por defecto `~/.config/wallust/wallust.toml`. Lanza `subprocess.CalledProcessError` si `wallust` falla.
+  - `wallust_bridge.generate_base_palette(image_path: str, user_config: Path | None = None) -> dict[str, str]`: claves `background`, `foreground`, `cursor`, `color0`…`color15`, valores `#rrggbb` en minúsculas (Wallust los escribe en mayúsculas; se normalizan). `user_config` por defecto `~/.config/wallust/wallust.toml`. Lanza `subprocess.CalledProcessError` si `wallust` falla y `RuntimeError` si termina sin escribir el archivo de destino (Wallust sale con 0 aunque no encuentre la plantilla).
   - `ControlsPanel.load_wallpaper_original()`: lanza la generación en un hilo y carga el resultado en el editor.
   - `ControlsPanel.apply_to_system()`: ya no cierra la ventana.
   - `WallustStudioWindow.show_toast(text: str)`.
@@ -467,7 +467,7 @@ Semántica de los tres botones (las tres dejan los deslizadores globales en 0):
 
 - [ ] **Step 1: Tests que fallan**
 
-  `tests/python/test_wallust_bridge.py` (`unittest.TestCase`; añade `home/rylai/scripts/wallust-studio` a `sys.path`). Cada test crea un directorio temporal con un `wallust` falso en `PATH`: un script bash que guarda sus argumentos y una copia del archivo pasado con `-C` en el directorio temporal, extrae `target = "…"` de esa configuración y escribe allí un JSON de 19 colores fijo (o sale con 1 en el test de error).
+  `tests/python/test_wallust_bridge.py` (`unittest.TestCase`; añade `home/rylai/scripts/wallust-studio` a `sys.path`). Cada test crea un directorio temporal con un `wallust` falso en `PATH`: un script bash que guarda sus argumentos y una copia del archivo pasado con `-C` en el directorio temporal, extrae `target = "…"` de esa configuración y escribe allí el JSON `FIXTURE`. Helper del test: `make_fake_wallust(exit_code=0, write_output=True, uppercase=False)` (el `setUp` lo llama con los valores por defecto; `uppercase=True` escribe los valores de `FIXTURE` en mayúsculas, como hace Wallust real; `write_output=False` sale con 0 sin escribir nada); `read_argv()` y `read_used_config()` leen lo que guardó el falso.
 
 ```python
 FIXTURE = {"background": "#101010", "foreground": "#eeeeee", "cursor": "#eeeeee",
@@ -482,6 +482,7 @@ def test_runs_wallust_with_isolated_config_and_no_sequences(self):
     argv = self.read_argv()
     self.assertEqual(argv[:2], ["run", self.img])
     self.assertIn("-s", argv)
+    self.assertIn("-n", argv)
     cfg = argv[argv.index("-C") + 1]
     self.assertNotEqual(Path(cfg).resolve(), self.user_cfg.resolve())
 
@@ -500,6 +501,16 @@ def test_wallust_failure_raises(self):
     self.make_fake_wallust(exit_code=1)
     with self.assertRaises(subprocess.CalledProcessError):
         generate_base_palette(self.img, self.user_cfg)
+
+def test_missing_output_raises(self):
+    self.make_fake_wallust(write_output=False)
+    with self.assertRaises(RuntimeError):
+        generate_base_palette(self.img, self.user_cfg)
+
+def test_template_path_is_absolute_and_hex_lowercased(self):
+    self.make_fake_wallust(uppercase=True)
+    self.assertEqual(generate_base_palette(self.img, self.user_cfg), FIXTURE)
+    self.assertRegex(self.read_used_config(), r'template = "/[^"]+palette\.json\.tmpl"')
 ```
 
   `tests/shell/studio.bats` (guardas estáticas; el comportamiento se comprueba a mano en el Step 6):
@@ -539,12 +550,12 @@ setup() { load helpers; cd "$REPO/home/rylai/scripts/wallust-studio/ui"; }
 ```
 
 - [ ] **Step 2:** `tests/run.sh` pasa a ejecutar también Python, sin escribir `__pycache__` en el repo: `PYTHONDONTWRITEBYTECODE=1 nix shell .#nixosConfigurations.haimiya.pkgs.bats .#nixosConfigurations.haimiya.pkgs.python3 -c sh -c 'bats tests/shell && python3 -m unittest discover -s tests/python -t tests/python'`. Ejecutar `bash tests/run.sh` → FAIL (`generate_base_palette` no existe; guardas de `studio.bats` y CSS fallan).
-- [ ] **Step 3: Implementar `generate_base_palette`** en `wallust_bridge.py`: dentro de un `tempfile.TemporaryDirectory()` escribir `palette.json.tmpl` (un objeto JSON con las 19 claves, cada valor `"{{<clave>}}"`) y `wallust.toml` = las líneas de la configuración del usuario **hasta** la tabla `[templates]` (se descarta desde `[templates]` hasta la siguiente cabecera `[…]` o el final), más `[templates]\nstudio = { template = "palette.json.tmpl", target = "<tmp>/palette.json" }`; ejecutar `subprocess.run(["wallust", "run", image_path, "-C", cfg, "-s", "-q"], check=True)`; devolver `json.load` del destino. Sin dependencias nuevas (solo `json`, `tempfile`, `subprocess`, `pathlib`).
+- [ ] **Step 3: Implementar `generate_base_palette`** en `wallust_bridge.py`: dentro de un `tempfile.TemporaryDirectory()` escribir `palette.json.tmpl` (un objeto JSON con las 19 claves, cada valor `"{{<clave>}}"`) y `wallust.toml` = las líneas de la configuración del usuario **hasta** la tabla `[templates]` (se descarta desde `[templates]` hasta la siguiente cabecera `[…]` o el final), más `[templates]\nstudio = { template = "<tmp>/palette.json.tmpl", target = "<tmp>/palette.json" }` con **rutas absolutas** (Wallust resuelve una ruta relativa contra `$XDG_CONFIG_HOME/wallust/templates`, no contra el directorio de `-C`; nunca usar `-d` junto con `-C`); ejecutar `subprocess.run(["wallust", "run", image_path, "-C", cfg, "-s", "-q", "-n"], check=True)` (`-n`: no escribe en la caché real de Wallust); si el destino no existe, `raise RuntimeError("wallust no generó la paleta")`; devolver `json.load` del destino con cada valor pasado a minúsculas. Sin dependencias nuevas (solo `json`, `tempfile`, `subprocess`, `pathlib`).
 - [ ] **Step 4: Implementar la interfaz.**
   - `css_manager.py`: todos los `border-radius` a `0px` (incluidos los `9999px`); fondo de `window.background, .app-window` de `0.85` a `0.90`; borrar los dos `box-shadow`; la celda activa (`.selected-swatch`) pasa de `border: 2px solid …` + sombra a `outline: 1px solid <color12>`.
   - `controls_panel.py`:
     - Fila de botones (homogénea, 3 columnas): **Restaurar** (tooltip "Volver a los últimos colores aplicados"), **Original** (tooltip "Colores que Wallust genera del wallpaper, sin perfil guardado"), **Cancelar**; debajo, a todo el ancho, **Aplicar al sistema** (sin emoji).
-    - En el bucle de los 16 botones, un `Gtk.EventControllerFocus` por botón cuyo `enter` llama a `self._on_select_color_to_edit(self.color_buttons[i], i)` (capturando `i` por valor).
+    - En el bucle de los 16 botones, un `Gtk.EventControllerFocus` por botón cuyo `enter` llama a `self._on_select_color_to_edit(self.color_buttons[i], i)` (capturando `i` por valor). Si en la comprobación manual (Step 6) las flechas no mueven el foco entre las celdas (la Tarea 0 no pudo confirmarlo en la documentación de GTK4), añadir un `Gtk.EventControllerKey` en `self.color_grid` que con Left/Right/Up/Down haga `grab_focus()` en la celda vecina (±1, ±8, con vuelta en 0..15) y devuelva `True`.
     - `apply_to_system()`: guardar el perfil y `system_sync.apply_and_reload(...)` como hoy, dentro de `try`; si va bien, `initial_palette` y `base_palette` = `current_palette.create_adjusted_copy()`, deslizadores globales a 0 y `self.get_root().show_toast("Colores aplicados")`; si lanza una excepción, `show_toast("Error al aplicar: wallust falló")`. Borrar la llamada a `self.cancel()`.
     - `load_wallpaper_original()`: si `_get_active_wallpaper()` es `None`, `show_toast("No hay wallpaper activo")` y salir. Si no, desactivar el botón Original con la etiqueta "Generando…" y ejecutar `generate_base_palette` en un `threading.Thread(daemon=True)`; al terminar, con `GLib.idle_add`, poner `base_palette` = `current_palette` = `ColorPalette(**resultado)` (sin tocar `initial_palette`), deslizadores a 0, refrescar la matriz, la tarjeta HSL y la vista previa, y `show_toast("Colores originales cargados: pulsa Aplicar para guardarlos")`; si falla, `show_toast("No se pudieron generar los colores originales")`. En los dos casos, reactivar el botón con su etiqueta.
   - `window.py`: envolver el contenido en `Adw.ToolbarView`, con un `Adw.HeaderBar` arriba cuyo `title-widget` es `Adw.WindowTitle(title="Wallust Studio", subtitle=<basename del wallpaper o "sin wallpaper">)` (de `self.controls_panel._get_active_wallpaper()`), y el `split_view` dentro de un `Adw.ToastOverlay`. `show_toast(text)` hace `self.toast_overlay.add_toast(Adw.Toast.new(text))`. Nueva acción `win.original` → `controls_panel.load_wallpaper_original()` con atajo `<Ctrl><Shift>r`. Tamaño por defecto 880×500 sin cambios.
