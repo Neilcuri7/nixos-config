@@ -1,10 +1,26 @@
 setup() { load helpers; cd "$REPO"; }
 SH=(home/rylai/scripts/wallpaper.sh home/rylai/scripts/hypr-cheatsheet.sh home/rylai/scripts/rofi-clipboard.sh)
-STYLE=(home/rylai/programs/rofi.rasi home/rylai/waybar/style.css home/rylai/hyprland/services.nix
-       home/rylai/theme/wallust/templates/gtk-colors.css "${SH[@]}")
+STYLE=(home/rylai/hyprland/services.nix home/rylai/theme/wallust/templates/gtk-colors.css "${SH[@]}")
+SOFT=(home/rylai/programs/rofi.rasi home/rylai/waybar/style.css)
 @test "no non-zero border-radius" {
   run grep -nP 'border-radius:\s*+(?!0(px)?\s*;)' "${STYLE[@]}"
   [ "$status" -eq 1 ]
+}
+@test "rofi and waybar only use radius 0, 4px or 8px" {
+  run grep -nP 'border-radius:\s*+(?!(0|4px|8px)(\s+(0|4px|8px))*\s*;)' "${SOFT[@]}"
+  [ "$status" -eq 1 ]
+}
+@test "rofi: window 8px, inputbar top corners 8px, element 4px" {
+  f=home/rylai/programs/rofi.rasi
+  sed -n '/^window {/,/^}/p' "$f" | grep -qF 'border-radius: 8px;'
+  sed -n '/^inputbar {/,/^}/p' "$f" | grep -qF 'border-radius: 8px 8px 0 0;'
+  sed -n '/^element {/,/^}/p' "$f" | grep -qF 'border-radius: 4px;'
+}
+@test "waybar: module groups 8px, workspace buttons 4px" {
+  f=home/rylai/waybar/style.css
+  sed -n '/^\.modules-left,/,/^}/p' "$f" | grep -qF 'border-radius: 8px;'
+  sed -n '/^#workspaces button {/,/^}/p' "$f" | grep -qF 'border-radius: 4px;'
+  sed -n '/^#workspaces button\.active {/,/^}/p' "$f" | grep -qF 'border-radius: 4px;'
 }
 @test "regression guard: hyprland rounding stays 0" {
   grep -q 'rounding = 0;' home/rylai/hyprland/appearance.nix
