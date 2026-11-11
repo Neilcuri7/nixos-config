@@ -8,6 +8,7 @@
       ecc-agy = "/home/rylai/Documents/github-clones/ecc-agy.sh";
       wallust-studio = "$HOME/scripts/wallust-studio.sh";
       colors = "$HOME/scripts/wallust-studio.sh";
+      claude-y = "claude --dangerously-skip-permissions";
     };
   };
 
@@ -20,6 +21,7 @@
       ecc-agy = "/home/rylai/Documents/github-clones/ecc-agy.sh";
       wallust-studio = "$HOME/scripts/wallust-studio.sh";
       colors = "$HOME/scripts/wallust-studio.sh";
+      claude-y = "claude --dangerously-skip-permissions";
     };
     history = {
       size = 10000;
