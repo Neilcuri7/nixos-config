@@ -30,6 +30,7 @@ This project uses **NixOS Flakes** combined with **Home Manager** in a modular s
 │   ├── scripts/               # Utility scripts (wallpaper, theme-sync, converter, etc.)
 │   ├── theme/                 # SINGLE SOURCE OF TRUTH for themes (Wallust, templates)
 │   └── waybar/                # Waybar configuration and CSS styles
+├── tests/                     # bats (shell/) and unittest (python/) suites run by tests/run.sh
 └── secrets/                   # Secrets encrypted with sops-nix
 ```
 

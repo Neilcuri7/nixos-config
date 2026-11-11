@@ -84,7 +84,7 @@ set_wallpaper() {
         fi
     fi
 
-    sync_env
+    sync_env 9>&-
 }
 
 restore_wallpaper() {

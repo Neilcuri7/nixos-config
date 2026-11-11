@@ -79,7 +79,3 @@ element selected element-text {
     text-color: @accent;
     font: "JetBrainsMono Nerd Font Bold 11";
 }
-
-element selected element-icon {
-    size: 26px;
-}
