@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import subprocess
 import tempfile
 from pathlib import Path
@@ -22,13 +23,20 @@ def apply_wallust_theme(palette_json_path: str, config_path: Optional[str] = Non
     
     subprocess.run(cmd, check=True)
 
+_TEMPLATES_HEADER = re.compile(r"^\[\s*templates\s*(\]|\.)")
+_TEMPLATES_DOTTED_KEY = re.compile(r"^\s*templates\s*\.")
+
 def _config_without_templates(text: str) -> str:
     kept = []
     skipping = False
+    top_level = True
     for line in text.splitlines():
-        stripped = line.strip()
+        stripped = line.split("#", 1)[0].strip()
         if stripped.startswith("["):
-            skipping = stripped == "[templates]"
+            top_level = False
+            skipping = bool(_TEMPLATES_HEADER.match(stripped))
+        elif top_level and _TEMPLATES_DOTTED_KEY.match(stripped):
+            continue
         if not skipping:
             kept.append(line)
     return "\n".join(kept)

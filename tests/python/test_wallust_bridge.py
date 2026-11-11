@@ -99,6 +99,29 @@ class GenerateBasePaletteTest(unittest.TestCase):
         self.assertEqual(generate_base_palette(self.img, self.user_cfg), FIXTURE)
         self.assertRegex(self.read_used_config(), r'template = "/[^"]+palette\.json\.tmpl"')
 
+    def _assert_templates_stripped(self, user_toml):
+        self.user_cfg.write_text(user_toml)
+        generate_base_palette(self.img, self.user_cfg)
+        used = self.read_used_config()
+        self.assertIn('backend = "fastresize"', used)
+        self.assertNotIn("current-theme.conf", used)
+        self.assertNotIn("kitty-colors.conf", used)
+
+    def test_strips_templates_subtable(self):
+        self._assert_templates_stripped(
+            'backend = "fastresize"\n\n[templates.kitty]\ntemplate = "kitty-colors.conf"\n'
+            'target = "~/.config/kitty/current-theme.conf"\n')
+
+    def test_strips_templates_header_with_comment(self):
+        self._assert_templates_stripped(
+            'backend = "fastresize"\n\n[templates] # user targets\n'
+            'kitty = { template = "kitty-colors.conf", target = "~/.config/kitty/current-theme.conf" }\n')
+
+    def test_strips_top_level_dotted_templates_keys(self):
+        self._assert_templates_stripped(
+            'backend = "fastresize"\n'
+            'templates.kitty = { template = "kitty-colors.conf", target = "~/.config/kitty/current-theme.conf" }\n')
+
 
 if __name__ == "__main__":
     unittest.main()
