@@ -41,7 +41,6 @@ KEYBINDINGS="󰌌 ─── [ APLICACIONES Y LANZADORES ] ───
 󰄄 Super + S                 : Captura de pantalla de área (Grim + Slurp + Swappy)
 󰄄 Super + =                 : Captura de pantalla completa (Grim + Swappy)
 󰈊 Super + Shift + O         : Selector de color (Hyprpicker)
-󰔎 Super + Shift + T         : Menú de temas (Nord, Catppuccin, Gruvbox, etc.)
 󰊴 Super + Shift + G         : Activar/Desactivar Gamemode
 󰌾 Super + Shift + L         : Bloquear pantalla (Swaylock)
 󰐥 Super + Shift + X         : Menú de apagado (Wlogout)

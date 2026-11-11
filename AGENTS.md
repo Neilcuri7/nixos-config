@@ -27,8 +27,8 @@ This project uses **NixOS Flakes** combined with **Home Manager** in a modular s
 │   ├── default.nix            # Main user definition, session variables, and MIME associations
 │   ├── hyprland/              # Hyprland configuration (keybinds, autostart, appearance, services)
 │   ├── programs/              # User applications (kitty, yazi, micro, rofi, shell, starship, etc.)
-│   ├── scripts/               # Utility scripts (theme-switcher, wallpaper, theme-sync, converter, etc.)
-│   ├── theme/                 # SINGLE SOURCE OF TRUTH for themes (Wallust, themes.json, templates)
+│   ├── scripts/               # Utility scripts (wallpaper, theme-sync, converter, etc.)
+│   ├── theme/                 # SINGLE SOURCE OF TRUTH for themes (Wallust, templates)
 │   └── waybar/                # Waybar configuration and CSS styles
 └── secrets/                   # Secrets encrypted with sops-nix
 ```
@@ -44,9 +44,8 @@ This project uses **NixOS Flakes** combined with **Home Manager** in a modular s
 1. **Single Color Templates**:
    - All application color templates reside in [`home/rylai/theme/wallust/templates/`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/theme/wallust/templates/).
    - If color support is added for a new application (e.g., a new terminal or document reader), it must be added as a template in that directory and mapped in [`wallust.toml`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/theme/wallust/wallust.toml).
-2. **Fixed Themes / Static Palettes**:
-   - Declared exclusively in [`home/rylai/theme/themes.json`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/theme/themes.json) following the Base16/Base24 specification.
-   - `theme-switcher.sh` automatically transforms palettes from `themes.json` into the `wallust cs` format to render **the exact same templates**.
+2. **No fixed themes**:
+   - The palette always comes from the current wallpaper through Wallust, or from a saved Wallust Studio profile for that image (`~/.local/state/wallust-studio/profiles/<sha256 of the image file>.json`).
 3. **Reloading Visual Components**:
    - Any script or tool that applies a theme or wallpaper must delegate component reloading and folder icon updates to [`home/rylai/scripts/theme-sync.sh`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/scripts/theme-sync.sh).
 
@@ -96,3 +95,7 @@ Before completing any task or delivering changes to the user, the agent must run
    ```
 3. **Formatting and Reference Verification**:
    - Ensure no references remain to deleted files or paths (such as `matugen`, `desktop-tools.nix`, or `converter-shell.nix`).
+4. **Shell Test Suite**:
+   ```bash
+   bash tests/run.sh
+   ```
