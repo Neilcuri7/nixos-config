@@ -55,7 +55,7 @@ This project uses **NixOS Flakes** combined with **Home Manager** in a modular s
    | Token | Valor | Dónde |
    |---|---|---|
    | Radio | `0` | todo `border-radius` en CSS/Nix; Hyprland `rounding = 0` |
-   | Radio suave | exterior `8px`, interior `4px` | solo Rofi (`window`, `inputbar` `8px 8px 0 0`, `element`) y Waybar (grupos de módulos, botones de workspace) |
+   | Radio suave | exterior `16px`, interior `8px` | solo Rofi (`window`, `inputbar` `16px 16px 0 0`, `element`) y Waybar (grupos de módulos, botones de workspace) |
    | Borde | ventanas Hyprland `2px`; superficies superpuestas `1px` | `appearance.nix`; Rofi, SwayNC, wlogout, Wallust Studio |
    | Opacidad de superficie | `0.90` (en RASI `e6`) | fondo de Rofi, `kitty background_opacity`, `@surface` de Waybar, `cc-bg`/`noti-bg` de SwayNC, fondo de ventana de Wallust Studio |
    | Tinte de entrada | `color4` a `0.12` | `input-bg` de Rofi |
