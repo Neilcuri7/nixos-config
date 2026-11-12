@@ -27,9 +27,10 @@ This project uses **NixOS Flakes** combined with **Home Manager** in a modular s
 │   ├── default.nix            # Main user definition, session variables, and MIME associations
 │   ├── hyprland/              # Hyprland configuration (keybinds, autostart, appearance, services)
 │   ├── programs/              # User applications (kitty, yazi, micro, rofi, shell, starship, etc.)
-│   ├── scripts/               # Utility scripts (theme-switcher, wallpaper, theme-sync, converter, etc.)
-│   ├── theme/                 # SINGLE SOURCE OF TRUTH for themes (Wallust, themes.json, templates)
+│   ├── scripts/               # Utility scripts (wallpaper, theme-sync, converter, etc.)
+│   ├── theme/                 # SINGLE SOURCE OF TRUTH for themes (Wallust, templates)
 │   └── waybar/                # Waybar configuration and CSS styles
+├── docs/                      # Documentation of system features and architecture
 └── secrets/                   # Secrets encrypted with sops-nix
 ```
 
@@ -44,11 +45,25 @@ This project uses **NixOS Flakes** combined with **Home Manager** in a modular s
 1. **Single Color Templates**:
    - All application color templates reside in [`home/rylai/theme/wallust/templates/`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/theme/wallust/templates/).
    - If color support is added for a new application (e.g., a new terminal or document reader), it must be added as a template in that directory and mapped in [`wallust.toml`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/theme/wallust/wallust.toml).
-2. **Fixed Themes / Static Palettes**:
-   - Declared exclusively in [`home/rylai/theme/themes.json`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/theme/themes.json) following the Base16/Base24 specification.
-   - `theme-switcher.sh` automatically transforms palettes from `themes.json` into the `wallust cs` format to render **the exact same templates**.
+2. **No fixed themes**:
+   - The palette always comes from the current wallpaper through Wallust, or from a saved Wallust Studio profile for that image (`~/.local/state/wallust-studio/profiles/<sha256 of the image file>.json`).
 3. **Reloading Visual Components**:
    - Any script or tool that applies a theme or wallpaper must delegate component reloading and folder icon updates to [`home/rylai/scripts/theme-sync.sh`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/scripts/theme-sync.sh).
+4. **Style tokens**:
+   - Every surface uses these tokens across the desktop interface.
+
+   | Token | Valor | Dónde |
+   |---|---|---|
+   | Radio | `0` | todo `border-radius` en CSS/Nix; Hyprland `rounding = 0` |
+   | Radio suave | exterior `16px`, interior `8px` | Rofi (`window`, `inputbar` `16px 16px 0 0`, `element`), Waybar (grupos de módulos, botones de workspace), Wallust Studio (`window`, `headerbar`, tarjetas y botones) y SwayNC (`.control-center`, `.notification`, widgets interiores) |
+   | Borde | ventanas Hyprland `2px`; superficies superpuestas `1px` | `appearance.nix`; Rofi, SwayNC, wlogout, Wallust Studio |
+   | Opacidad de superficie | `0.90` (SwayNC `0.80`) | fondo de Rofi, `kitty background_opacity`, `@surface` de Waybar, fondo de ventana de Wallust Studio; `cc-bg`/`noti-bg` de SwayNC a `0.80` |
+   | Tinte de entrada | `color4` a `0.12` | `input-bg` de Rofi |
+   | Tinte de selección | `color4` a `0.20` | `selected-accent` de Rofi |
+   | Tinte de borde | `color4` a `0.35` | `border-col` de Rofi, Wallust Studio, SwayNC |
+   | Acento | `color12` | texto y borde del elemento activo |
+
+   - Nested SwayNC cards (`alpha(@noti-bg, 0.6/0.8)`) keep their extra transparency on purpose.
 
 ---
 

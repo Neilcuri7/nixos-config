@@ -1,3 +1,4 @@
+import os
 import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
@@ -13,6 +14,7 @@ class WallustStudioWindow(Adw.ApplicationWindow):
         super().__init__(*args, **kwargs)
         self.set_title("Wallust Studio")
         self.set_default_size(880, 500)
+        self.add_css_class("app-window")
 
         # Main Split Layout
         self.split_view = Adw.NavigationSplitView()
@@ -34,8 +36,25 @@ class WallustStudioWindow(Adw.ApplicationWindow):
         content_page = Adw.NavigationPage.new(self.preview_panel, "Preview")
         self.split_view.set_content(content_page)
 
-        self.set_content(self.split_view)
+        # Cabecera con el wallpaper activo
+        wallpaper = self.controls_panel._get_active_wallpaper()
+        subtitle = os.path.basename(wallpaper) if wallpaper else "sin wallpaper"
+        header = Adw.HeaderBar()
+        header.set_title_widget(Adw.WindowTitle(title="Wallust Studio", subtitle=subtitle))
+
+        # Toasts sobre el contenido
+        self.toast_overlay = Adw.ToastOverlay()
+        self.toast_overlay.set_child(self.split_view)
+
+        toolbar_view = Adw.ToolbarView()
+        toolbar_view.add_top_bar(header)
+        toolbar_view.set_content(self.toast_overlay)
+
+        self.set_content(toolbar_view)
         self.setup_shortcuts()
+
+    def show_toast(self, text: str):
+        self.toast_overlay.add_toast(Adw.Toast.new(text))
 
     def setup_shortcuts(self):
         # Apply (Ctrl+S / Enter)
@@ -56,6 +75,12 @@ class WallustStudioWindow(Adw.ApplicationWindow):
         self.add_action(action_restore)
         self.get_application().set_accels_for_action("win.restore", ["<Ctrl>r"])
 
+        # Original del wallpaper (Ctrl+Shift+R)
+        action_original = Gio.SimpleAction.new("original", None)
+        action_original.connect("activate", self.on_original)
+        self.add_action(action_original)
+        self.get_application().set_accels_for_action("win.original", ["<Ctrl><Shift>r"])
+
     def on_apply(self, action, param):
         self.controls_panel.apply_to_system()
 
@@ -64,3 +89,6 @@ class WallustStudioWindow(Adw.ApplicationWindow):
 
     def on_restore(self, action, param):
         self.controls_panel.restore_defaults()
+
+    def on_original(self, action, param):
+        self.controls_panel.load_wallpaper_original()

@@ -48,7 +48,6 @@ in
       (mkBind "${modifier} + SHIFT + F" "hl.dsp.window.float({ action = \"toggle\" })")
       (mkBind "${modifier} + SHIFT + L" "hl.dsp.exec_cmd(\"swaylock\")")
       (mkBind "${modifier} + SHIFT + X" "hl.dsp.exec_cmd(\"wlogout\")")
-      (mkBind "${modifier} + SHIFT + T" "hl.dsp.exec_cmd(${lib.strings.escapeNixString "${config.home.homeDirectory}/scripts/theme-switcher.sh menu"})")
       (mkBind "${modifier} + SHIFT + O" "hl.dsp.exec_cmd(\"hyprpicker -a -f hex\")")
       (mkBind "${modifier} + SHIFT + G" "hl.dsp.exec_cmd(${lib.strings.escapeNixString "${config.home.homeDirectory}/scripts/gamemode.sh"})")
       (mkBind "${modifier} + SHIFT + I" "hl.dsp.layout(\"togglesplit\")")

@@ -1,7 +1,7 @@
-@define-color cc-bg rgba({{color0 | red}}, {{color0 | green}}, {{color0 | blue}}, 0.88);
-@define-color noti-bg rgba({{color0 | red}}, {{color0 | green}}, {{color0 | blue}}, 0.92);
+@define-color cc-bg rgba({{color0 | red}}, {{color0 | green}}, {{color0 | blue}}, 0.80);
+@define-color noti-bg rgba({{color0 | red}}, {{color0 | green}}, {{color0 | blue}}, 0.80);
 @define-color noti-bg-hover rgba({{color4 | red}}, {{color4 | green}}, {{color4 | blue}}, 0.22);
 @define-color text-color {{foreground}};
 @define-color text-color-disabled rgba({{color7 | red}}, {{color7 | green}}, {{color7 | blue}}, 0.45);
-@define-color border-color rgba({{color4 | red}}, {{color4 | green}}, {{color4 | blue}}, 0.40);
+@define-color border-color rgba({{color4 | red}}, {{color4 | green}}, {{color4 | blue}}, 0.35);
 @define-color accent-color {{color12}};

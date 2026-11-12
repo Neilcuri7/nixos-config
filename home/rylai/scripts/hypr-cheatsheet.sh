@@ -41,7 +41,6 @@ KEYBINDINGS="󰌌 ─── [ APLICACIONES Y LANZADORES ] ───
 󰄄 Super + S                 : Captura de pantalla de área (Grim + Slurp + Swappy)
 󰄄 Super + =                 : Captura de pantalla completa (Grim + Swappy)
 󰈊 Super + Shift + O         : Selector de color (Hyprpicker)
-󰔎 Super + Shift + T         : Menú de temas (Nord, Catppuccin, Gruvbox, etc.)
 󰊴 Super + Shift + G         : Activar/Desactivar Gamemode
 󰌾 Super + Shift + L         : Bloquear pantalla (Swaylock)
 󰐥 Super + Shift + X         : Menú de apagado (Wlogout)
@@ -51,7 +50,7 @@ if command -v rofi >/dev/null 2>&1; then
     echo "$KEYBINDINGS" | rofi -dmenu \
         -p "󰌽 Atajos de Teclado" \
         -theme "$ROFI_CONFIG" \
-        -theme-str 'window { width: 950px; } listview { lines: 17; } element-text { font: "JetBrainsMono Nerd Font 10"; } prompt { font: "JetBrainsMono Nerd Font 10.5"; } entry { font: "JetBrainsMono Nerd Font 10.5"; }'
+        -theme-str 'window { width: 56%; height: 82%; } listview { scrollbar: true; } element { padding: 3px 10px; } element-text { font: "JetBrainsMono Nerd Font 10"; } prompt { font: "JetBrainsMono Nerd Font 10.5"; } entry { font: "JetBrainsMono Nerd Font 10.5"; }'
 else
     echo "$KEYBINDINGS"
 fi

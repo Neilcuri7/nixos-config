@@ -10,24 +10,24 @@
 
 window {
     background-color: @background;
-    border: 2px;
+    border: 1px;
     border-color: @border-col;
     border-radius: 16px;
-    width: 600px;
-    padding: 16px;
+    width: 520px;
+    padding: 0;
 }
 
 mainbox {
-    spacing: 12px;
+    spacing: 0;
     children: [ inputbar, listview ];
 }
 
 inputbar {
     background-color: @input-bg;
-    border: 1px;
+    border: 0 0 1px 0;
     border-color: @border-col;
-    border-radius: 12px;
-    padding: 8px 14px;
+    border-radius: 16px 16px 0 0;
+    padding: 14px 16px;
     children: [ prompt, entry ];
 }
 
@@ -47,13 +47,14 @@ listview {
     lines: 8;
     columns: 1;
     fixed-height: false;
-    spacing: 6px;
+    padding: 8px;
+    spacing: 2px;
     cycle: true;
 }
 
 element {
-    padding: 8px 12px;
-    border-radius: 10px;
+    padding: 10px;
+    border-radius: 8px;
     spacing: 12px;
     background-color: transparent;
     children: [ element-icon, element-text ];
@@ -77,8 +78,4 @@ element selected {
 element selected element-text {
     text-color: @accent;
     font: "JetBrainsMono Nerd Font Bold 11";
-}
-
-element selected element-icon {
-    size: 26px;
 }

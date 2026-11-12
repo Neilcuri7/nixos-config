@@ -31,7 +31,6 @@ in
               hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
               hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
               hl.exec_cmd("${config.home.homeDirectory}/scripts/wallpaper.sh --restore")
-              hl.exec_cmd("${config.home.homeDirectory}/scripts/theme-switcher.sh init")
               hl.exec_cmd("swaync")
               hl.exec_cmd("hypridle")
               hl.exec_cmd("wl-paste --type text --watch cliphist store")

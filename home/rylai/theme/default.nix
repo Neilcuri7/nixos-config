@@ -73,11 +73,6 @@ in
   };
 
   # Archivos y Plantillas de Wallust
-  home.file.".config/themes.json" = {
-    source = ./themes.json;
-    force = true;
-  };
-
   home.file.".config/wallust" = {
     source = ./wallust;
     recursive = true;

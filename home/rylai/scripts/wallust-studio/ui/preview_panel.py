@@ -212,7 +212,7 @@ class PreviewPanel(Gtk.Box):
         items = [
             ("󰉋", "nixos-config", True),
             ("󰉋", "wallpapers", True),
-            ("󰈔", "themes.json", False),
+            ("󰈔", "wallust.toml", False),
         ]
 
         for glyph, name, is_folder in items:

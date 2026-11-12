@@ -91,7 +91,7 @@ in
         match.class = "^(?i)(.*walluststudio.*)$";
         float = true;
         center = true;
-        size = "880 500";
+        size = "880 550";
       }
     ];
   };

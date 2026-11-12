@@ -30,7 +30,7 @@
     services.tumbler.enable = true; # Para miniatura de imágenes
 
     environment.systemPackages = with pkgs; [
-      swaybg
+      awww
       libnotify
       imagemagick
       jq
