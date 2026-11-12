@@ -55,12 +55,12 @@ This project uses **NixOS Flakes** combined with **Home Manager** in a modular s
    | Token | Valor | Dónde |
    |---|---|---|
    | Radio | `0` | todo `border-radius` en CSS/Nix; Hyprland `rounding = 0` |
-   | Radio suave | exterior `16px`, interior `8px` | solo Rofi (`window`, `inputbar` `16px 16px 0 0`, `element`) y Waybar (grupos de módulos, botones de workspace) |
+   | Radio suave | exterior `16px`, interior `8px` | Rofi (`window`, `inputbar` `16px 16px 0 0`, `element`), Waybar (grupos de módulos, botones de workspace) y Wallust Studio (`window`, `headerbar`, tarjetas y botones) |
    | Borde | ventanas Hyprland `2px`; superficies superpuestas `1px` | `appearance.nix`; Rofi, SwayNC, wlogout, Wallust Studio |
    | Opacidad de superficie | `0.90` (en RASI `e6`) | fondo de Rofi, `kitty background_opacity`, `@surface` de Waybar, `cc-bg`/`noti-bg` de SwayNC, fondo de ventana de Wallust Studio |
    | Tinte de entrada | `color4` a `0.12` | `input-bg` de Rofi |
    | Tinte de selección | `color4` a `0.20` | `selected-accent` de Rofi |
-   | Tinte de borde | `color4` a `0.35` | `border-col` de Rofi |
+   | Tinte de borde | `color4` a `0.35` | `border-col` de Rofi, Wallust Studio |
    | Acento | `color12` | texto y borde del elemento activo |
 
    - Nested SwayNC cards (`alpha(@noti-bg, 0.6/0.8)`) keep their extra transparency on purpose.

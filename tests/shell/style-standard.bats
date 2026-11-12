@@ -1,13 +1,13 @@
 setup() { load helpers; cd "$REPO"; }
 SH=(home/rylai/scripts/wallpaper.sh home/rylai/scripts/hypr-cheatsheet.sh home/rylai/scripts/rofi-clipboard.sh)
 STYLE=(home/rylai/hyprland/services.nix home/rylai/theme/wallust/templates/gtk-colors.css "${SH[@]}")
-SOFT=(home/rylai/programs/rofi.rasi home/rylai/waybar/style.css)
+SOFT=(home/rylai/programs/rofi.rasi home/rylai/waybar/style.css home/rylai/scripts/wallust-studio/ui/css_manager.py)
 @test "no non-zero border-radius" {
   run grep -nP 'border-radius:\s*+(?!0(px)?\s*;)' "${STYLE[@]}"
   [ "$status" -eq 1 ]
 }
-@test "rofi and waybar only use radius 0, 8px or 16px" {
-  run grep -nP 'border-radius:\s*+(?!(0|8px|16px)(\s+(0|8px|16px))*\s*;)' "${SOFT[@]}"
+@test "rofi, waybar and studio only use radius 0, 8px or 16px" {
+  run grep -nP 'border-radius:\s*+(?!(0(px)?|8px|16px)(\s+(0(px)?|8px|16px))*\s*;)' "${SOFT[@]}"
   [ "$status" -eq 1 ]
 }
 @test "rofi: window 16px, inputbar top corners 16px, element 8px" {
@@ -50,10 +50,12 @@ SOFT=(home/rylai/programs/rofi.rasi home/rylai/waybar/style.css)
   run grep -nE '(background-color|text-color|border(-color|-radius)?)\s*:' "${SH[@]}"
   [ "$status" -eq 1 ]
 }
-@test "studio css: no radius, no shadow, window at 0.90" {
+@test "studio css: soft radius 8px and 16px, border matches rofi, window at 0.90" {
   f=home/rylai/scripts/wallust-studio/ui/css_manager.py
-  run grep -nP 'border-radius:\s*+(?!0(px)?\s*;)' "$f"
-  [ "$status" -eq 1 ]
   ! grep -q 'box-shadow' "$f"
   sed -n '/window.background, .app-window/,/}}/p' "$f" | grep -qF '_hex_to_rgba_css(bg, 0.90)'
+  sed -n '/window.background, .app-window/,/}}/p' "$f" | grep -qF '_hex_to_rgba_css(c4, 0.35)'
+  sed -n '/window.background, .app-window/,/}}/p' "$f" | grep -qF 'border-radius: 16px;'
+  sed -n '/headerbar {/,/}}/p' "$f" | grep -qF 'border-radius: 16px 16px 0 0;'
+  sed -n '/\.controls-sidebar {/,/}}/p' "$f" | grep -qF 'border-radius: 8px;'
 }

@@ -14,6 +14,7 @@ class WallustStudioWindow(Adw.ApplicationWindow):
         super().__init__(*args, **kwargs)
         self.set_title("Wallust Studio")
         self.set_default_size(880, 500)
+        self.add_css_class("app-window")
 
         # Main Split Layout
         self.split_view = Adw.NavigationSplitView()

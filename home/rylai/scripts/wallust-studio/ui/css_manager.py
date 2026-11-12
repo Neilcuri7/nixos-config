@@ -87,14 +87,22 @@ class CSSManager:
         window.background, .app-window {{
             background-color: {_hex_to_rgba_css(bg, 0.90)};
             color: {fg};
+            border: 1px solid {_hex_to_rgba_css(c4, 0.35)};
+            border-radius: 16px;
+        }}
+
+        headerbar {{
+            background-color: transparent;
+            border-radius: 16px 16px 0 0;
+            border-bottom: 1px solid {_hex_to_rgba_css(c4, 0.35)};
         }}
 
         /* Panel Lateral de Controles (Izquierdo) */
         .controls-sidebar {{
             background-color: {_hex_to_rgba_css(c0, 0.85)};
-            border-radius: 0px;
+            border-radius: 8px;
             padding: 12px;
-            border: 1px solid {_hex_to_rgba_css(c8, 0.40)};
+            border: 1px solid {_hex_to_rgba_css(c4, 0.35)};
         }}
 
         .section-header-title {{
@@ -114,9 +122,9 @@ class CSSManager:
 
         .slider-section-card {{
             background-color: {_hex_to_rgba_css(bg, 0.70)};
-            border-radius: 0px;
+            border-radius: 8px;
             padding: 8px 10px;
-            border: 1px solid {_hex_to_rgba_css(c8, 0.30)};
+            border: 1px solid {_hex_to_rgba_css(c4, 0.35)};
         }}
 
         .slider-label {{
@@ -133,7 +141,7 @@ class CSSManager:
         }}
 
         .micro-reset-btn {{
-            border-radius: 0px;
+            border-radius: 8px;
             background-color: {_hex_to_rgba_css(c8, 0.35)};
             color: {fg};
             padding: 2px 4px;
@@ -148,13 +156,13 @@ class CSSManager:
         /* Matriz de 16 Colores ANSI */
         .swatch-grid-card {{
             background-color: {_hex_to_rgba_css(bg, 0.70)};
-            border-radius: 0px;
+            border-radius: 8px;
             padding: 8px;
-            border: 1px solid {_hex_to_rgba_css(c8, 0.30)};
+            border: 1px solid {_hex_to_rgba_css(c4, 0.35)};
         }}
 
         .ansi-swatch-btn {{
-            border-radius: 0px;
+            border-radius: 8px;
             min-height: 28px;
             min-width: 32px;
             border: 1px solid rgba(255, 255, 255, 0.10);
@@ -170,20 +178,20 @@ class CSSManager:
 
         .hsl-adjuster-card {{
             background-color: {_hex_to_rgba_css(c0, 0.60)};
-            border-radius: 0px;
+            border-radius: 8px;
             padding: 6px 10px;
-            border: 1px solid {_hex_to_rgba_css(c8, 0.25)};
+            border: 1px solid {_hex_to_rgba_css(c4, 0.35)};
         }}
 
         /* Botones de Acción Inferiores */
         .btn-pill-secondary {{
             background-color: {_hex_to_rgba_css(c8, 0.35)};
             color: {fg};
-            border-radius: 0px;
+            border-radius: 8px;
             padding: 6px 12px;
             font-family: 'Inter', sans-serif;
             font-size: 11px;
-            border: 1px solid {_hex_to_rgba_css(c8, 0.40)};
+            border: 1px solid {_hex_to_rgba_css(c4, 0.35)};
         }}
         .btn-pill-secondary:hover {{
             background-color: {_hex_to_rgba_css(c8, 0.55)};
@@ -192,7 +200,7 @@ class CSSManager:
         .btn-pill-primary {{
             background-color: {c4};
             color: {bg};
-            border-radius: 0px;
+            border-radius: 8px;
             padding: 8px 16px;
             font-family: 'Inter', sans-serif;
             font-size: 12px;
@@ -207,9 +215,9 @@ class CSSManager:
         /* ================= PREVISUALIZACIÓN ALL-IN-ONE ================= */
         .preview-canvas-card {{
             background-color: {_hex_to_rgba_css(c0, 0.85)};
-            border-radius: 0px;
+            border-radius: 8px;
             padding: 12px;
-            border: 1px solid {_hex_to_rgba_css(c8, 0.40)};
+            border: 1px solid {_hex_to_rgba_css(c4, 0.35)};
         }}
 
         /* 1. Mini-Waybar */
@@ -220,7 +228,7 @@ class CSSManager:
         .waybar-island {{
             background-color: {_hex_to_rgba_css(c0, 0.90)};
             border: 1px solid {_hex_to_rgba_css(c12, 0.35)};
-            border-radius: 0px;
+            border-radius: 16px;
             padding: 2px 8px;
         }}
         .ws-btn {{
@@ -233,7 +241,7 @@ class CSSManager:
         .ws-btn.active {{
             color: {c12};
             background-color: {_hex_to_rgba_css(c12, 0.20)};
-            border-radius: 0px;
+            border-radius: 8px;
         }}
         .waybar-mod {{
             font-family: 'JetBrainsMono Nerd Font', monospace;
@@ -259,7 +267,7 @@ class CSSManager:
         /* 2. Mini-Terminal (Kitty) */
         .term-window-card {{
             background-color: {bg};
-            border-radius: 0px;
+            border-radius: 0;
             border: 2px solid {c4};
         }}
 
@@ -268,7 +276,7 @@ class CSSManager:
             padding: 5px 10px;
             border-bottom: 1px solid {_hex_to_rgba_css(c8, 0.35)};
         }}
-        .term-dot {{ border-radius: 0px; min-width: 8px; min-height: 8px; }}
+        .term-dot {{ border-radius: 0; min-width: 8px; min-height: 8px; }}
         .term-dot-red {{ background-color: {c1}; }}
         .term-dot-yellow {{ background-color: {c3}; }}
         .term-dot-green {{ background-color: {c2}; }}
@@ -292,7 +300,7 @@ class CSSManager:
 
         .code-syntax-box {{
             background-color: {_hex_to_rgba_css(c0, 0.70)};
-            border-radius: 0px;
+            border-radius: 0;
             padding: 6px 10px;
             border: 1px solid {_hex_to_rgba_css(c8, 0.30)};
         }}
@@ -302,13 +310,13 @@ class CSSManager:
             font-size: 9px;
             font-weight: bold;
             padding: 2px;
-            border-radius: 0px;
+            border-radius: 0;
         }}
 
         /* 3. Mini-Thunar (GTK4) */
         .thunar-shell-card {{
             background-color: {bg};
-            border-radius: 0px;
+            border-radius: 0;
             border: 1px solid {_hex_to_rgba_css(c8, 0.40)};
         }}
         .thunar-sidebar {{
@@ -318,7 +326,7 @@ class CSSManager:
         }}
         .thunar-place-item {{
             padding: 4px 8px;
-            border-radius: 0px;
+            border-radius: 0;
             font-family: 'Inter', sans-serif;
             font-size: 11px;
             color: {c7};
@@ -331,7 +339,7 @@ class CSSManager:
 
         .thunar-folder-card {{
             background-color: {c0};
-            border-radius: 0px;
+            border-radius: 8px;
             padding: 6px 8px;
             border: 1px solid {_hex_to_rgba_css(c8, 0.30)};
         }}
