@@ -1,12 +1,12 @@
 setup() { load helpers; cd "$REPO"; }
 SH=(home/rylai/scripts/wallpaper.sh home/rylai/scripts/hypr-cheatsheet.sh home/rylai/scripts/rofi-clipboard.sh)
-STYLE=(home/rylai/hyprland/services.nix home/rylai/theme/wallust/templates/gtk-colors.css "${SH[@]}")
-SOFT=(home/rylai/programs/rofi.rasi home/rylai/waybar/style.css home/rylai/scripts/wallust-studio/ui/css_manager.py)
+STYLE=(home/rylai/theme/wallust/templates/gtk-colors.css "${SH[@]}")
+SOFT=(home/rylai/programs/rofi.rasi home/rylai/waybar/style.css home/rylai/scripts/wallust-studio/ui/css_manager.py home/rylai/hyprland/services.nix)
 @test "no non-zero border-radius" {
   run grep -nP 'border-radius:\s*+(?!0(px)?\s*;)' "${STYLE[@]}"
   [ "$status" -eq 1 ]
 }
-@test "rofi, waybar and studio only use radius 0, 8px or 16px" {
+@test "rofi, waybar, studio and swaync only use radius 0, 8px or 16px" {
   run grep -nP 'border-radius:\s*+(?!(0(px)?|8px|16px)(\s+(0(px)?|8px|16px))*\s*;)' "${SOFT[@]}"
   [ "$status" -eq 1 ]
 }
@@ -36,11 +36,20 @@ SOFT=(home/rylai/programs/rofi.rasi home/rylai/waybar/style.css home/rylai/scrip
 @test "kitty opacity is 0.90" {
   grep -qF 'background_opacity = "0.90"' home/rylai/programs/kitty.nix
 }
-@test "swaync surfaces are 0.90 and not re-alpha'd" {
+@test "swaync surfaces are 0.80 and not re-alpha'd" {
   f=home/rylai/theme/wallust/templates/swaync-colors.css
-  grep -qE '^@define-color cc-bg .*0\.90\);' "$f"
-  grep -qE '^@define-color noti-bg .*0\.90\);' "$f"
+  grep -qE '^@define-color cc-bg .*0\.80\);' "$f"
+  grep -qE '^@define-color noti-bg .*0\.80\);' "$f"
   ! grep -qF 'alpha(@cc-bg' home/rylai/hyprland/services.nix
+}
+@test "swaync: control-center 16px, notification 16px, widgets 8px" {
+  f=home/rylai/hyprland/services.nix
+  sed -n '/^\s*\.control-center {/,/}/p' "$f" | grep -qF 'border-radius: 16px;'
+  sed -n '/^\s*\.notification {/,/}/p' "$f" | grep -qF 'border-radius: 16px;'
+  sed -n '/^\s*\.widget-mpris {/,/}/p' "$f" | grep -qF 'border-radius: 8px;'
+}
+@test "wlogout retains radius 0" {
+  sed -n '/programs.wlogout = {/,/services.swaync = {/p' home/rylai/hyprland/services.nix | grep -q 'border-radius: 0;'
 }
 @test "waybar surface is 0.90 only" {
   grep -qF 'alpha(@surface, 0.90)' home/rylai/waybar/style.css

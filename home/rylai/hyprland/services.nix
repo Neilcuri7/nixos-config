@@ -99,7 +99,7 @@
       .control-center {
         background: @cc-bg;
         border: 1px solid @border-color;
-        border-radius: 0;
+        border-radius: 16px;
         padding: 12px;
       }
 
@@ -119,7 +119,7 @@
       .notification {
         background: @noti-bg;
         border: 1px solid alpha(@border-color, 0.4);
-        border-radius: 0;
+        border-radius: 16px;
         padding: 10px;
         transition: all 0.2s ease-in-out;
       }
@@ -140,7 +140,7 @@
       .notification-action {
         color: @text-color;
         border: 1px solid @border-color;
-        border-radius: 0;
+        border-radius: 8px;
         background: alpha(@noti-bg-hover, 0.8);
       }
 
@@ -150,7 +150,7 @@
 
       .close-button {
         color: @text-color;
-        border-radius: 0;
+        border-radius: 8px;
         background: transparent;
       }
 
@@ -168,7 +168,7 @@
       .widget-title > button {
         color: @text-color;
         border: 1px solid alpha(@border-color, 0.5);
-        border-radius: 0;
+        border-radius: 8px;
         padding: 4px 8px;
         background: alpha(@noti-bg, 0.6);
       }
@@ -180,14 +180,14 @@
 
       .widget-dnd {
         margin: 6px;
-        border-radius: 0;
+        border-radius: 8px;
         background: alpha(@noti-bg, 0.6);
         color: @text-color;
         padding: 6px 10px;
       }
 
       .widget-dnd > switch {
-        border-radius: 0;
+        border-radius: 8px;
         background: alpha(@noti-bg-hover, 0.8);
         border: 1px solid alpha(@border-color, 0.5);
       }
@@ -199,7 +199,7 @@
       .widget-mpris {
         background: alpha(@noti-bg, 0.8);
         border: 1px solid alpha(@border-color, 0.3);
-        border-radius: 0;
+        border-radius: 8px;
         padding: 10px;
         margin: 6px;
         color: @text-color;
@@ -209,7 +209,7 @@
       .widget-backlight {
         background: alpha(@noti-bg, 0.6);
         border: 1px solid alpha(@border-color, 0.25);
-        border-radius: 0;
+        border-radius: 8px;
         padding: 8px;
         margin: 6px;
         color: @text-color;
