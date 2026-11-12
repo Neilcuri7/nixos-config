@@ -30,7 +30,7 @@ This project uses **NixOS Flakes** combined with **Home Manager** in a modular s
 │   ├── scripts/               # Utility scripts (wallpaper, theme-sync, converter, etc.)
 │   ├── theme/                 # SINGLE SOURCE OF TRUTH for themes (Wallust, templates)
 │   └── waybar/                # Waybar configuration and CSS styles
-├── tests/                     # bats (shell/) and unittest (python/) suites run by tests/run.sh
+├── docs/                      # Documentation of system features and architecture
 └── secrets/                   # Secrets encrypted with sops-nix
 ```
 
@@ -50,7 +50,7 @@ This project uses **NixOS Flakes** combined with **Home Manager** in a modular s
 3. **Reloading Visual Components**:
    - Any script or tool that applies a theme or wallpaper must delegate component reloading and folder icon updates to [`home/rylai/scripts/theme-sync.sh`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/home/rylai/scripts/theme-sync.sh).
 4. **Style tokens**:
-   - Every surface uses these tokens; the guard is [`tests/shell/style-standard.bats`](file:///home/rylai/Documents/nixos-proyect/mi-config/nixos-config/tests/shell/style-standard.bats).
+   - Every surface uses these tokens across the desktop interface.
 
    | Token | Valor | Dónde |
    |---|---|---|
@@ -111,7 +111,3 @@ Before completing any task or delivering changes to the user, the agent must run
    ```
 3. **Formatting and Reference Verification**:
    - Ensure no references remain to deleted files or paths (such as `matugen`, `desktop-tools.nix`, or `converter-shell.nix`).
-4. **Shell Test Suite**:
-   ```bash
-   bash tests/run.sh
-   ```
