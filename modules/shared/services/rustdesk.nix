@@ -12,7 +12,7 @@
 
   config = lib.mkIf config.myPlatform.services.rustdesk.enable {
     environment.systemPackages = [
-      pkgs.rustdesk
+      pkgs.rustdesk-flutter
     ];
 
     systemd.services.rustdesk = {
@@ -22,7 +22,7 @@
       path = [ "/run/wrappers" pkgs.coreutils ];
       serviceConfig = {
         Type = "simple";
-        ExecStart = "${pkgs.rustdesk}/bin/rustdesk --service";
+        ExecStart = "${pkgs.rustdesk-flutter}/bin/rustdesk --service";
         Restart = "always";
         RestartSec = "5s";
         KillMode = "mixed";
