@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, osConfig, ... }:
 
 {
   programs.wlogout = {
@@ -270,6 +270,15 @@
           label = "󰃟";
         };
       };
+    };
+  };
+
+  services.wayvnc = lib.mkIf (osConfig.myPlatform.services.wayvnc.enable or false) {
+    enable = true;
+    autoStart = true;
+    settings = {
+      address = "0.0.0.0";
+      port = 5900;
     };
   };
 }

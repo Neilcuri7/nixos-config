@@ -9,6 +9,7 @@
     ../../modules/shared/services/sops.nix
     ../../modules/shared/services/input-remapper.nix
     ../../modules/shared/services/rustdesk.nix
+    ../../modules/shared/services/wayvnc.nix
   ];
 
   networking.hostName = "chinatsu";

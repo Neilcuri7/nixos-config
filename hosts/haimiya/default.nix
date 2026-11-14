@@ -9,6 +9,7 @@
     ../../modules/shared/services/sops.nix
     ../../modules/shared/services/input-remapper.nix
     ../../modules/shared/services/rustdesk.nix
+    ../../modules/shared/services/wayvnc.nix
   ];
 
   networking.hostName = "haimiya";
@@ -61,6 +62,10 @@
       sops.enable = true;
       input-remapper.enable = true;
       rustdesk.enable = true;
+      wayvnc = {
+        enable = true;
+        allowedClients = [ "100.68.192.120" ];
+      };
     };
   };
 
