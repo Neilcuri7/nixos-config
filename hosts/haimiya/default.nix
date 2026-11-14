@@ -8,6 +8,7 @@
     ../../modules/shared/hardware
     ../../modules/shared/services/sops.nix
     ../../modules/shared/services/input-remapper.nix
+    ../../modules/shared/services/rustdesk.nix
   ];
 
   networking.hostName = "haimiya";
@@ -59,6 +60,7 @@
     services = {
       sops.enable = true;
       input-remapper.enable = true;
+      rustdesk.enable = true;
     };
   };
 
