@@ -1,21 +1,29 @@
 { config, lib, pkgs, ... }:
 
+let
+  cfg = config.myPlatform.services.rustdesk;
+in
 {
   options.myPlatform.services.rustdesk = {
-    enable = lib.mkEnableOption "RustDesk remote desktop client and background service";
+    enable = lib.mkEnableOption "RustDesk remote desktop client";
+    enableService = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Enable RustDesk background systemd service for unattended access";
+    };
     openFirewall = lib.mkOption {
       type = lib.types.bool;
-      default = true;
+      default = false;
       description = "Open firewall ports for RustDesk direct LAN connections";
     };
   };
 
-  config = lib.mkIf config.myPlatform.services.rustdesk.enable {
+  config = lib.mkIf cfg.enable {
     environment.systemPackages = [
       pkgs.rustdesk-flutter
     ];
 
-    systemd.services.rustdesk = {
+    systemd.services.rustdesk = lib.mkIf cfg.enableService {
       description = "RustDesk background service";
       wantedBy = [ "multi-user.target" ];
       after = [ "network.target" "systemd-user-sessions.service" ];
@@ -29,7 +37,7 @@
       };
     };
 
-    networking.firewall = lib.mkIf config.myPlatform.services.rustdesk.openFirewall {
+    networking.firewall = lib.mkIf (cfg.enableService && cfg.openFirewall) {
       allowedTCPPorts = [ 21115 21116 21117 21118 21119 ];
       allowedUDPPorts = [ 21116 ];
     };
